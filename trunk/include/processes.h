@@ -8,7 +8,7 @@ unsigned int scheduler(unsigned int esp);
 
 int createProcess(int (*fn)(int ,int ,char * ), int tty);
 
-void sleep(int seconds);
+void __sleep(int seconds);
 
 
 int shell(int a,int b,char * c);
