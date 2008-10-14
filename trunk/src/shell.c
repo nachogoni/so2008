@@ -78,7 +78,7 @@ int handle_nros(int ppid, int pid, char * parameters)
 {
 	int i = 0;
 
-	for(i = 0; i < i+1/*5000*/; i++)
+	for(i = 0; i < 5000; i++)
 		printf("%d\n", i);
 
 	return 0;
