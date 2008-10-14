@@ -79,6 +79,13 @@ void sleep(int seconds)
 }
 
 
+
+
+
+
+
+
+
 int a(int a,int b,char * c)
 {
 	sleep(1);
@@ -118,7 +125,7 @@ int c(int a,int b,char * c)
 
 int d(int a,int b,char * c)
 {
-	sleep(5);
+	sleep(10);
 	while(1)
 	{
 		sleep(20);

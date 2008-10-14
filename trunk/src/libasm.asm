@@ -6,7 +6,7 @@ GLOBAL  int_80_hand, write, read, fork
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
-GLOBAL	beep
+GLOBAL	beep,reboot
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 
 GLOBAL  createStackFrame
@@ -333,6 +333,10 @@ set_cursor_pos:
 	pop ecx
 	pop eax
 	pop ebp
+	ret
+
+reboot:
+	jmp 0x0000
 	ret
 
 beep:
