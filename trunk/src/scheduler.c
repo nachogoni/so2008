@@ -19,22 +19,36 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 
 unsigned int scheduler_priority_roundRobin(unsigned int esp)
 {
+
+        /*TODO: Revisar.
+        * Dejé comentados los printfs que usé para debuggear.
+        * Cambié el if por >= por si se baja la prioridad en ejecución,
+        * no debería tener que esperar a que haga overflow para cambiar.
+        */
+
 	process_vector[process_running].esp = esp;
 	
-	if(process_vector[process_running].lived == process_vector[process_running].priority)
+	if (process_vector[process_running].lived >= process_vector[process_running].priority)
 	{
 		// reseteo el tiempo de vida del proceso actual
 		process_vector[process_running].lived = 0;
+
 		// paso al siguiente proceso no bloqueado
 		do
 			process_running = (process_running + 1) % process_count;
 		while (process_vector[process_running].status != PROC_READY);
+
 		// seteo el tiempo vivido del nuevo proceso en cero
 		process_vector[process_running].lived = 0;
+// 		printf("Process runnin adentro: %d\n", process_running);
 		return process_running;
 	}
+
 	// incremento el tiempo vivido total del proceso activo
 	process_vector[process_running].lived++;
+
+// 	printf("Process runnin afuera: %d\n", process_running);
+// 	printf("Lived afuera: %d\n", process_vector[process_running].lived);
 	return process_running;
 }
 
