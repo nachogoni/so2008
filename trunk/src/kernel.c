@@ -210,7 +210,7 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
  	getBlockMem(&memory,&memory_size);
 
  	//Inicializo la paginacion en 2mb
-	__init_pagination((unsigned long *) 0x200000, (unsigned long *) 0x201000, KERNEL_MEM_SIZE, 8*MB);
+	__init_pagination((unsigned long **) 0x200000, (unsigned long *) 0x201000, KERNEL_MEM_SIZE, 8*MB);
 
 	/******************** FIN CONFIGURACION DEL SO *************************/
 

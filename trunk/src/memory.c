@@ -80,7 +80,7 @@ __set_memory_addr(void* i_memory, size_t i_size)
 void
 __init_memory(void* i_memory, size_t i_size)
 {
-	struct s_memory_block_header header, *testheader;
+	struct s_memory_block_header header;
 	struct s_memory_block new;
 
 	mem_addr=i_memory;
@@ -127,7 +127,6 @@ malloc(size_t size)
 	memory_block aux;
 	struct s_memory_block new;
 	struct s_memory_block_header* header;
-	size_t i, f_end=0;
 	
 	if (size<=0)
 		return NULL;
@@ -158,7 +157,7 @@ malloc(size_t size)
 				if ((aux->offset - size - sizeof(struct s_memory_block)) > 0)
 				{
 					//Asigno el nuevo
-					new.address = (char*)aux + sizeof(struct s_memory_block)*2 + size;
+					new.address = (unsigned char*)aux + sizeof(struct s_memory_block)*2 + size;
 					new.offset = aux->offset - size - sizeof(struct s_memory_block);
 					new.free=1;
 					new.next=aux->next;
@@ -218,7 +217,6 @@ free(void* address)
 
 	memory_block ant,act,sig;
 	struct s_memory_block_header* header;
-	int i, f_found=0;
 	
 	if (address==NULL)
 		return;
