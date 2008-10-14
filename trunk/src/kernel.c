@@ -34,7 +34,7 @@ int reboot_pc = 0;
 DESCR_INT idt[0x81];
 
 /* IDTR */
-IDTR idtr;					
+IDTR idtr;
 
 /* Usuario activo del sistema */
 int active_user;
@@ -100,7 +100,6 @@ __read(int fd, void* buffer, size_t count)
 
 	return i;
 }
-
 
 /* __write
 *
@@ -230,12 +229,12 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	createProcess(&shell, 3);
 	createProcess(&shell, 4);
 	createProcess(&shell, 5);
-//	createProcess(&shell, 6);
+	createProcess(&shell, 6);
 
-	createProcess(&a, 6);
-	createProcess(&b, 6);
-	createProcess(&c, 6);
-	createProcess(&d, 6);
+// 	createProcess(&a, 6);
+// 	createProcess(&b, 6);
+// 	createProcess(&c, 6);
+// 	createProcess(&d, 6);
 	
 	
 	printf("fork %d\n",fork());
