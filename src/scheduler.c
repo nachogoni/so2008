@@ -1,15 +1,34 @@
 #include "../include/scheduler.h"
+#include "../include/processes.h"
 #include "../include/strings.h"
 
 extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
 
+static void new_timerTick(void)
+{
+	int i = 0;
+	
+	for (i = 0; i < process_count; i++)
+	{
+		if (process_vector[i].status == PROC_SLEEP_BLOQUED)
+		{
+			process_vector[i].sleep--;
+			if (process_vector[i].sleep == 0)
+				process_vector[i].status = PROC_READY;
+		}
+	}
+	
+	return;
+}
+
 unsigned int scheduler_roundRobin(unsigned int esp)
 {
 	process_vector[process_running].esp = esp;
+
+	new_timerTick();
 	
-	// paso al siguiente proceso no bloqueado
 	do
 		process_running = (process_running + 1) % process_count;
 	while (process_vector[process_running].status != PROC_READY);
