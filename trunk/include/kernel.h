@@ -13,6 +13,8 @@
 
 #define MAX_PROCESS_COUNT	64
 
+#define DEFAULT_PRIORITY        1
+
 /* Scheluding setteando @ processes.c */
 enum {SCH_ROUND_ROBIN, SCH_PRIORITY_ROUND_ROBIN};
 
