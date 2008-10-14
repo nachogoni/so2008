@@ -270,15 +270,14 @@ size_t tty_setByte (int b)
 	tty_vector[tty_id].stdout_first %= tty_vector[tty_id].stdout_length;
 	
 	if (b == '\n')
+	{
 		for (i = 0; i < tty_vector[tty_id].stdout_width * 2; i += 2)
 		{
 			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i + 1] = SCREEN_BLACK;
 			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i] = ' ';
 		}
+	}
 
-//	if ((tty_vector[tty_id].active == TTY_ACTIVE) && (b == '\n'))
-//		tty_flush();
-	
 	return 1;
 }
 
@@ -313,7 +312,7 @@ _Sti();
 
 tty_resp_t tty_clear_scr()
 {
-	int from = 0, to = 0, len = 0, i = 0, screen_size = 0;
+	int from = 0, to = 0, i = 0, screen_size = 0;
 	
 	if (tty_id >= tty_count || tty_vector[tty_id].using != TTY_IN_USE)
 		return TTY_INVALID_ID;
@@ -329,10 +328,8 @@ tty_resp_t tty_clear_scr()
 	
 	if (from > to)
 	{
-		len = tty_vector[tty_id].stdout_length - from;
-		
 		// Clears the first part of the screen
-		for (i = from; i < len; i += 2)
+		for (i = from; i < tty_vector[tty_id].stdout_length; i += 2)
 		{
 			tty_vector[tty_id].stdout[i + 1] = SCREEN_BLACK;
 			tty_vector[tty_id].stdout[i] = ' ';
@@ -347,10 +344,8 @@ tty_resp_t tty_clear_scr()
 	}
 	else
 	{
-		len = to - from;
-		
 		// Clears the first part of the screen
-		for (i = from; i < len; i += 2)
+		for (i = from; i < to; i += 2)
 		{
 			tty_vector[tty_id].stdout[i + 1] = SCREEN_BLACK;
 			tty_vector[tty_id].stdout[i] = ' ';
