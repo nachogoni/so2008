@@ -85,7 +85,9 @@ int a(int a,int b,char * c)
 	while(1)
 	{
 		sleep(2);
+		tty_set_color(SCREEN_FORE_YELLOW, SCREEN_BACK_BLACK);
 		printf("a");
+		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
 }
@@ -95,7 +97,9 @@ int b(int a,int b,char * c)
 	while(1)
 	{
 		sleep(1);
+		tty_set_color(SCREEN_FORE_VIOLET, SCREEN_BACK_BLACK);
 		printf("b");
+		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
 }
@@ -105,7 +109,9 @@ int c(int a,int b,char * c)
 	while(1)
 	{
 		sleep(1);
+		tty_set_color(SCREEN_FORE_RED, SCREEN_BACK_BLACK);
 		printf("c");
+		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
 }
@@ -116,7 +122,9 @@ int d(int a,int b,char * c)
 	while(1)
 	{
 		sleep(20);
+		tty_set_color(SCREEN_FORE_WHITE2, SCREEN_BACK_BLACK);
 		printf("d");
+		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
 }
