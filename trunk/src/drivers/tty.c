@@ -7,6 +7,7 @@
 #include "keyboard.h"
 #include "memory.h"
 #include "kernel.h"
+#include "processes.h"
 
 #define TTY_ACTIVE	0
 #define TTY_BACKGROUND	TTY_ACTIVE + 1
@@ -33,6 +34,7 @@ typedef struct tty_t
 	int stdin_write;	// where to write a new input
 	int stdin_empty;	// if stdin is empty
 //	int * stdin;		// stdin buffer (keyboard)
+	unsigned int stdin_blocked_proc;		// pid of the process blocked at stdin
 	int stdin[STDIN_WIDTH];	// stdin buffer (keyboard)
 } tty_t;
 
@@ -74,6 +76,7 @@ static int new_tty(int buffer_length)
 	tty_vector[tty_id_new].stdin_write = 0;
 	tty_vector[tty_id_new].stdin_empty = TTY_EMPTY;
 	tty_vector[tty_id_new].tty_color = SCREEN_FORE_WHITE | SCREEN_BACK_BLACK;
+	tty_vector[tty_id_new].stdin_blocked_proc = 0;
 
 	/* malloc of the tty stdout buffer */
 //	tty_vector[tty_id_new].stdout = malloc(tty_vector[tty_id_new].stdout_length * tty_vector[tty_id_new].stdout_width * 2 * sizeof(char));
@@ -152,7 +155,7 @@ size_t tty_writeBuffer(int b)
 
 	if ((tty_vector[tty_fore_id].stdin_empty != TTY_EMPTY) && (tty_vector[tty_fore_id].stdin_read == tty_vector[tty_fore_id].stdin_write))
 	{
-		// TODO: beep();
+		beep();
 		return 0;
 	}
 
@@ -196,6 +199,11 @@ size_t tty_writeBuffer(int b)
 
 	tty_vector[tty_fore_id].stdin_empty = TTY_NOT_EMPTY;
 	
+	if (tty_vector[tty_fore_id].stdin_blocked_proc != 0)
+	{
+		unblock_process(tty_vector[tty_fore_id].stdin_blocked_proc);
+	}		
+	
 	return 1;
 }
 
@@ -204,79 +212,80 @@ size_t tty_writeBuffer(int b)
 size_t tty_setByte (int b)
 {
 	int screen_size = 0, i = 0, len = 0;
+	int tty_id_actual = tty_id;
 
-	if (tty_id >= tty_count || tty_vector[tty_id].using != TTY_IN_USE)
+	if (tty_id_actual >= tty_count || tty_vector[tty_id_actual].using != TTY_IN_USE)
 		return TTY_INVALID_ID;
 	
 	switch(b)
 	{
 		case '\n':
 			// new line
-			tty_vector[tty_id].stdout_cursor += tty_vector[tty_id].stdout_width * 2;
+			tty_vector[tty_id_actual].stdout_cursor += tty_vector[tty_id_actual].stdout_width * 2;
 			// to the first column
-			tty_vector[tty_id].stdout_cursor -= (tty_vector[tty_id].stdout_cursor % (tty_vector[tty_id].stdout_width * 2));
+			tty_vector[tty_id_actual].stdout_cursor -= (tty_vector[tty_id_actual].stdout_cursor % (tty_vector[tty_id_actual].stdout_width * 2));
 			break;
 		case '\t':
 			// new tab
-			tty_vector[tty_id].stdout_cursor += TTY_TAB * 2;
-			tty_vector[tty_id].stdout_cursor -= tty_vector[tty_id].stdout_cursor % (TTY_TAB * 2);
+			tty_vector[tty_id_actual].stdout_cursor += TTY_TAB * 2;
+			tty_vector[tty_id_actual].stdout_cursor -= tty_vector[tty_id_actual].stdout_cursor % (TTY_TAB * 2);
 			break;
 		case '\r':
 			// carry return
-			tty_vector[tty_id].stdout_cursor -= tty_vector[tty_id].stdout_width * 2;
+			tty_vector[tty_id_actual].stdout_cursor -= tty_vector[tty_id_actual].stdout_width * 2;
 			// to the first column
-			tty_vector[tty_id].stdout_cursor -= (tty_vector[tty_id].stdout_cursor % (tty_vector[tty_id].stdout_width * 2));
+			tty_vector[tty_id_actual].stdout_cursor -= (tty_vector[tty_id_actual].stdout_cursor % (tty_vector[tty_id_actual].stdout_width * 2));
 			// Not negative cursor
-			if (tty_vector[tty_id].stdout_cursor < 0)
-				tty_vector[tty_id].stdout_cursor = 0;
+			if (tty_vector[tty_id_actual].stdout_cursor < 0)
+				tty_vector[tty_id_actual].stdout_cursor = 0;
 			break;
 		case '\b':
 			// backspace
-			tty_vector[tty_id].stdout_cursor -= 2;
+			tty_vector[tty_id_actual].stdout_cursor -= 2;
 			// Not negative cursor
-			if (tty_vector[tty_id].stdout_cursor < 0)
-				tty_vector[tty_id].stdout_cursor = 0;
+			if (tty_vector[tty_id_actual].stdout_cursor < 0)
+				tty_vector[tty_id_actual].stdout_cursor = 0;
 			// write a blank
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor] = ' ';
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = tty_vector[tty_id].tty_color;
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor] = ' ';
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor + 1] = tty_vector[tty_id_actual].tty_color;
 			break;
 		default:
 			// Sets the char into the buffer
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor] = (unsigned char)b;
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor] = (unsigned char)b;
 			// Sets char format
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = tty_vector[tty_id].tty_color;
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor + 1] = tty_vector[tty_id_actual].tty_color;
 			// Increments to the next position into the buffer
-			tty_vector[tty_id].stdout_cursor += 2;
+			tty_vector[tty_id_actual].stdout_cursor += 2;
 			break;
 	}
 
 	// Cursor must be into the screen	
-	screen_size = (tty_vector[tty_id].stdout_width * tty_vector[tty_id].stdout_height * 2);
+	screen_size = (tty_vector[tty_id_actual].stdout_width * tty_vector[tty_id_actual].stdout_height * 2);
 	
 	// distance from first to cursor into the buffer
-	if (tty_vector[tty_id].stdout_cursor < tty_vector[tty_id].stdout_first)
-		len = tty_vector[tty_id].stdout_cursor + (tty_vector[tty_id].stdout_length - tty_vector[tty_id].stdout_first);
+	if (tty_vector[tty_id_actual].stdout_cursor < tty_vector[tty_id_actual].stdout_first)
+		len = tty_vector[tty_id_actual].stdout_cursor + (tty_vector[tty_id_actual].stdout_length - tty_vector[tty_id_actual].stdout_first);
 	else
-		len = tty_vector[tty_id].stdout_cursor - tty_vector[tty_id].stdout_first;
+		len = tty_vector[tty_id_actual].stdout_cursor - tty_vector[tty_id_actual].stdout_first;
 	
-	len %= tty_vector[tty_id].stdout_length;
+	len %= tty_vector[tty_id_actual].stdout_length;
 	
 	// what if the cursor left the screen? -> increments the firts line to show
 	if (len >= screen_size)
-		tty_vector[tty_id].stdout_first += tty_vector[tty_id].stdout_width * 2;
+		tty_vector[tty_id_actual].stdout_first += tty_vector[tty_id_actual].stdout_width * 2;
 
 	// first must fit into the buffer
-	tty_vector[tty_id].stdout_cursor %= tty_vector[tty_id].stdout_length;
+	tty_vector[tty_id_actual].stdout_cursor %= tty_vector[tty_id_actual].stdout_length;
 	
 	// first must fit into the buffer
-	tty_vector[tty_id].stdout_first %= tty_vector[tty_id].stdout_length;
+	tty_vector[tty_id_actual].stdout_first %= tty_vector[tty_id_actual].stdout_length;
 	
 	if (b == '\n')
 	{
-		for (i = 0; i < tty_vector[tty_id].stdout_width * 2; i += 2)
+		for (i = 0; i < tty_vector[tty_id_actual].stdout_width * 2; i += 2)
 		{
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i + 1] = tty_vector[tty_id].tty_color;
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i] = ' ';
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor + i + 1] = tty_vector[tty_id_actual].tty_color;
+			tty_vector[tty_id_actual].stdout[tty_vector[tty_id_actual].stdout_cursor + i] = ' ';
 		}
 	}
 
@@ -295,11 +304,15 @@ size_t tty_getByte(int * b)
 	{
 		// TODO: now we are blocked in stdin
 		// TODO: sleep(-1);
-//		return 0;
+		// return 0;
+
 
 _Sti();
-
 		while (tty_vector[tty_id].stdin_empty == TTY_EMPTY); //TODO:
+		
+//		tty_vector[tty_id].stdin_blocked_proc = getpid();
+//		block_process(PROC_STDIN_BLOQUED);
+//		tty_vector[tty_id].stdin_blocked_proc = 0;
 	}
 	
 	*b = (int)tty_vector[tty_id].stdin[tty_vector[tty_id].stdin_read];
