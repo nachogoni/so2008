@@ -70,13 +70,21 @@ int createProcess(int (*fn)(int ,int ,char *), int tty)
 	return process_count++;
 }
 
-void __sleep(int seconds)
+void sleep(int seconds)
 {
 	process_vector[process_running].status = PROC_SLEEP_BLOQUED;
 	process_vector[process_running].sleep = seconds * 18;
 	asm volatile ("hlt");
 	return;	
 }
+
+
+
+
+
+
+
+
 
 int a(int a,int b,char * c)
 {
