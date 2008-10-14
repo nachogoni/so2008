@@ -23,6 +23,9 @@ unsigned int scheduler(unsigned int esp)
 		case SCH_ROUND_ROBIN:
 			next_process = scheduler_roundRobin(esp);
 			break;
+		
+		case SCH_PRIORITY_ROUND_ROBIN:
+			next_process = scheduler_priority_roundRobin(esp);
 		default:
 			next_process = scheduler_roundRobin(esp);
 			break;
