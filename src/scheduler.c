@@ -13,7 +13,7 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 	do
 		process_running = (process_running + 1) % process_count;
 	while (process_vector[process_running].status != PROC_READY);
-	
+
 	return process_running;
 }
 
@@ -56,19 +56,32 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	int i;	
 	int total_cpu = 0;
 
-	for (i = 0; i < process_count; i++) {
+	for (i = 0; i < process_count; i++)
+        {
 		if (process_vector[i].status == PROC_BLOQUED)
 			total_cpu += process_vector[i].priority;
 	}
 
-	for (i = 0; i < process_count; i++) {
-		strcpy(ret[i].name, process_vector[i].name);		
-		ret[i].pid = process_vector[i].pid;		
+	for (i = 0; i < process_count; i++)
+        {
+		strcpy(ret[i].name, process_vector[i].name);
+		ret[i].pid = process_vector[i].pid;
 		ret[i].parent = process_vector[i].parent;	
 		ret[i].priority = process_vector[i].priority;
 		ret[i].status = process_vector[i].status;
-		ret[i].cpu = (double)(process_vector[i].priority) * 100 / total_cpu;
-		if (ret[i].status == PROC_BLOQUED) 
+		
+		/*TODO: total_cpu nunca debería ser 0. Sacar if
+		cuando se implemente el blockeo.*/
+		if (total_cpu)
+		{
+		  ret[i].cpu = process_vector[i].priority *100.0 / total_cpu;
+                }
+		else
+		{
+		  ret[i].cpu = 0;
+                }
+
+		if (ret[i].status == PROC_BLOQUED)
 			ret[i].cpu = 0;
 	}
 	*n = i;

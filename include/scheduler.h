@@ -4,12 +4,12 @@
 #include "../include/kernel.h"
 
 typedef struct processTop {
-	char name[32];			// executable name
+	char name[32];		// executable name
 	unsigned int status;	// BLOCKED -READY - EXECUTING
-	unsigned int pid;		// process id
+	unsigned int pid;	// process id
 	unsigned int parent;	// parent process id
 	unsigned int priority;	// priority level of the process
-	double cpu;				// percentage of cpu for this process
+	unsigned int cpu;	// percentage of cpu for this process
 } processTop;
 
 unsigned int scheduler_roundRobin(unsigned int esp);

@@ -78,7 +78,7 @@ int handle_nros(int ppid, int pid, char * parameters)
 {
 	int i = 0;
 
-	for(i = 0; i < 5000; i++)
+	for(i = 0; i < 500000; i++)
 		printf("%d\n", i);
 
 	return 0;
@@ -88,13 +88,11 @@ int handle_nros(int ppid, int pid, char * parameters)
 static 
 int handle_top(int ppid, int pid, char * parameters)
 {
-	int i = 0;
 
-	printf("TOP\n", i);
+    printf("TOP\n");
+    topApp(ppid, pid, parameters);
 
-	topApp(ppid, pid, parameters);
-
-	return 0;
+    return 0;
 }
 
 /* Inicializador del shell */

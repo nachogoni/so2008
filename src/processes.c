@@ -64,6 +64,7 @@ int createProcess(int (*fn)(int ,int ,char *), int tty)
 
 	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address);
 	process_vector[process_count].status = PROC_READY;
+	process_vector[process_count].priority = DEFAULT_PRIORITY;
 	
 	return process_count++;
 }
