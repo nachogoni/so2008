@@ -10,7 +10,7 @@
 
 typedef struct
 {
-	unsigned long *page_directory;
+	unsigned long **page_directory;
 	unsigned long *page_table;
 	unsigned long start_kernel_zone_idx;
 	unsigned long kernel_used;
@@ -24,10 +24,29 @@ typedef struct
 s_pagination g_pagination;
 
 
+/* definiciones de funciones estaticas */
+static void
+set_page_zone(unsigned long **page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts);
+
+/*
+recibe:
+- el vector de tabla de pagina
+- la direccion inicial
+- la cantidad de paginas
+- atributos de las paginas
+// attribute set to: supervisor level, read/write, present(011 in binary)
+*/
+static unsigned long 
+set_page_table(unsigned long *page_table, unsigned long start_address, int page_start, int page_count, char atts);
+
+
+/* fin definiciones */
+
+
 void
-__init_pagination(unsigned long *page_directory, unsigned long *page_table, unsigned long kernel_size, unsigned long user_size)
+__init_pagination(unsigned long **page_directory, unsigned long *page_table, unsigned long kernel_size, unsigned long user_size)
 {
-	unsigned long address, page_count;
+	unsigned page_count;
 	
 	g_pagination.page_directory = page_directory;
 	g_pagination.page_table = page_table;
@@ -74,11 +93,10 @@ __init_pagination(unsigned long *page_directory, unsigned long *page_table, unsi
 }
 
 static void
-set_page_zone(unsigned long *page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts)
+set_page_zone(unsigned long **page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts)
 {
 	unsigned long address;
 	unsigned long page_count, page_count_left;
-	int i, dir_idx=0;
 	
 	//Cantidad de paginas totales
 	page_count_left = mem_size / (4*KB);
@@ -108,7 +126,7 @@ set_page_zone(unsigned long *page_directory, unsigned long *page_table, unsigned
 		page_count_left = page_count_left - page_count;
 	}
 		
-	return address;
+	return;
 }
 
 /*
@@ -151,14 +169,14 @@ set_page_table(unsigned long *page_table, unsigned long start_address, int page_
 */
 
 void
-add_page_table(unsigned long *page_directory, unsigned long *page_table, int index, char atts)
+add_page_table(unsigned long **page_directory, unsigned long *page_table, int index, char atts)
 {
 	//limpio los bits insignificantes de los atributos
 	atts = atts & 7;
 
 	//seteo 
 	page_directory[index] = page_table; // attribute set to: supervisor level, read/write, present(011 in binary)
-	page_directory[index] = page_directory[index] | atts;
+	page_directory[index] = (unsigned long *)(((unsigned long)page_directory[index]) | atts);
 }
 
 /*
@@ -284,11 +302,11 @@ get_free_page(void)
     page_table = g_pagination.page_directory[idx_directory];
 	
     //como las direcciones son lineales en la paginacion (1a1) devuelvo directamente 
-    address = idx_directory*4*MB + idx_page * 4*KB;
+    address = (void *)(idx_directory*4*MB + idx_page * 4*KB);
 	
 //	printf("Dir= %x\n", address);
 
-	g_pagination.user_used++;
+g_pagination.user_used++;
     
 	
 	return address;

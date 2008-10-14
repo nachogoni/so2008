@@ -20,21 +20,7 @@
 */
 
 void
-__init_pagination(unsigned long *page_directory, unsigned long *page_table, unsigned long kernel_size, unsigned long user_size);
-
-static void
-set_page_zone(unsigned long *page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts);
-
-/*
-recibe:
-- el vector de tabla de pagina
-- la direccion inicial
-- la cantidad de paginas
-- atributos de las paginas
-// attribute set to: supervisor level, read/write, present(011 in binary)
-*/
-static unsigned long 
-set_page_table(unsigned long *page_table, unsigned long start_address, int page_start, int page_count, char atts);
+__init_pagination(unsigned long **page_directory, unsigned long *page_table, unsigned long kernel_size, unsigned long user_size);
 
 /*
  Setea una entrada en el directorio
@@ -46,7 +32,7 @@ set_page_table(unsigned long *page_table, unsigned long start_address, int page_
 */
 
 void
-add_page_table(unsigned long *page_directory, unsigned long *page_table, int index, char atts);
+add_page_table(unsigned long **page_directory, unsigned long *page_table, int index, char atts);
 
 void
 up_page(unsigned int index);

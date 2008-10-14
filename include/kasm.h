@@ -37,10 +37,10 @@ void		debug (void);
 // Genera un stackFrame para que nuevos procesos puedan ser agregados al scheduler
 int createStackFrame(int (*fn)(int ,int ,char *), void * dire);
 
-int read_cr0();
-void write_cr0(unsigned long * kaka);
-int read_cr3();
-void write_cr3(unsigned long * kaka);
+int		read_cr0();
+void 		write_cr0(int);
+unsigned long*	read_cr3();
+void 		write_cr3(unsigned long **);
 
 #endif
 
