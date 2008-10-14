@@ -306,10 +306,11 @@ get_free_page(void)
 	
 //	printf("Dir= %x\n", address);
 
-g_pagination.user_used++;
+    g_pagination.user_used++;
     
-	
-	return address;
+    //TODO armar si no tiene paginas que devuelva NULL
+
+    return address;
 	
 }
 

@@ -212,6 +212,9 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
  	//Inicializo la paginacion en 2mb
 	__init_pagination((unsigned long **) 0x200000, (unsigned long *) 0x201000, KERNEL_MEM_SIZE, 8*MB);
 
+	//Inicializo zona de memoria de kernel para malloc's en 3MB x 1MB
+	__init_memory((void*)0x300000, 1*MB);
+
 	/******************** FIN CONFIGURACION DEL SO *************************/
 
 	/* Pantalla de inicio */
@@ -233,10 +236,9 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 //	createProcess(&shell, 6);
 
 	createProcess(&a, 6);
-	createProcess(&b, 6);
-	createProcess(&c, 6);
-	createProcess(&d, 6);
-	
+//	createProcess(&b, 6);
+//	createProcess(&c, 6);
+//	createProcess(&d, 6);
 	
 	printf("fork %d\n",fork());
 	
