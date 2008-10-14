@@ -32,7 +32,6 @@ unsigned int write(int fd, const void * buf, unsigned int count);
 void		set_cursor_pos(unsigned int);
 
 unsigned int	fork(void);
-void 		sleep(int seconds);
 
 void		debug (void);
 

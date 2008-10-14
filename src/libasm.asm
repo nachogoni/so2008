@@ -6,7 +6,7 @@ GLOBAL  int_80_hand, write, read, fork
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
-GLOBAL	beep, reboot, sleep
+GLOBAL	beep,reboot
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 
 GLOBAL  createStackFrame
@@ -14,7 +14,7 @@ GLOBAL  createStackFrame
 EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
-EXTERN  __write, __read, __fork, __sleep
+EXTERN  __write, __read, __fork
 
 EXTERN _invop
 EXTERN _div0
@@ -187,11 +187,6 @@ int_80_hand:
 	   jz _pread
 	   cmp eax, 4             ; FORK = 4
 	   jz _pfork
-	   cmp eax, 5             ; REBOOT = 5
-	   jz _preboot
-	   cmp eax, 6             ; SLEEP = 6
-	   jz _psleep	
-
 
 	   ;si no hay instruccion salgo
 	   jmp _pend
@@ -231,46 +226,15 @@ _pread:
 ; el fork no lleva parametros
 _pfork:
 
-	   call __fork
-	   jmp	 _pend	       	  ; salgo
-
-_preboot:
-	   jmp	   0x0000
-	   jmp	   _pend	  ; salgo
-
-_psleep:
-	   push    ebx             ; int
-
-	   call    __sleep
-
-	   pop     ebx
-	   jmp	 _pend	       	  ; salgo
+		call __fork
+		jmp	 _pend	       	  ; salgo
 
 _pend:
-	   pop     es		  ;salgo
+	   pop     es			  ;salgo
 	   pop     ds
 	   iret
 
-; sleep coloca en 
-; - ebx el tiempo
-sleep:
-	push    ebp             ; arma stack frame
-	mov     ebp, esp
 
-	push    ebx
-
-	mov     eax, 6 	    ; pongo el selector en sleep
-	mov     ebx, [ebp+8]    ; tiempo
-
-	int     080h		    ; llamo a int 80
-
-	pop	   ebx
-
-	mov     esp, ebp        ; destruye stack frame
-	pop     ebp
-	ret
-
-; no lleva parametros
 fork:
 	push    ebp             ; arma stack frame
 	mov     ebp, esp
@@ -342,7 +306,7 @@ read:
 ;Recibe por stack la posicion de pantalla a donde llevarlo
 set_cursor_pos:
 	push ebp
-     	mov  ebp, esp
+     mov     ebp, esp
 
 	push eax
 	push ecx
@@ -372,14 +336,7 @@ set_cursor_pos:
 	ret
 
 reboot:
-	push    ebp             ; arma stack frame
-	mov     ebp, esp
-
-	mov     eax, 5 		    ; pongo el selector en reboot
-	int     080h		    ; llamo a int 80
-
-	mov     esp, ebp        ; destruye stack frame
-	pop     ebp
+	jmp 0x0000
 	ret
 
 beep:
