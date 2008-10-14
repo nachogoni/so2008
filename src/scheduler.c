@@ -1,10 +1,44 @@
-#include "../include/scheduler.h"
-#include "../include/processes.h"
-#include "../include/strings.h"
+#include "processes.h"
+#include "strings.h"
+#include "pagination.h"
+#include "tty.h"
+#include "scheduler.h"
+#include "memory.h"
+
 
 extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
+
+int actual_scheduler = SCH_ROUND_ROBIN;
+
+unsigned int scheduler(unsigned int esp)
+{
+	unsigned int next_process;
+	
+	switch(actual_scheduler)
+	{
+		case SCH_ROUND_ROBIN:
+			next_process = scheduler_roundRobin(esp);
+			break;
+		case SCH_PRIORITY_ROUND_ROBIN:
+			next_process = scheduler_priority_roundRobin(esp);
+			break;
+		default:
+			next_process = scheduler_roundRobin(esp);
+			break;
+	}
+	
+	process_running = next_process;
+	
+	// set the tty_id global of the next process
+	tty_set_actual(process_vector[next_process].tty_id);
+	tty_flush();
+	// set the heap address global for malloc into the next process
+	__set_memory_addr(process_vector[next_process].heap_address, SIZE_PER_PAGE);
+	// returns the esp value to finish the task switch
+	return process_vector[next_process].esp;
+}
 
 static void new_timerTick(void)
 {
@@ -85,9 +119,10 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
         {
 		strcpy(ret[i].name, process_vector[i].name);
 		ret[i].pid = process_vector[i].pid;
-		ret[i].parent = process_vector[i].parent;	
+		ret[i].parent = process_vector[i].ppid;	
 		ret[i].priority = process_vector[i].priority;
 		ret[i].status = process_vector[i].status;
+		ret[i].tty = process_vector[i].tty_id;
 		
 		/*TODO: total_cpu nunca debería ser 0. Sacar if
 		cuando se implemente el blockeo.*/

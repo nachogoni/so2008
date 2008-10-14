@@ -9,7 +9,7 @@
 #ifndef _kernel_
 #define _kernel_
 
-#define INIT_PID	0
+#define INIT_PID	1
 
 #define MAX_PROCESS_COUNT	64
 
@@ -27,7 +27,7 @@ typedef struct process_t
 	unsigned int status;	// BLOCKED -READY - EXECUTING
 	unsigned int esp;		// stack pointer
 	unsigned int pid;		// process id
-	unsigned int parent;	// parent process id
+	unsigned int ppid;	// parent process id
 	unsigned int lived;		// count of timer ticks lived
 	unsigned int sleep;		// count of timer ticks left to awake
 	unsigned int priority;	// priority level of the process

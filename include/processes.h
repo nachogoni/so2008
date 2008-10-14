@@ -2,14 +2,17 @@
 #define PROCESSES_H_
 
 
-enum {NONE, PROC_BLOQUED, PROC_SLEEP_BLOQUED, PROC_STDIN_BLOQUED, PROC_READY, PROC_EXECUTING};
+typedef enum {NONE, PROC_BLOQUED, PROC_SLEEP_BLOQUED, PROC_STDIN_BLOQUED, PROC_READY, PROC_EXECUTING} procStatusT;
 
-unsigned int scheduler(unsigned int esp);
-
-int createProcess(int (*fn)(int ,int ,char * ), int tty);
+int createProcess(int (*fn)(int ,int ,char * ), char * name, int tty);
 
 void sleep(int seconds);
 
+void block_process(procStatusT block_type);
+void unblock_process(unsigned int pid);
+
+unsigned int getpid(void);
+unsigned int getppid(void);
 
 int shell(int a,int b,char * c);
 int a(int a,int b,char * c);

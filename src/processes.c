@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "tty.h"
 #include "scheduler.h"
+#include "strings.h"
 #include "memory.h"
 #include "pagination.h"
 #include "processes.h"
@@ -13,49 +14,23 @@ process_t process_vector[MAX_PROCESS_COUNT];
 unsigned int process_running = 0;
 unsigned int process_count = 1;
 
-int actual_scheduler = SCH_ROUND_ROBIN;
-
-unsigned int scheduler(unsigned int esp)
-{
-	unsigned int next_process;
-	
-	switch(actual_scheduler)
-	{
-		case SCH_ROUND_ROBIN:
-			next_process = scheduler_roundRobin(esp);
-			break;
-		case SCH_PRIORITY_ROUND_ROBIN:
-			next_process = scheduler_priority_roundRobin(esp);
-			break;
-		default:
-			next_process = scheduler_roundRobin(esp);
-			break;
-	}
-	
-	process_running = next_process;
-	
-	// set the tty_id global of the next process
-	tty_set_actual(process_vector[next_process].tty_id);
-	tty_flush();
-	// set the heap address global for malloc into the next process
-	__set_memory_addr(process_vector[next_process].heap_address, SIZE_PER_PAGE);
-	// returns the esp value to finish the task switch
-	return process_vector[next_process].esp;
-}
-
 int shell(int a,int b,char * c)
 {
-	last_pid++;
-	init_shell(last_pid, last_pid + 1,"");
+	init_shell(process_vector[process_count].ppid, process_vector[process_count].pid,"");
 	return 1;
 }
 
-int createProcess(int (*fn)(int ,int ,char *), int tty)
+int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 {
-	if (process_count>=MAX_PROCESS_COUNT)
+	if (process_count>=MAX_PROCESS_COUNT || name == NULL)
 		return -1;
 	
 	process_vector[process_count].tty_id = tty;
+	
+	strcpy(process_vector[process_count].name, name);
+
+	process_vector[process_count].pid = ++last_pid;
+	process_vector[process_count].ppid = INIT_PID;
 	
 	process_vector[process_count].stack_address = get_free_page() + 0x0FFF;
 	process_vector[process_count].heap_address = get_free_page();
@@ -70,11 +45,43 @@ int createProcess(int (*fn)(int ,int ,char *), int tty)
 	return process_count++;
 }
 
+void block_process(procStatusT block_type)
+{
+	process_vector[process_running].status = block_type;
+	asm volatile ("hlt");
+	return;	
+}
+
+void unblock_process(unsigned int pid)
+{
+	int i = 0;
+	
+	for (i = 0; i < process_count; i++)
+	{
+		if (process_vector[i].pid == pid)
+		{
+			process_vector[i].status = PROC_READY;
+		}
+	}
+	
+	return;	
+}
+
+unsigned int getpid(void)
+{
+	return process_vector[process_running].pid;
+}
+
+unsigned int getppid(void)
+{
+	return process_vector[process_running].ppid;
+}
+
+
 void sleep(int seconds)
 {
-	process_vector[process_running].status = PROC_SLEEP_BLOQUED;
 	process_vector[process_running].sleep = seconds * 18;
-	asm volatile ("hlt");
+	block_process(PROC_SLEEP_BLOQUED);
 	return;	
 }
 

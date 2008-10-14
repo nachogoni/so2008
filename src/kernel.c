@@ -212,14 +212,11 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
  	//Inicializo la paginacion en 2mb
 	__init_pagination((unsigned long **) 0x200000, (unsigned long *) 0x201000, KERNEL_MEM_SIZE, 8*MB);
 
-	//Inicializo zona de memoria de kernel para malloc's en 3MB x 1MB
-	__init_memory((void*)0x300000, 1*MB);
-
 	/******************** FIN CONFIGURACION DEL SO *************************/
 
 	/* Pantalla de inicio */
 	//init_presents(OS_PID, OS_PID+1, NULL);
-	showSplashScreen();
+	//showSplashScreen();
 
 	/* Seteo al usuario activo como user */
 	active_user=U_NORMAL;
@@ -227,25 +224,25 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	/******************** INICIO DE ZONA LIBRE *************************/
 	printf("Initializing multitasking services... OK\n");
 
-	createProcess(&shell, 0);
-	createProcess(&shell, 1);
-	createProcess(&shell, 2);
-	createProcess(&shell, 3);
-	createProcess(&shell, 4);
-	createProcess(&shell, 5);
-//	createProcess(&shell, 6);
+	createProcess(&shell, "shell", 0);
+	createProcess(&shell, "shell", 1);
+	createProcess(&shell, "shell", 2);
+	createProcess(&shell, "shell", 3);
+	createProcess(&shell, "shell", 4);
+	createProcess(&shell, "shell", 5);
+	createProcess(&shell, "shell", 6);
 
-	createProcess(&a, 6);
-//	createProcess(&b, 6);
-//	createProcess(&c, 6);
-//	createProcess(&d, 6);
+//	createProcess(&a, "f_a", 6);
+//	createProcess(&b, "f_b", 6);
+//	createProcess(&c, "f_c", 6);
+//	createProcess(&d, "f_d", 6);
 	
 	printf("fork %d\n",fork());
 	
 	_Sti();
 
 	while(!shutdown_pc && !reboot_pc)
-		sleep(1);
+		asm volatile ("hlt");
 
 	_Cli();
 	
