@@ -1,5 +1,6 @@
 
 GLOBAL  read_msw,_lidt
+GLOBAL	task_switch
 GLOBAL  int_08_hand, int_09_hand, int_0c_hand
 GLOBAL  int_80_hand, write, read, fork
 GLOBAL  set_cursor_pos, init_cereal
@@ -113,6 +114,22 @@ int_08_hand_back:						; Handler de INT 8 ( Timer tick)
 	pop     es
 	pop     ds
 	iret
+
+; Cambia de tarea
+task_switch:
+	; Guardo los registros del proceso actual en su stack
+	pusha
+	; Cargo el parametro para la funcion que guarda el stack pointer
+	push	esp
+	; Llamo al scheduler pasandole el stack pointer actual para recibir el nuevo stack
+	call	scheduler
+	pop	esp
+	; Setea el stack pointer del nuevo proceso
+	mov	esp, eax
+	; Restauro los registros del nuevo proceso
+	popa
+
+	ret
 
 ; Handler de INT 8 (Timer tick) -> Multitasker
 int_08_hand:

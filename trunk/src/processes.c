@@ -4,6 +4,7 @@
 #include "scheduler.h"
 #include "memory.h"
 #include "pagination.h"
+#include "processes.h"
 #include "shell.h"
 
 int last_pid = INIT_PID;
@@ -73,6 +74,49 @@ void sleep(int seconds)
 {
 	process_vector[process_running].status = PROC_SLEEP_BLOQUED;
 	process_vector[process_running].sleep = seconds * 18;
-	//TODO	
+	asm volatile ("hlt");
 	return;	
+}
+
+
+int a(int a,int b,char * c)
+{
+	sleep(1);
+	while(1)
+	{
+		sleep(2);
+		printf("a");
+	}
+	return 1;
+}
+int b(int a,int b,char * c)
+{
+	sleep(2);
+	while(1)
+	{
+		sleep(1);
+		printf("b");
+	}
+	return 1;
+}
+int c(int a,int b,char * c)
+{
+	sleep(2);
+	while(1)
+	{
+		sleep(1);
+		printf("c");
+	}
+	return 1;
+}
+
+int d(int a,int b,char * c)
+{
+	sleep(5);
+	while(1)
+	{
+		sleep(20);
+		printf("d");
+	}
+	return 1;
 }

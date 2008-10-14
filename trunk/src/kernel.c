@@ -230,21 +230,31 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	createProcess(&shell, 3);
 	createProcess(&shell, 4);
 	createProcess(&shell, 5);
-	createProcess(&shell, 6);
+//	createProcess(&shell, 6);
 
+	createProcess(&a, 6);
+	createProcess(&b, 6);
+	createProcess(&c, 6);
+	createProcess(&d, 6);
+	
+	
 	printf("fork %d\n",fork());
 	
 	_Sti();
 
 	while(!shutdown_pc && !reboot_pc)
-		;//sleep();
+		sleep(1);
 
+	_Cli();
+	
+	printf("\n\n\n\nSystem is shutting down... OK\n");
+	
 	/******************** FINALIZACION DEL SO *************************/
 
 	fd_close(SERIAL);
 	fd_close(KEYBOARD);
 	fd_close(TTY);
-	//fd_close(VIDEO);
+
 /*
 	if (shutdown_pc)
 		shutdown();

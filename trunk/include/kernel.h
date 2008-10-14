@@ -18,8 +18,6 @@
 /* Scheluding setteando @ processes.c */
 enum {SCH_ROUND_ROBIN, SCH_PRIORITY_ROUND_ROBIN};
 
-enum {NONE, PROC_BLOQUED, PROC_SLEEP_BLOQUED, PROC_STDIN_BLOQUED, PROC_READY, PROC_EXECUTING};
-
 #define KERNEL_MEM_SIZE		4*MB
 
 // Process information
