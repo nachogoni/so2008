@@ -78,7 +78,7 @@ int handle_nros(int ppid, int pid, char * parameters)
 {
 	int i = 0;
 
-	for(i = 0; i < 500000; i++)
+	for(i = 0; i < 5000; i++)
 		printf("%d\n", i);
 
 	return 0;
@@ -106,9 +106,11 @@ init_shell(int ppid, int pid, char * param)
 
 	while(!goOut)
 	{
+		tty_set_color(SCREEN_FORE_GREEN, SCREEN_BACK_BLACK);
 		// Imprime el prompt
 		printf("%s>", prompt);
-	
+		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
+		
 		cleanBuffer(buffer, BUFFER_SIZE + 1);
 		// Obtiene el comando ingresado por el teclado
 		len = getCommand(buffer, BUFFER_SIZE, history, count);

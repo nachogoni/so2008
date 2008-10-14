@@ -19,6 +19,7 @@
 
 typedef struct tty_t
 {
+	int tty_color;	// foreground and background color
 	int using;		// sets if the current tty_id is been used
 	int active;		// TTY_ACTIVE or TTY_BACKGROUND
 	int stdout_length;	// length of the buffer
@@ -72,6 +73,7 @@ static int new_tty(int buffer_length)
 	tty_vector[tty_id_new].stdin_read = 0;
 	tty_vector[tty_id_new].stdin_write = 0;
 	tty_vector[tty_id_new].stdin_empty = TTY_EMPTY;
+	tty_vector[tty_id_new].tty_color = SCREEN_FORE_WHITE | SCREEN_BACK_BLACK;
 
 	/* malloc of the tty stdout buffer */
 //	tty_vector[tty_id_new].stdout = malloc(tty_vector[tty_id_new].stdout_length * tty_vector[tty_id_new].stdout_width * 2 * sizeof(char));
@@ -236,13 +238,13 @@ size_t tty_setByte (int b)
 				tty_vector[tty_id].stdout_cursor = 0;
 			// write a blank
 			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor] = ' ';
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = tty_vector[tty_id].tty_color;
 			break;
 		default:
 			// Sets the char into the buffer
 			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor] = (unsigned char)b;
 			// Sets char format
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + 1] = tty_vector[tty_id].tty_color;
 			// Increments to the next position into the buffer
 			tty_vector[tty_id].stdout_cursor += 2;
 			break;
@@ -273,7 +275,7 @@ size_t tty_setByte (int b)
 	{
 		for (i = 0; i < tty_vector[tty_id].stdout_width * 2; i += 2)
 		{
-			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i + 1] = tty_vector[tty_id].tty_color;
 			tty_vector[tty_id].stdout[tty_vector[tty_id].stdout_cursor + i] = ' ';
 		}
 	}
@@ -331,14 +333,14 @@ tty_resp_t tty_clear_scr()
 		// Clears the first part of the screen
 		for (i = from; i < tty_vector[tty_id].stdout_length; i += 2)
 		{
-			tty_vector[tty_id].stdout[i + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[i + 1] = tty_vector[tty_id].tty_color;
 			tty_vector[tty_id].stdout[i] = ' ';
 		}
 		
 		// the last part of the screen
 		for (i = 0; i < to; i += 2)
 		{
-			tty_vector[tty_id].stdout[i + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[i + 1] = tty_vector[tty_id].tty_color;
 			tty_vector[tty_id].stdout[i] = ' ';
 		}
 	}
@@ -347,7 +349,7 @@ tty_resp_t tty_clear_scr()
 		// Clears the first part of the screen
 		for (i = from; i < to; i += 2)
 		{
-			tty_vector[tty_id].stdout[i + 1] = SCREEN_BLACK;
+			tty_vector[tty_id].stdout[i + 1] = tty_vector[tty_id].tty_color;
 			tty_vector[tty_id].stdout[i] = ' ';
 		}
 	}
@@ -430,5 +432,15 @@ tty_resp_t tty_get_position(int * x, int * y)
 
 	*x = ((int)(tty_vector[tty_id].stdout_cursor / (2 * tty_vector[tty_id].stdout_width))) % tty_vector[tty_id].stdout_width;
 
+	return TTY_OK;
+}
+
+tty_resp_t tty_set_color(int foreground, int background)
+{
+	if (foreground > 0x0F || background > 0xF0)
+		return TTY_BAD_PARAMETERS;
+	
+	tty_vector[tty_id].tty_color = (0x0F & foreground) | (0xF0 & background);
+	
 	return TTY_OK;
 }

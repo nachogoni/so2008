@@ -115,22 +115,6 @@ int_08_hand_back:						; Handler de INT 8 ( Timer tick)
 	pop     ds
 	iret
 
-; Cambia de tarea
-task_switch:
-	; Guardo los registros del proceso actual en su stack
-	pusha
-	; Cargo el parametro para la funcion que guarda el stack pointer
-	push	esp
-	; Llamo al scheduler pasandole el stack pointer actual para recibir el nuevo stack
-	call	scheduler
-	pop	esp
-	; Setea el stack pointer del nuevo proceso
-	mov	esp, eax
-	; Restauro los registros del nuevo proceso
-	popa
-
-	ret
-
 ; Handler de INT 8 (Timer tick) -> Multitasker
 int_08_hand:
 	; Guardo los registros del proceso actual en su stack
