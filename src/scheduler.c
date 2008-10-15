@@ -70,7 +70,7 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 	return process_running;
 }
 
-unsigned int scheduler_roundRobin(unsigned int esp)
+unsigned int scheduler_priority_roundRobin(unsigned int esp)
 {
 
 
