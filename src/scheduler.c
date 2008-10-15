@@ -10,7 +10,7 @@ extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
 
-int actual_scheduler = SCH_ROUND_ROBIN;
+int actual_scheduler = SCH_PRIORITY_ROUND_ROBIN;
 
 unsigned int scheduler(unsigned int esp)
 {
@@ -74,35 +74,45 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 unsigned int scheduler_priority_roundRobin(unsigned int esp)
 {
 
-
-
 	process_vector[process_running].esp = esp;
-	
+
 	new_timerTick();
+	
 
 	if (process_vector[process_running].priority > 4 || process_vector[process_running].priority < 1) {
+//		printf("cambiando prioridad al proceso: %d %s\n", process_vector[process_running].pid , process_vector[process_running].name);
 		process_vector[process_running].priority = 1;
 	}
 
 
-	if (process_vector[process_running].lived >= process_vector[process_running].priority)
+
+//	if (process_vector[process_running].pid != 1)
+//		printf("%d %s vivio %d / %d\n", process_vector[process_running].pid , process_vector[process_running].name, process_vector[process_running].lived, process_vector[process_running].priority);
+
+	if (process_vector[process_running].lived >= process_vector[process_running].priority
+		|| process_vector[process_running].lived != PROC_READY)
 	{
+
+
 		process_vector[process_running].lived = 0;
 		// paso al siguiente proceso no bloqueado
 		do
+		{
 			process_running = (process_running + 1) % process_count;
+		}	
 		while (process_vector[process_running].status != PROC_READY);
 
 		// seteo el tiempo vivido del nuevo proceso en cero
 		process_vector[process_running].lived = 0;
-// 		printf("entra al procesador el proceso: %d %s\n", process_vector[process_running].pid , process_vector[process_running].name);
+ //		if (process_vector[process_running].pid != 1)
+//			printf("entra al procesador el proceso: %d %s\n", process_vector[process_running].pid , process_vector[process_running].name);
 		return process_running;
 	}
 
 	// incremento el tiempo vivido total del proceso activo
 	process_vector[process_running].lived++;
 
- //	printf("Lived : %d\n", process_vector[process_running].lived);
+	//printf("Lived : %d\n", process_vector[process_running].lived);
 	return process_running;
 }
 
