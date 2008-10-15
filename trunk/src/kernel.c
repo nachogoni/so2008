@@ -224,6 +224,8 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	/******************** INICIO DE ZONA LIBRE *************************/
 	printf("Initializing multitasking services... OK\n");
 
+	createIdle();
+
 	createProcess(&shell, "shell", 0);
 	createProcess(&shell, "shell", 1);
 	createProcess(&shell, "shell", 2);
@@ -232,8 +234,8 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	createProcess(&shell, "shell", 5);
 	createProcess(&shell, "shell", 6);
 
-//	createProcess(&a, "f_a", 6);
-//	createProcess(&b, "f_b", 6);
+	createProcess(&a, "f_a", 6);
+	createProcess(&b, "f_b", 6);
 //	createProcess(&c, "f_c", 6);
 //	createProcess(&d, "f_d", 6);
 	
