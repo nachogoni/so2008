@@ -177,10 +177,17 @@ sem_up(key_t key)
 }
 
 int
-sem_down(key_t key);
+sem_down(key_t key)
+{
+
+
+};
 
 int
-sem_close(key_t key);
+sem_close(key_t key)
+{
+
+};
 
 
 void

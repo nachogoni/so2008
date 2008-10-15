@@ -58,6 +58,8 @@ get_free_page(void);
 void
 down_pages_process(void *heap, void* stack);
 
+void*
+duplicatePage(void *address);
 
 #endif
 
