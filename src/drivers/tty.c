@@ -307,12 +307,12 @@ size_t tty_getByte(int * b)
 		// return 0;
 
 
-_Sti();
-		while (tty_vector[tty_id].stdin_empty == TTY_EMPTY); //TODO:
+//_Sti();
+//		while (tty_vector[tty_id].stdin_empty == TTY_EMPTY); //TODO:
 		
-//		tty_vector[tty_id].stdin_blocked_proc = getpid();
-//		block_process(PROC_STDIN_BLOQUED);
-//		tty_vector[tty_id].stdin_blocked_proc = 0;
+		tty_vector[tty_id].stdin_blocked_proc = getpid();
+		block_process(PROC_STDIN_BLOQUED);
+		tty_vector[tty_id].stdin_blocked_proc = 0;
 	}
 	
 	*b = (int)tty_vector[tty_id].stdin[tty_vector[tty_id].stdin_read];

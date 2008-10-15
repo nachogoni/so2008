@@ -45,9 +45,22 @@ int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 	return process_count++;
 }
 
+void createIdle(void)
+{
+	process_vector[0].tty_id = 7;
+	strcpy(process_vector[0].name, "idle");
+	process_vector[0].pid = INIT_PID;
+	process_vector[0].ppid = INIT_PID;
+	process_vector[0].status = PROC_READY;
+	process_vector[0].priority = DEFAULT_PRIORITY;
+	
+	return;
+}
+
 void block_process(procStatusT block_type)
 {
 	process_vector[process_running].status = block_type;
+	_Sti();
 	asm volatile ("hlt");
 	return;	
 }

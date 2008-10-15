@@ -8,6 +8,8 @@ int createProcess(int (*fn)(int ,int ,char * ), char * name, int tty);
 
 void sleep(int seconds);
 
+void createIdle(void);
+
 void block_process(procStatusT block_type);
 void unblock_process(unsigned int pid);
 
