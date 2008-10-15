@@ -112,8 +112,7 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 
 	for (i = 0; i < process_count; i++)
         {
-		if (process_vector[i].status == PROC_BLOQUED)
-			printf("%d",process_vector[i].priority);
+		if (process_vector[i].status == PROC_READY)
 			total_cpu += process_vector[i].priority;
 	}
 
@@ -130,7 +129,7 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 		
 		/*TODO: total_cpu nunca debería ser 0. Sacar if
 		cuando se implemente el blockeo.*/
-		if (total_cpu)
+		if (total_cpu && ret[i].status == PROC_READY)
 		{
 		  ret[i].cpu = process_vector[i].priority *1000 / total_cpu /10;
                 }
