@@ -24,7 +24,7 @@ loader.o: loader.asm
 %.o: %.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"../include" -I"../include/drivers" -O0 -g3 -Wall -c -fno-builtin -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	gcc -I"../include" -I"../include/drivers" -O0 -g3 -Wall -c -fno-builtin -fno-stack-protector -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 # 	gcc -I"../include" -I"../include/drivers" -O0 -g3 -c -fno-builtin -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
