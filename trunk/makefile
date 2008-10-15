@@ -1,5 +1,5 @@
 all:
-	$(MAKE) -C src
+	$(MAKE) -C ./src
 	mkdir -p bin
 	mv ./src/kernel.bin ./bin/kernel.bin
 

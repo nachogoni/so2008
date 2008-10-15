@@ -81,7 +81,7 @@ unsigned int scheduler_priority_roundRobin(unsigned int esp)
 
 	process_vector[process_running].esp = esp;
 	
-	if (process_vector[process_running].lived >= process_vector[process_running].priority)
+	if (process_vector[process_running].lived >= process_vector[process_running].priority || process_vector[process_running].priority > 4 || process_vector[process_running].priority < 1)
 	{
 		// reseteo el tiempo de vida del proceso actual
 		process_vector[process_running].lived = 0;
