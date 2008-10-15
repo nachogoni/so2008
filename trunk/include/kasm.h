@@ -37,7 +37,7 @@ unsigned int	fork(void);
 void		debug (void);
 
 // Genera un stackFrame para que nuevos procesos puedan ser agregados al scheduler
-int createStackFrame(int (*fn)(int ,int ,char *), void * dire);
+int createStackFrame(int (*fn)(int ,int ,char *), void * dire, int ppid, int pid, char *parametros);
 
 int		read_cr0();
 void 		write_cr0(int);

@@ -43,6 +43,13 @@ createStackFrame:
 	;sti
 	;pushf
 	;cli
+	mov ecx, [ebp+28]
+	push ecx
+	mov ecx, [ebp+24]
+	push ecx
+	mov ecx, [ebp+20]
+	push ecx
+
 	mov ecx, 512
 	push ecx
 	; Push de CS y ESP (lo usa iret en el multitask)
