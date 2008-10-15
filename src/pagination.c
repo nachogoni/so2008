@@ -1,5 +1,6 @@
 #include "../include/pagination.h"
 #include "../include/defs.h"
+#include "../include/memory.h"
 #include "../include/kasm.h"
 
 /********************************** 
@@ -314,4 +315,29 @@ get_free_page(void)
 	
 }
 
+void*
+duplicatePage(void *address)
+{
+    int idx_directory, idx_page, index;
+    unsigned long *page_table;
+    void* new_address;
+    
+    index=(unsigned long)address/(4*KB);
+    
+    idx_directory = index / PAGES_PER_TABLE_DIR;
+    idx_page = index % PAGES_PER_TABLE_DIR;
+   
+    //Obtengo la tabla de pagina donde se encuentra la pagina
+    page_table = g_pagination.page_directory[idx_directory];
+	
+    //como las direcciones son lineales en la paginacion (1a1) devuelvo directamente 
+    address = (void *)(idx_directory*4*MB + idx_page * 4*KB);
 
+    //obtengo una direccion nueva
+    new_address = get_free_page();
+
+    //copio el contenido
+    memcpy(new_address, address, 4*KB);
+
+    return new_address;
+}
