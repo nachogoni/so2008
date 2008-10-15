@@ -1,7 +1,9 @@
 #ifndef _scheduler_
 #define _scheduler_
 
-#include "../include/kernel.h"
+#define DEFAULT_PRIORITY        1
+
+enum {SCH_ROUND_ROBIN, SCH_PRIORITY_ROUND_ROBIN};
 
 typedef struct processTop {
 	char name[32];		// executable name

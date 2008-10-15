@@ -302,14 +302,8 @@ size_t tty_getByte(int * b)
 	
 	if ((tty_vector[tty_id].stdin_empty == TTY_EMPTY) && (tty_vector[tty_id].stdin_read == tty_vector[tty_id].stdin_write))
 	{
-		// TODO: now we are blocked in stdin
-		// TODO: sleep(-1);
-		// return 0;
-
-
-//_Sti();
-//		while (tty_vector[tty_id].stdin_empty == TTY_EMPTY); //TODO:
-		
+		// blocks actual process waiting for a new byte in the buffer
+		tty_flush();
 		tty_vector[tty_id].stdin_blocked_proc = getpid();
 		block_process(PROC_STDIN_BLOQUED);
 		tty_vector[tty_id].stdin_blocked_proc = 0;

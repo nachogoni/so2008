@@ -11,9 +11,9 @@ int topApp(int ppid, int pid, char * parameters)
 
 	top(topList, &q);
 	
-	printf("Name\tPID\tPPID\tNiceness\tStatus\tCPU%c\n", '%');
+	printf("PID\tPPID\tNiceness\tStatus\tCPU%c\tName\n", '%');
 	for(i  = 0; i < q; i++) {
-		printf("%s:%d\t%d\t%d\t%d\t\t%d\t%d\n", topList[i].name, topList[i].tty, topList[i].pid, topList[i].parent, topList[i].priority, topList[i].status, topList[i].cpu);
+		printf("%d\t%d\t%d\t\t%d\t%d\t%s:%d\n", topList[i].pid, topList[i].parent, topList[i].priority, topList[i].status, topList[i].cpu, topList[i].name, topList[i].tty);
 	}
 	
 	return 1;	

@@ -47,7 +47,7 @@ int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 
 void createIdle(void)
 {
-	process_vector[0].tty_id = 7;
+	process_vector[0].tty_id = 0;
 	strcpy(process_vector[0].name, "idle");
 	process_vector[0].pid = INIT_PID;
 	process_vector[0].ppid = INIT_PID;
@@ -89,7 +89,6 @@ unsigned int getppid(void)
 {
 	return process_vector[process_running].ppid;
 }
-
 
 void sleep(int seconds)
 {

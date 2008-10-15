@@ -64,9 +64,10 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 	new_timerTick();
 	
 	do
+	{
 		process_running = (process_running + 1) % process_count;
+	}	
 	while (process_vector[process_running].status != PROC_READY);
-	//printf("entra al procesador el proceso: %d %s\n", process_vector[process_running].pid , process_vector[process_running].name);
 	return process_running;
 }
 
