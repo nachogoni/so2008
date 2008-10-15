@@ -9,14 +9,10 @@
 #ifndef _kernel_
 #define _kernel_
 
-#define INIT_PID	1
+#define NONE_PROC	0
+#define INIT_PID	NONE_PROC + 1
 
 #define MAX_PROCESS_COUNT	64
-
-#define DEFAULT_PRIORITY        1
-
-/* Scheluding setteando @ processes.c */
-enum {SCH_ROUND_ROBIN, SCH_PRIORITY_ROUND_ROBIN};
 
 #define KERNEL_MEM_SIZE		4*MB
 
