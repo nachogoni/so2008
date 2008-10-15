@@ -6,7 +6,7 @@ GLOBAL  int_80_hand, write, read, fork
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
-GLOBAL	beep,reboot
+GLOBAL	beep,reboot, task_switch
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 
 GLOBAL  createStackFrame
@@ -131,8 +131,12 @@ int_08_hand:
 	out	 20h, al
 	; Restauro los registros del nuevo proceso
 	popa
-
+	sti
 	iret
+
+task_switch:
+	int 008h
+	ret
 
 int_09_hand:				; Handler de INT 8 ( Timer tick)
         push    ds
