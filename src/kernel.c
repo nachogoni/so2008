@@ -236,8 +236,8 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 
 	createProcess(&a, "f_a", 6);
 	createProcess(&b, "f_b", 6);
-//	createProcess(&c, "f_c", 6);
-//	createProcess(&d, "f_d", 6);
+	createProcess(&c, "f_c", 6);
+	createProcess(&d, "f_d", 6);
 	
 	printf("fork %d\n",fork());
 	

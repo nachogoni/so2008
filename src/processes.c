@@ -60,20 +60,20 @@ void createIdle(void)
 void block_process(procStatusT block_type)
 {
 	process_vector[process_running].status = block_type;
-	_Sti();
-	asm volatile ("hlt");
+	task_switch();
 	return;	
 }
 
 void unblock_process(unsigned int pid)
 {
-	int i = 0;
+	int i = 0, found = 0;
 	
-	for (i = 0; i < process_count; i++)
+	for (i = 0; i < process_count && !found; i++)
 	{
 		if (process_vector[i].pid == pid)
 		{
 			process_vector[i].status = PROC_READY;
+			found = 1;
 		}
 	}
 	

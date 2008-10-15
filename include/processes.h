@@ -2,7 +2,7 @@
 #define PROCESSES_H_
 
 
-typedef enum {NONE, PROC_BLOQUED, PROC_SLEEP_BLOQUED, PROC_STDIN_BLOQUED, PROC_READY, PROC_EXECUTING} procStatusT;
+typedef enum {NONE, PROC_BLOQUED, PROC_SEM_BLOQUED, PROC_SLEEP_BLOQUED, PROC_STDIN_BLOQUED, PROC_READY, PROC_EXECUTING} procStatusT;
 
 int createProcess(int (*fn)(int ,int ,char * ), char * name, int tty);
 

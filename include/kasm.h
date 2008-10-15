@@ -21,6 +21,7 @@ void		_Cli(void);        /* Deshabilita interrupciones  */
 void		_Sti(void);	 /* Habilita interrupciones  */
 void 		beep(void);
 void 		reboot(void);
+void 		task_switch(void);
 void		int_08_hand();      /* Timer tick */
 void		int_09_hand();      /* Keyboard */
 void		int_0c_hand();      /* Keyboard */
