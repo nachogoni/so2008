@@ -22,6 +22,7 @@ int shell(int a,int b,char * c)
 
 int kernel_return_Function() {
 	printf("retorno");
+	while(1);
 }
 
 int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
