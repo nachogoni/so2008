@@ -9,7 +9,7 @@ int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, i
 void kernel_return_Function_no_unblock(void);
 void kernel_return_Function_unblock(void);
 
-void _kill(int pid, int signal);
+int _kill(int pid, int signal);
 
 void sleep(int seconds);
 
@@ -23,6 +23,8 @@ unsigned int getppid(void);
 unsigned int getNextPID(void);
 int getProcessTTY(void);
 int getResponse(void);
+
+int _kill(int pid, int signal);
 
 int shell(int a,int b,char * c);
 int a(int a,int b,char * c);

@@ -15,7 +15,7 @@ EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
 EXTERN  __write, __read, __fork, __exec, __exec_wait
-EXTERN  __shm_open, __shm_close, __mmap
+EXTERN  __shm_open, __shm_close, __mmap, __fork, __kill
 
 EXTERN _invop
 EXTERN _div0
@@ -224,6 +224,21 @@ _pread:
 	   pop     edx
 	   pop     edx
 	   jmp	 _pend	       	  ; salgo
+
+
+; parametros para kill
+; ebx	=	pid
+; ecx	=	signal
+_pkill:
+	push	ecx		;signal
+	push	ebx		;pid
+
+	call	__kill
+
+	pop	ebx
+	pop	ecx
+	jmp	_pend
+
 
 ; el fork no lleva parametros
 _pfork:
@@ -727,4 +742,7 @@ vuelve:	mov     ax, 1
 
 
 	
-COM1 EQU 3f8h
+COM1 EQU 3f8h; parametros para kill
+; ebx	=	pid
+; ecx	=	signal
+

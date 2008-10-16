@@ -174,6 +174,10 @@ unsigned int __exec_wait(int (*fn)(int ,int ,char *), char * process_name, char 
 	return resp;
 }
 
+unsigned int __kill(int pid, int signal) {
+	return _kill(pid, signal);
+}
+
 void init(void)
 {
 	printf("Initializing multitasking services...\t");

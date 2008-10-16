@@ -205,19 +205,20 @@ int d(int a,int b,char * c)
 	}
 	return 1;
 }
-
-void _kill( int pid, int signal) {
+int _kill( int pid, int signal) {
 	
 	int i = 0;
 
 	switch(signal) {
 		case SIGKILL: 
 			while(process_vector[i].pid != pid && i < process_count) {
-				if  ( i != process_count)
-					process_vector[i].status = NONE;
+//				printf("proceso :%d - %s no matado\n",process_vector[i].pid,process_vector[i].name);
+				i++;
 			}
+			if  ( i != process_count)
+				process_vector[i].status = NONE;
 			break;
-		default: return;
+		default: return 0;
 	}			
-	return;	
+	return 0;	
 }
