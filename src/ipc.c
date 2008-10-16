@@ -53,7 +53,7 @@ shm_open(key_t key, size_t size, int flags)
 	void *address;
 
 	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.count_keys > 0)
+	if (g_ipc.first != NULL)
 	{
 		//obtengo el primero
 		ant = actual = g_ipc.first;
@@ -66,7 +66,7 @@ shm_open(key_t key, size_t size, int flags)
 		}
 
 		if (found == 0)
-			return -1;	
+			return actual->shmid;	
 	}
 
 	/* armo el bloque nuevo en zona kernel */
@@ -83,8 +83,9 @@ shm_open(key_t key, size_t size, int flags)
 		return -1;
 	
 	//Obtengo las paginas necesarias
-	while(--count_pages && (get_free_page() != NULL))
-		;
+	while(--count_pages)
+		if (get_free_page() == NULL)
+			return -1;
 	
 	/* copio los valores a la estructura */
 	new->shmid = g_ipc.count_keys++;
@@ -94,7 +95,7 @@ shm_open(key_t key, size_t size, int flags)
 	new->flags = flags;
 	
 	/* si es el primero */
-	if (g_ipc.count_keys == 0)
+	if (g_ipc.first != NULL)
 	{
 		g_ipc.first = new;
 		new->next = NULL;
@@ -115,7 +116,7 @@ mmap(int shmid)
 	int found=0;
 
 	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.count_keys == 0)
+	if (g_ipc.first != NULL)
 		return NULL;
 
 	//obtengo el primero
@@ -143,7 +144,7 @@ shm_close(int shmid)
 	int found=0;
 
 	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.count_keys == 0)
+	if (g_ipc.first != NULL)
 		return -1;
 
 	//obtengo el primero
@@ -166,9 +167,11 @@ shm_close(int shmid)
 		else
 		{
 			ant->next = actual->next;
-			free(actual);
 			//TODO: si se hace lo de control de paginas, liberarlas
 		}
+
+		free(actual);
+
 		return 1;
 	}
 
