@@ -43,15 +43,16 @@ createStackFrame:
 	;sti
 	;pushf
 	;cli
-	mov ecx, [ebp+28]
+	mov ecx, [ebp+28]	;parametros en el 28
 	push ecx
-	mov ecx, [ebp+24]
+	mov ecx, [ebp+24]  	;pid en el 24;parametros en el 28
 	push ecx
-	mov ecx, [ebp+20]
+	mov ecx, [ebp+20]	;ppid en el 20
 	push ecx
-
+	pushf
 	mov ecx, 512
 	push ecx
+	
 	; Push de CS y ESP (lo usa iret en el multitask)
 	push cs
 	push eax

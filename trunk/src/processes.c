@@ -38,7 +38,7 @@ int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 	/* Inicializa la memoria del proceso*/
 	__init_memory(process_vector[process_count].heap_address, SIZE_PER_PAGE);
 
-	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address, 1, 1, "matias");
+	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address, 1, 2, "matias");
 	process_vector[process_count].status = PROC_READY;
 	process_vector[process_count].priority = DEFAULT_PRIORITY;
 	
@@ -112,9 +112,9 @@ int a(int a,int b,char * c)
 	{
 		sleep(2);
 		tty_set_color(SCREEN_FORE_YELLOW, SCREEN_BACK_BLACK);
-		printf("ppid :%d\n",a);
-		printf("pid :%d\n",a);
-		printf("parametros :%s\n",a);
+		printf("ppid :%d - %s\n",a,a);
+		printf("pid :%d - %s\n",b,b);
+		printf("parametros :%d - %s\n",c,c);
 		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
@@ -126,9 +126,9 @@ int b(int a,int b,char * c)
 	{
 		sleep(1);
 		tty_set_color(SCREEN_FORE_VIOLET, SCREEN_BACK_BLACK);
-		printf("ppid :%d\n",a);
-		printf("pid :%d\n",a);
-		printf("parametros :%s\n",a);
+		printf("ppid :%d - %s\n",a,a);
+		printf("pid :%d - %s\n",b,b);
+		printf("parametros :%d - %s\n",c,c);
 		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
@@ -140,9 +140,9 @@ int c(int a,int b,char * c)
 	{
 		sleep(1);
 		tty_set_color(SCREEN_FORE_RED, SCREEN_BACK_BLACK);
-		printf("ppid :%d\n",a);
-		printf("pid :%d\n",a);
-		printf("parametros :%s\n",a);
+		printf("ppid :%d - %s\n",a,a);
+		printf("pid :%d - %s\n",b,b);
+		printf("parametros :%d - %s\n",c,c);
 		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
@@ -155,9 +155,9 @@ int d(int a,int b,char * c)
 	{
 		sleep(20);
 		tty_set_color(SCREEN_FORE_WHITE2, SCREEN_BACK_BLACK);
-		printf("ppid :%d\n",a);
-		printf("pid :%d\n",a);
-		printf("parametros :%s\n",a);
+		printf("ppid :%d - %s\n",a,a);
+		printf("pid :%d - %s\n",b,b);
+		printf("parametros :%d - %s\n",c,c);
 		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	}
 	return 1;
