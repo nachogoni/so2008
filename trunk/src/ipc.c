@@ -14,18 +14,18 @@ typedef struct s_ipc_block_shm *  shm_block;
 
 typedef struct s_ipc_block_shm
 {
-	int			shmid;
-	char 		 	key[30];
-	void * 		 	address;
-	size_t			size;
-	int			flags;
-	shm_block		next;
+   int         shmid;
+   char        key[30];
+   void *         address;
+   size_t         size;
+   int         flags;
+   shm_block      next;
 }s_ipc_block_shm;
 
 typedef struct
 {
-	int 			count_keys;
-	shm_block	 	first;
+   int         count_keys;
+   shm_block      first;
 }s_ipc_shm;
 
 s_ipc_shm g_ipc;
@@ -33,10 +33,10 @@ s_ipc_shm g_ipc;
 void
 __init_ipcs(void)
 {
-	g_ipc.count_keys = 0;
-	g_ipc.first = NULL;
+   g_ipc.count_keys = 0;
+   g_ipc.first = NULL;
 
-	return;
+   return;
 }
 
 /*
@@ -48,133 +48,152 @@ int   shmdt(const void *);
 int   
 shm_open(key_t key, size_t size, int flags)
 {
-	shm_block actual, ant = NULL, new;
-	int found=0, count_pages;
-	void *address;
+   shm_block actual, ant = NULL, new;
+   int found=0, count_pages;
+   void *address, *mem_addr;
+   size_t mem_size;
 
-	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.first != NULL)
-	{
-		//obtengo el primero
-		ant = actual = g_ipc.first;
+   //Backup de la memoria anterior
+   __get_memory_addr(&mem_addr, &mem_size);
+   //Seteo zona de kernel
+   __set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
-		/* busco a ver si existe */
-		while( (actual != NULL) && (( found = strcmp(actual->key,key)) < 0 ))
-		{
-			ant = actual;
-			actual = actual->next;
-		}
+   /* si hay shms armados veo que no exista la key */
+   if (g_ipc.first != NULL)
+   {
+      //obtengo el primero
+      ant = actual = g_ipc.first;
 
-		if (found == 0)
-			return actual->shmid;	
-	}
+      /* busco a ver si existe */
+      while( (actual != NULL) && (( found = strcmp(actual->key,key)) < 0 ))
+      {
+         ant = actual;
+         actual = actual->next;
+      }
 
-	/* armo el bloque nuevo en zona kernel */
-	if ((new=(shm_block)malloc(sizeof(s_ipc_block_shm))) == NULL)
-		return -1;
+      if (found == 0)
+         return actual->shmid;   
+   }
 
-	/* obtengo las paginas */
-	count_pages = size / (4*KB);
-	if (size % (4*KB))
-		count_pages++;
+   /* armo el bloque nuevo en zona kernel */
+   if ((new=(shm_block)malloc(sizeof(s_ipc_block_shm))) == NULL)
+      return -1;
 
-	/* obtengo la direccion inicial */
-	if ((address = get_free_page()) == NULL)
-		return -1;
-	
-	//Obtengo las paginas necesarias
-	while(--count_pages)
-		if (get_free_page() == NULL)
-			return -1;
-	
-	/* copio los valores a la estructura */
-	new->shmid = g_ipc.count_keys++;
-	strcpy(new->key, key);
-	new->address = address;
-	new->size = size;
-	new->flags = flags;
-	
-	/* si es el primero */
-	if (g_ipc.first != NULL)
-	{
-		g_ipc.first = new;
-		new->next = NULL;
-	}
-	else
-	{
-		new->next = actual;
-		ant->next = new;
-	}
+   /* obtengo las paginas */
+   count_pages = size / (4*KB);
+   if (size % (4*KB))
+      count_pages++;
 
-	return new->shmid;
+   /* obtengo la direccion inicial */
+   if ((address = get_free_page()) == NULL)
+      return -1;
+   
+   //Obtengo las paginas necesarias
+   while(--count_pages)
+      if (get_free_page() == NULL)
+         return -1;
+   
+   /* copio los valores a la estructura */
+   new->shmid = g_ipc.count_keys++;
+   strcpy(new->key, key);
+   new->address = address;
+   new->size = size;
+   new->flags = flags;
+   
+   /* si es el primero */
+   if (g_ipc.first != NULL)
+   {
+      g_ipc.first = new;
+      new->next = NULL;
+   }
+   else
+   {
+      new->next = actual;
+      ant->next = new;
+   }
+
+   //restauro
+   __set_memory_addr(mem_addr, mem_size);
+
+   return new->shmid;
 }
 
 void*
 mmap(int shmid)
 {
-	shm_block actual, ant = NULL;
-	int found=0;
+   shm_block actual, ant = NULL;
+   int found=0;
 
-	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.first == NULL)
-		return NULL;
+   /* si hay shms armados veo que no exista la key */
+   if (g_ipc.first == NULL)
+      return NULL;
 
-	//obtengo el primero
-	if ((ant = actual = g_ipc.first) == NULL)
-		return 0;
+   //obtengo el primero
+   if ((ant = actual = g_ipc.first) == NULL)
+      return 0;
 
-	/* busco a ver si existe */
-	while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
-	{
-		ant = actual;
-		actual = actual->next;
-	}
+   /* busco a ver si existe */
+   while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
+   {
+      ant = actual;
+      actual = actual->next;
+   }
 
-	/* si lo encontro */
-	if (found)
-		return actual->address;	
+   /* si lo encontro */
+   if (found)
+      return actual->address; 
 
-	return NULL;
+   return NULL;
 }
 
 int
 shm_close(int shmid)
 {
-	shm_block actual, ant = NULL;
-	int found=0;
+   shm_block actual, ant = NULL;
+   int found=0;
+   void *mem_addr;
+   size_t mem_size;
 
-	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.first == NULL)
-		return -1;
+   //Backup de la memoria anterior
+   __get_memory_addr(&mem_addr, &mem_size);
+   //Seteo zona de kernel
+   __set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
-	//obtengo el primero
-	if ((ant = actual = g_ipc.first) == NULL)
-		return 0;
+   /* si hay shms armados veo que no exista la key */
+   if (g_ipc.first == NULL)
+      return -1;
 
-	/* busco a ver si existe */
-	while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
-	{
-		ant = actual;
-		actual = actual->next;
-	}
+   //obtengo el primero
+   if ((ant = actual = g_ipc.first) == NULL)
+      return 0;
 
-	/* si lo encontro */
-	if (found)
-	{
-		/* si es el primero */
-		if (ant == actual)
-			g_ipc.first = actual->next;
-		else
-		{
-			ant->next = actual->next;
-			//TODO: si se hace lo de control de paginas, liberarlas
-		}
+   /* busco a ver si existe */
+   while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
+   {
+      ant = actual;
+      actual = actual->next;
+   }
 
-		free(actual);
+   /* si lo encontro */
+   if (found)
+   {
+      /* si es el primero */
+      if (ant == actual)
+         g_ipc.first = actual->next;
+      else
+      {
+         ant->next = actual->next;
+         //TODO: si se hace lo de control de paginas, liberarlas
+      }
 
-		return 1;
-	}
+      free(actual);
 
-	return 0;
+      return 1;
+   }
+
+   //restauro
+   __set_memory_addr(mem_addr, mem_size);
+
+   return 0;
 }
 

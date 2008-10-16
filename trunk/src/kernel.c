@@ -268,40 +268,10 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	__init_memory((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	//Inicializo shared memory
-	__init_ipcs();
+	//__init_ipcs();
 
 	//Inicializo semaforos
-//	__init_sem();
-
-/*Prueba villera de pablo en un lugar incorrecto. :)*/
-// 	shm_open("abc", 1*KB, 0);
-// 
-// 	shm_open("abc", 1*KB, 0);
-// 
-// 	shm_open("ghi", 1*KB, 0);
-// 
-// 	memory = mmap(2);
-// 
-// 	memory = mmap(0);
-// 
-// 	shm_close(2);
-// 
-// 	shm_close(0);
-// 
-// 	memory = mmap(0);
-// 
-// 	shm_open("def", 5*KB, 0);
-// 
-// 	memory = mmap(0);
-// 
-// 	memory = mmap(2);
-// 
-// 	shm_close(0);
-// 
-// 	shm_close(1);
-// 
-// 	shm_close(2);
-
+	//__init_sem();
 
 	/******************** FIN CONFIGURACION DEL SO *************************/
 

@@ -79,6 +79,13 @@ int
 sem_set(key_t key, int flags)
 {
 	sem_block actual, ant = NULL, new;
+	void *mem_addr;
+	size_t mem_size;
+
+	//Backup de la memoria anterior
+	__get_memory_addr(&mem_addr, &mem_size);
+	//Seteo zona de kernel
+	__set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	/* si no existe lo creo */
 	if (searchSem(&actual, &ant, key))
@@ -105,6 +112,8 @@ sem_set(key_t key, int flags)
 		ant->next = new;
 	}
 
+	//restauro
+	__set_memory_addr(mem_addr, mem_size);
 	return 1;
 }
 
@@ -112,6 +121,13 @@ static void
 addProcessSem(sem_block sem, unsigned long pid, int priority)
 {
 	sem_block_proc proc, ant, new;
+	void *mem_addr;
+	size_t mem_size;
+
+	//Backup de la memoria anterior
+	__get_memory_addr(&mem_addr, &mem_size);
+	//Seteo zona de kernel
+	__set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	/* No busco a ver si ya estaba por que es bloqueante */
 
@@ -153,6 +169,8 @@ addProcessSem(sem_block sem, unsigned long pid, int priority)
 		new->next = proc;
 	}
 
+	//restauro
+	__set_memory_addr(mem_addr, mem_size);
 	return;
 }
 
@@ -186,6 +204,13 @@ getFirstProc(sem_block sem)
 {
 	sem_block_proc proc;
 	unsigned long procid;
+	void *mem_addr;
+	size_t mem_size;
+
+	//Backup de la memoria anterior
+	__get_memory_addr(&mem_addr, &mem_size);
+	//Seteo zona de kernel
+	__set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	/* No busco a ver si ya estaba por que es bloqueante */
 
@@ -200,6 +225,9 @@ getFirstProc(sem_block sem)
 		procid = proc->pid;
 		free(proc);
 	}
+
+	//restauro
+	__set_memory_addr(mem_addr, mem_size);
 
 	return procid;
 }
@@ -231,6 +259,13 @@ int
 sem_close(key_t key)
 {
 	sem_block actual, ant = NULL;
+	void *mem_addr;
+	size_t mem_size;
+
+	//Backup de la memoria anterior
+	__get_memory_addr(&mem_addr, &mem_size);
+	//Seteo zona de kernel
+	__set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	/* Busco el semaforo */
 	if (!searchSem(&actual, &ant, key))
@@ -255,6 +290,10 @@ sem_close(key_t key)
 	
 	free(actual);
 
+   g_sem.count_keys--;
+
+	//restauro
+	__set_memory_addr(mem_addr, mem_size);
 	return 1;	
 }
 

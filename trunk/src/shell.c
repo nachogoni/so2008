@@ -206,12 +206,12 @@ init_shell(int ppid, int pid, char * param)
 				
 				if (fore == 1)
 				{
-					__exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
+					exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
 //					goOut = __wait();
 //					printf("response:%d", goOut);
 				}
 				else
-					__exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
+					exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
 				
 				//goOut = handlers[i](pid, ++next_pid, parameters);
 				found = 1;
