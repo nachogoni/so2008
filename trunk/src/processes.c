@@ -14,18 +14,47 @@ process_t process_vector[MAX_PROCESS_COUNT];
 unsigned int process_running = 0;
 unsigned int process_count = 1;
 
-int shell(int a,int b,char * c)
+void kernel_return_Function_unblock(void)
 {
-	init_shell(process_vector[process_count].ppid, process_vector[process_count].pid,"");
-	return 1;
+	int i, found, resp;
+
+	 __asm__ __volatile__("mov %0, %%eax": "=dN" (resp));
+		
+	i = 0;
+	found = 0;
+	
+	for (i = 0; i < process_count && !found; i++)
+	{
+		if (process_vector[i].pid == process_vector[process_running].ppid)
+		{
+			process_vector[i].status = PROC_READY;
+			process_vector[i].response = resp;
+			found = 1;
+		}
+	}
+
+	process_vector[process_running].status = NONE;
+	
+	task_switch();
+	
+	return;
 }
 
-int kernel_return_Function() {
-	printf("retorno");
-	while(1);
+void kernel_return_Function_no_unblock(void)
+{
+	process_vector[process_running].status = NONE;
+	
+	task_switch();
+	
+	return;
 }
 
-int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
+unsigned int getNextPID(void)
+{
+	return ++last_pid;
+}
+
+int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, int tty, void (*ret_fn)(void))
 {
 	if (process_count>=MAX_PROCESS_COUNT || name == NULL)
 		return -1;
@@ -34,8 +63,8 @@ int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 	
 	strcpy(process_vector[process_count].name, name);
 
-	process_vector[process_count].pid = ++last_pid;
-	process_vector[process_count].ppid = INIT_PID;
+	process_vector[process_count].pid = getNextPID();
+	process_vector[process_count].ppid = getpid();
 	
 	process_vector[process_count].stack_address = get_free_page() + 0x0FFF;
 	process_vector[process_count].heap_address = get_free_page();
@@ -43,7 +72,8 @@ int createProcess(int (*fn)(int ,int ,char *), char * name, int tty)
 	/* Inicializa la memoria del proceso*/
 	__init_memory(process_vector[process_count].heap_address, SIZE_PER_PAGE);
 
-	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address, 1, 2, "Lista de Parametros", kernel_return_Function);
+	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address,
+		process_vector[process_count].ppid, process_vector[process_count].pid, parameters, ret_fn);
 	process_vector[process_count].status = PROC_READY;
 	process_vector[process_count].priority = DEFAULT_PRIORITY;
 	
@@ -85,9 +115,19 @@ void unblock_process(unsigned int pid)
 	return;	
 }
 
+int getResponse(void)
+{
+	return process_vector[process_running].response;
+}
+
 unsigned int getpid(void)
 {
 	return process_vector[process_running].pid;
+}
+
+int getProcessTTY(void)
+{
+	return process_vector[process_running].tty_id;
 }
 
 unsigned int getppid(void)
