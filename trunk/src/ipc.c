@@ -101,7 +101,7 @@ __shm_open(key_t key, size_t size, int flags)
    new->flags = flags;
    
    /* si es el primero */
-   if (g_ipc.first != NULL)
+   if (g_ipc.first == NULL)
    {
       g_ipc.first = new;
       new->next = NULL;
@@ -119,7 +119,7 @@ __shm_open(key_t key, size_t size, int flags)
 }
 
 void*
-mmap(int shmid)
+__mmap(int shmid)
 {
    shm_block actual, ant = NULL;
    int found=0;
@@ -163,10 +163,6 @@ __shm_close(int shmid)
    if (g_ipc.first == NULL)
       return -1;
 
-   //obtengo el primero
-   if ((ant = actual = g_ipc.first) == NULL)
-      return 0;
-
    /* busco a ver si existe */
    while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
    {
@@ -178,7 +174,7 @@ __shm_close(int shmid)
    if (found)
    {
       /* si es el primero */
-      if (ant == actual)
+      if (ant == NULL)
          g_ipc.first = actual->next;
       else
       {

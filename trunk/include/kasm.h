@@ -40,6 +40,8 @@ unsigned int 	exec_wait(int (*fn)(int ,int ,char *), char * process_name, char *
 
 int 		shm_open(key_t key, size_t size, int flags);
 
+void* 		__mmap(int shmid);
+
 int 		shm_close(int shmid);
 
 void		debug (void);

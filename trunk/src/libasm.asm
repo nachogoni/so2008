@@ -2,7 +2,7 @@
 GLOBAL  read_msw,_lidt
 GLOBAL	task_switch
 GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
-GLOBAL  write, read, fork, exec, exec_wait, shm_open, shm_close
+GLOBAL  write, read, fork, exec, exec_wait, shm_open, shm_close, mmap
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
@@ -15,7 +15,7 @@ EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
 EXTERN  __write, __read, __fork, __exec, __exec_wait
-EXTERN  __shm_open, __shm_close
+EXTERN  __shm_open, __shm_close, __mmap
 
 EXTERN _invop
 EXTERN _div0
@@ -192,31 +192,6 @@ int_0c_hand:					; Handler de INT 0c ( Serial Port )
         pop     ds
         iret
 
-; recibe parametros a traves de los registros
-; eax   =   tipo
-int_80_hand:
-	   push    ds
-	   push    es
-
-	   cmp eax, 0             ; WRITE = 0
-	   jz _pwrite
-	   cmp eax, 1             ; READ = 1
-	   jz _pread
-	   cmp eax, 4             ; FORK = 4
-	   jz _pfork
-	   cmp eax, 5             ; EXEC = 5
-	   jz _pexec
-	   cmp eax, 6             ; EXEC WAIT = 6
-	   jz _pexec_wait
-	   cmp eax, 7             ; REBOOT = 7
-	   jz _preboot
-	   cmp eax, 8             ; SHM_OPEN = 8
-	   jz _pshm_open
-	   cmp eax, 9             ; SHM_CLOSE = 9
-	   jz _pshm_close
-
-	   ;si no hay instruccion salgo
-	   jmp _pend
 
 ; parametros para write
 ; ebx   =   file descriptor
@@ -268,6 +243,34 @@ _pexec:
 	   pop     edx
 	   jmp	 _pend	       ; salgo
 
+; recibe parametros a traves de los registros
+; eax   =   tipo
+int_80_hand:
+	   push    ds
+	   push    es
+
+	   cmp eax, 0             ; WRITE = 0
+	   jz _pwrite
+	   cmp eax, 1             ; READ = 1
+	   jz _pread
+	   cmp eax, 4             ; FORK = 4
+	   jz _pfork
+	   cmp eax, 5             ; EXEC = 5
+	   jz _pexec
+	   cmp eax, 6             ; EXEC WAIT = 6
+	   jz _pexec_wait
+	   cmp eax, 7             ; REBOOT = 7
+	   jz _preboot
+	   cmp eax, 8             ; SHM_OPEN = 8
+	   jz _pshm_open
+	   cmp eax, 9             ; SHM_CLOSE = 9
+	   jz _pshm_close
+	   cmp eax, 10             ; MMAP = 10
+	   jz _pmmap
+
+	   ;si no hay instruccion salgo
+	   jmp _pend
+
 _pexec_wait:
 	   push    edx             
 	   push    ecx             
@@ -300,6 +303,16 @@ _pshm_close:
 	   pop     ebx
 
 	   jmp	 _pend	       ; salgo
+
+_pmmap:
+	   push    ebx             
+
+	   call    __mmap
+
+	   pop     ebx
+
+	   jmp	 _pend	       ; salgo
+
 
 _preboot:
 	   jmp 0x0000
@@ -458,6 +471,24 @@ shm_close:
 	push    ebx
 
 	mov     eax, 9	 	 ; pongo el selector en shm_close
+	mov     ebx, [ebp+8]     ; 
+
+	int     080h		    ; llamo a int 80
+
+	pop	ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; mmap
+mmap:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+
+	mov     eax, 10	 	 ; pongo el selector en shm_close
 	mov     ebx, [ebp+8]     ; 
 
 	int     080h		    ; llamo a int 80
