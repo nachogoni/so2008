@@ -33,6 +33,7 @@ typedef struct process_t
 	unsigned int sleep;		// count of timer ticks left to awake
 	unsigned int priority;	// priority level of the process
 	unsigned int tty_id;	// id of the tty for the process
+	int response;			// return of the last child process
 	void * heap_address;	// address of heap page
 	void * stack_address;	// address of the stack page
 } process_t;
@@ -64,8 +65,11 @@ size_t __write(int fd, const void* buffer, size_t count);
 **/
 size_t __read(int fd, void* buffer, size_t count);
 
-int
-__fork(void);
+unsigned int __exec(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
+unsigned int __exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
+int __wait(void);
+
+unsigned int __fork(void);
 
 unsigned int scheduler (unsigned int esp);
 

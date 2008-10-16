@@ -164,10 +164,8 @@ size_t tty_writeBuffer(int b)
 	{
 		if (tty_fore_id >= tty_count || tty_vector[tty_fore_id].using != TTY_IN_USE)
 			return 1;
-
-		tty_set_active((TTY_INITIAL_COUNT - 1)-(b - F07));
+		tty_set_active((TTY_INITIAL_COUNT - 1)-(b - (F01 - TTY_INITIAL_COUNT + 1)));
 		tty_flush();
-
 		return 1;
 	}
 	

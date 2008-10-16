@@ -12,6 +12,7 @@
 #include "../include/drivers/tty.h"
 #include "../include/drivers/keyboard.h"
 #include "../include/drivers/serial.h"
+#include "processes.h"
 
 /* Aplicaciones */
 #include "./app/top.h"
@@ -157,7 +158,7 @@ int handle_top(int ppid, int pid, char * parameters)
 int 
 init_shell(int ppid, int pid, char * param)
 {
-	char goOut = 0;	
+	char goOut = 0, fore = 1;	
 	char buffer[BUFFER_SIZE + 1], * parameters;
 	int len = 0, count = 0, i = 0, found = 0, w_spaces=0;
 	char history[HISTORY_SIZE][BUFFER_SIZE + 1];
@@ -186,7 +187,13 @@ init_shell(int ppid, int pid, char * param)
 				parameters = buffer + i + 1;
 				buffer[i] = '\0';
 			}
-		
+
+		fore = 1;		
+
+		for(i = 0; i < strlen(parameters) && fore == 1; i++)
+			if (parameters[i] == '&')
+				fore = 0;
+
 		found = 0;
 		i = 0;
 
@@ -195,7 +202,17 @@ init_shell(int ppid, int pid, char * param)
 		{
 			if (strcmp(buffer+w_spaces, commands_avaiable[i].name) == 0)
 			{
-				goOut = (commands_avaiable[i].instruction)(pid, ++next_pid, parameters);
+				goOut = 0;//(commands_avaiable[i].instruction)(pid, ++next_pid, parameters);
+				
+				if (fore == 1)
+				{
+					__exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
+//					goOut = __wait();
+//					printf("response:%d", goOut);
+				}
+				else
+					__exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
+				
 				//goOut = handlers[i](pid, ++next_pid, parameters);
 				found = 1;
 			}

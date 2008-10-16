@@ -15,7 +15,7 @@ int actual_scheduler = SCH_PRIORITY_ROUND_ROBIN;
 unsigned int scheduler(unsigned int esp)
 {
 	unsigned int next_process;
-	
+
 	switch(actual_scheduler)
 	{
 		case SCH_ROUND_ROBIN:
@@ -117,7 +117,7 @@ unsigned int scheduler_priority_roundRobin(unsigned int esp)
 }
 
 void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
-	int i;	
+	int i = 0, x = 0;	
 	int total_cpu = 0;
 
 	for (i = 0; i < process_count; i++)
@@ -126,31 +126,34 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 			total_cpu += process_vector[i].priority;
 	}
 
-	
-
 	for (i = 0; i < process_count; i++)
+	{
+		if (process_vector[i].status != NONE)
         {
-		strcpy(ret[i].name, process_vector[i].name);
-		ret[i].pid = process_vector[i].pid;
-		ret[i].parent = process_vector[i].ppid;	
-		ret[i].priority = process_vector[i].priority;
-		ret[i].status = process_vector[i].status;
-		ret[i].tty = process_vector[i].tty_id;
-		
-		/*TODO: total_cpu nunca debería ser 0. Sacar if
-		cuando se implemente el blockeo.*/
-		if (total_cpu && ret[i].status == PROC_READY)
-		{
-		  ret[i].cpu = process_vector[i].priority *1000 / total_cpu /10;
-                }
-		else
-		{
-		  ret[i].cpu = 0;
-                }
-
-		if (ret[i].status == PROC_BLOQUED)
-			ret[i].cpu = 0;
+			strcpy(ret[x].name, process_vector[i].name);
+			ret[x].pid = process_vector[i].pid;
+			ret[x].parent = process_vector[i].ppid;	
+			ret[x].priority = process_vector[i].priority;
+			ret[x].status = process_vector[i].status;
+			ret[x].tty = process_vector[i].tty_id;
+			
+			/*TODO: total_cpu nunca debería ser 0. Sacar if
+			cuando se implemente el blockeo.*/
+			if (total_cpu && ret[x].status == PROC_READY)
+			{
+			  ret[x].cpu = process_vector[i].priority *1000 / total_cpu /10;
+	        }
+			else
+			{
+			  ret[x].cpu = 0;
+	        }
+	
+			if (ret[x].status == PROC_SLEEP_BLOQUED || ret[x].status == PROC_SEM_BLOQUED ||
+			  ret[x].status == PROC_STDIN_BLOQUED || ret[x].status == PROC_CHILD_BLOQUED)
+				ret[x].cpu = 0;
+			x++;
+        }
 	}
-	*n = i;
+	*n = x;
 }
 

@@ -134,8 +134,7 @@ __write(int fd, const void* buffer, size_t count)
  * 
  * Devuelve el pid 
  */
-int
-__fork(void)
+unsigned int __fork(void)
 {
 	int pid;
 	
@@ -147,6 +146,58 @@ __fork(void)
 	//creo el proceso
 	
 	return pid;
+}
+
+int __wait(void)
+{
+	return getResponse();
+}
+
+unsigned int __exec_(int (*fn)(int ,int ,char *), char * process_name, char * parameters, int tty_id, void (*ret_fn)(void))
+{
+	if (fn == NULL || process_name == NULL || ret_fn == NULL)
+		return NONE_PROC;
+	
+	return createProcess(fn, process_name, parameters, tty_id, ret_fn);
+}
+
+unsigned int __exec(int (*fn)(int ,int ,char *), char * process_name, char * parameters)
+{
+	return __exec_(fn, process_name, parameters, getProcessTTY(), &kernel_return_Function_no_unblock);
+}
+
+unsigned int __exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters)
+{
+	unsigned int resp = 0;
+	resp = __exec_(fn, process_name, parameters, getProcessTTY(), &kernel_return_Function_unblock);
+	block_process(PROC_CHILD_BLOQUED);
+	return resp;
+}
+
+void init(void)
+{
+	printf("Initializing multitasking services...\t");
+
+	createIdle();
+	
+	__exec_(&init_shell, "shell", "", 0, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 1, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 2, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 3, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 4, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 5, &kernel_return_Function_no_unblock);
+	__exec_(&init_shell, "shell", "", 6, &kernel_return_Function_no_unblock);
+
+	__exec_(&a, "f_a", "", 6, &kernel_return_Function_no_unblock);
+	__exec_(&b, "f_b", "", 6, &kernel_return_Function_no_unblock);
+	__exec_(&c, "f_c", "", 6, &kernel_return_Function_no_unblock);
+	__exec_(&d, "f_d", "", 6, &kernel_return_Function_no_unblock);
+	
+	tty_set_color(SCREEN_FORE_GREEN2, SCREEN_BACK_BLACK);
+	printf("OK!\n");
+	tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
+	
+	return;
 }
 
 /**********************************************
@@ -262,24 +313,9 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	active_user=U_NORMAL;
 
 	/******************** INICIO DE ZONA LIBRE *************************/
-	printf("Initializing multitasking services... OK\n");
 
-	createIdle();
-
-	createProcess(&shell, "shell", 0);
-	createProcess(&shell, "shell", 1);
-	createProcess(&shell, "shell", 2);
-	createProcess(&shell, "shell", 3);
-	createProcess(&shell, "shell", 4);
-	createProcess(&shell, "shell", 5);
-	createProcess(&shell, "shell", 6);
-
-	createProcess(&a, "f_a", 6);
-//	createProcess(&b, "f_b", 6);
-//	createProcess(&c, "f_c", 6);
-//	createProcess(&d, "f_d", 6);
-	
-	printf("fork %d\n",fork());
+	// Proceso base
+	init();
 	
 	_Sti();
 
@@ -287,12 +323,14 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 		asm volatile ("hlt");
 
 	_Cli();
+
+	tty_set_active(0);
 	
 	printf("\n\n\n\nSystem is shutting down... OK\n");
 	
 	/******************** FINALIZACION DEL SO *************************/
 
-	fd_close(SERIAL);
+	//fd_close(SERIAL);
 	fd_close(KEYBOARD);
 	fd_close(TTY);
 
@@ -302,6 +340,5 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	if (reboot_pc)
 		reboot();
 */
-	
 }
 
