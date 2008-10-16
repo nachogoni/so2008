@@ -50,8 +50,9 @@ createStackFrame:
 	push ecx
 	mov ecx, [ebp+20]	;ppid en el 20
 	push ecx
-	pushf
-
+	mov ecx, [ebp+32]	;pusheo la direccion de retorno a la funcion de mantenimiento del kernel
+	push ecx
+	
 	mov ecx, 512
 	push ecx
 	
