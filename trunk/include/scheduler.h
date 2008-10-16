@@ -21,5 +21,8 @@ unsigned int scheduler_roundRobin(unsigned int esp);
 
 unsigned int scheduler_priority_roundRobin(unsigned int esp);
 
+void _kill(int pid, int signal);
+
 void top( processTop ret[MAX_PROCESS_COUNT], int * n);
+
 #endif

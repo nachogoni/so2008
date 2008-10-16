@@ -4,7 +4,7 @@
 #include "tty.h"
 #include "scheduler.h"
 #include "memory.h"
-
+#include "signal.h"
 
 extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
@@ -104,7 +104,7 @@ unsigned int scheduler_priority_roundRobin(unsigned int esp)
 
 		// seteo el tiempo vivido del nuevo proceso en cero
 		process_vector[process_running].lived = 0;
- //		if (process_vector[process_running].pid != 1)
+//		if (process_vector[process_running].pid != 1)
 //			printf("entra al procesador el proceso: %d %s\n", process_vector[process_running].pid , process_vector[process_running].name);
 		return process_running;
 	}
@@ -129,7 +129,7 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	for (i = 0; i < process_count; i++)
 	{
 		if (process_vector[i].status != NONE)
-        {
+        	{
 			strcpy(ret[x].name, process_vector[i].name);
 			ret[x].pid = process_vector[i].pid;
 			ret[x].parent = process_vector[i].ppid;	
@@ -149,7 +149,7 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	        }
 	
 			if (ret[x].status == PROC_SLEEP_BLOQUED || ret[x].status == PROC_SEM_BLOQUED ||
-			  ret[x].status == PROC_STDIN_BLOQUED || ret[x].status == PROC_CHILD_BLOQUED)
+				ret[x].status == PROC_STDIN_BLOQUED || ret[x].status == PROC_CHILD_BLOQUED)
 				ret[x].cpu = 0;
 			x++;
         }
@@ -157,3 +157,17 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	*n = x;
 }
 
+void _kill( int pid, int signal) {
+	
+	int i = 0;
+
+	switch(signal) {
+		case SIGKILL: 
+			while(process_vector[i].pid != pid && i < process_count) {
+				if  ( i != process_count)
+					process_vector[i].status = NONE;
+			}
+		default: return;
+	}			
+	return;	
+}

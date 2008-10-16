@@ -17,27 +17,27 @@ int topApp(int ppid, int pid, char * parameters)
 		printf("%d\t%d\t%d\t\t", topList[i].pid, topList[i].parent, topList[i].priority);
 
 		if (topList[i].pid == getpid())
-			printf("running");
+			printf("RUNNING");
 		else
 			switch (topList[i].status)
 			{
 				case PROC_CHILD_BLOQUED:
-					printf("child");
+					printf("CHILD");
 				break;
 				case PROC_SEM_BLOQUED:
-					printf("sem");
+					printf("SEM");
 				break;
 				case PROC_SLEEP_BLOQUED:
-					printf("sleep");
+					printf("SLEEP");
 				break;
 				case PROC_STDIN_BLOQUED:
-					printf("read");
+					printf("READ");
 				break;
 				case PROC_READY:
-					printf("ready");
+					printf("READY");
 				break;
 				case PROC_EXECUTING:
-					printf("running");
+					printf("RUNNING");
 				break;
 				default:
 					printf("¿?");
