@@ -188,10 +188,10 @@ void init(void)
 	__exec_(&init_shell, "shell", "", 5, &kernel_return_Function_no_unblock);
 	__exec_(&init_shell, "shell", "", 6, &kernel_return_Function_no_unblock);
 
-	__exec_(&a, "f_a", "", 6, &kernel_return_Function_no_unblock);
-	__exec_(&b, "f_b", "", 6, &kernel_return_Function_no_unblock);
-	__exec_(&c, "f_c", "", 6, &kernel_return_Function_no_unblock);
-	__exec_(&d, "f_d", "", 6, &kernel_return_Function_no_unblock);
+//	__exec_(&a, "f_a", "", 6, &kernel_return_Function_no_unblock);
+//	__exec_(&b, "f_b", "", 6, &kernel_return_Function_no_unblock);
+//	__exec_(&c, "f_c", "", 6, &kernel_return_Function_no_unblock);
+//	__exec_(&d, "f_d", "", 6, &kernel_return_Function_no_unblock);
 	
 	tty_set_color(SCREEN_FORE_GREEN2, SCREEN_BACK_BLACK);
 	printf("OK!\n");
@@ -308,7 +308,7 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	if (shutdown_pc)
 		shutdown();
 	if (reboot_pc)
-		reboot();
+		_reboot();
 */
 }
 
