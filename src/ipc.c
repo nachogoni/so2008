@@ -160,7 +160,6 @@ shm_close(int shmid)
 	/* si lo encontro */
 	if (found)
 	{
-		
 		/* si es el primero */
 		if (ant == actual)
 			g_ipc.first = actual->next;

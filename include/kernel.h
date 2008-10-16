@@ -16,6 +16,11 @@
 
 #define KERNEL_MEM_SIZE		4*MB
 
+#define KERNEL_PAGE_DIRECTORY	0x200000
+#define KERNEL_TABLE_DIRECTORY	0x201000
+#define KERNEL_MALLOC_ADDRESS	0x300000
+#define KERNEL_MALLOC_SIZE	512*KB
+
 // Process information
 typedef struct process_t
 {
