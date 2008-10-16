@@ -116,7 +116,7 @@ mmap(int shmid)
 	int found=0;
 
 	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.first != NULL)
+	if (g_ipc.first == NULL)
 		return NULL;
 
 	//obtengo el primero
@@ -144,7 +144,7 @@ shm_close(int shmid)
 	int found=0;
 
 	/* si hay shms armados veo que no exista la key */
-	if (g_ipc.first != NULL)
+	if (g_ipc.first == NULL)
 		return -1;
 
 	//obtengo el primero
