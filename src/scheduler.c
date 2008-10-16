@@ -156,18 +156,3 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	}
 	*n = x;
 }
-
-void _kill( int pid, int signal) {
-	
-	int i = 0;
-
-	switch(signal) {
-		case SIGKILL: 
-			while(process_vector[i].pid != pid && i < process_count) {
-				if  ( i != process_count)
-					process_vector[i].status = NONE;
-			}
-		default: return;
-	}			
-	return;	
-}

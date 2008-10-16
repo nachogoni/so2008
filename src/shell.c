@@ -197,7 +197,7 @@ init_shell(int ppid, int pid, char * param)
 			}
 
 		fore = 1;		
-
+	
 		for(i = 0; i < strlen(parameters) && fore == 1; i++)
 			if (parameters[i] == '&')
 				fore = 0;
@@ -217,6 +217,7 @@ init_shell(int ppid, int pid, char * param)
 					exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
 //					goOut = __wait();
 //					printf("response:%d", goOut);
+					printf("response:%d", __wait());
 				}
 				else
 					exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
