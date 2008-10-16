@@ -1,7 +1,7 @@
 RM := rm -rf
-C_SRCS := libasm.c loader.c libc.c fd.c memory.c strings.c pagination.c ipc.c scheduler.c processes.c sem.c kernel.c io.c ./drivers/video.c ./drivers/tty.c ./drivers/keyboard.c shell.c grubInfo.c ./drivers/serial.c ./app/chat.c ./app/games.c ./app/tron.c ./app/movie.c ./app/top.c
-C_DEPS := libasm.d loader.d libc.d fd.d memory.d strings.d pagination.d ipc.d scheduler.d processes.d sem.d kernel.d io.d ./drivers/video.d ./drivers/tty.d ./drivers/keyboard.d shell.d grubInfo.d ./drivers/serial.d ./app/chat.d ./app/games.d ./app/tron.d ./app/movie.d ./app/top.d
-OBJS := libasm.o loader.o libc.o fd.o memory.o strings.o pagination.o ipc.o scheduler.o processes.o sem.o kernel.o io.o ./drivers/video.o  ./drivers/tty.o ./drivers/keyboard.o shell.o grubInfo.o ./drivers/serial.o ./app/chat.o ./app/games.o ./app/tron.o ./app/movie.o ./app/top.o
+C_SRCS := libasm.c loader.c libc.c fd.c memory.c strings.c pagination.c ipc.c scheduler.c processes.c sem.c kernel.c io.c ./drivers/video.c ./drivers/tty.c ./drivers/keyboard.c shell.c grubInfo.c ./drivers/serial.c ./app/chat.c ./app/games.c ./app/tron.c ./app/top.c
+C_DEPS := libasm.d loader.d libc.d fd.d memory.d strings.d pagination.d ipc.d scheduler.d processes.d sem.d kernel.d io.d ./drivers/video.d ./drivers/tty.d ./drivers/keyboard.d shell.d grubInfo.d ./drivers/serial.d ./app/chat.d ./app/games.d ./app/tron.d ./app/top.d
+OBJS := libasm.o loader.o libc.o fd.o memory.o strings.o pagination.o ipc.o scheduler.o processes.o sem.o kernel.o io.o ./drivers/video.o  ./drivers/tty.o ./drivers/keyboard.o shell.o grubInfo.o ./drivers/serial.o ./app/chat.o ./app/games.o ./app/tron.o ./app/top.o
 LIBS :=
 
 # All Target

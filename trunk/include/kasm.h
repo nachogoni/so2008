@@ -38,6 +38,10 @@ unsigned int    exec(int (*fn)(int ,int ,char *), char * process_name, char * pa
 
 unsigned int 	exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
 
+int 		shm_open(key_t key, size_t size, int flags);
+
+int 		shm_close(int shmid);
+
 void		debug (void);
 
 // Genera un stackFrame para que nuevos procesos puedan ser agregados al scheduler

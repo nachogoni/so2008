@@ -40,8 +40,6 @@ typedef struct process_t
 
 int (*player)(void);
 
-typedef int size_t;
-typedef short int ssize_t;
 typedef enum eINT_80 {WRITE=0, READ, FORK=4} tINT_80;
 typedef enum eUSER {U_KERNEL=0, U_NORMAL} tUSERS;
 
