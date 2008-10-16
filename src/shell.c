@@ -2,6 +2,7 @@
 #include "../include/fd.h"
 #include "../include/strings.h"
 #include "../include/io.h"
+#include "../include/ipc.h"
 #include "../include/kernel.h"
 #include "../include/kasm.h"
 #include "../include/memory.h"
@@ -40,6 +41,9 @@ static int handle_configSerial(int ppid, int pid, char * parameters);
 static int handle_top(int ppid, int pid, char * parameters);
 static int handle_nros(int ppid, int pid, char * parameters);
 
+static int handle_sm1(int ppid, int pid, char * parameters);
+static int handle_sm2(int ppid, int pid, char * parameters);
+
 static int next_pid = 1;
 
 #define MAX_LEN_COMMAND		30
@@ -69,8 +73,62 @@ command commands_avaiable[] = {
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
 			{"top",handle_top,"Listado de procesos"},
+			{"sm1",handle_sm1,"Shared Memory 1"},
+			{"sm2",handle_sm2,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
+
+
+static 
+int handle_sm1(int ppid, int pid, char * parameters)
+{
+    int shmId;
+    char *memDir = NULL;
+
+    if ( (shmId = shm_open("sm", 4, 0)) == -1 )
+    {
+        printf("sm1Error @ shm_open\n");
+        return 0;
+    }
+
+    printf("shmID = %d\n", shmId);
+
+    if ( (memDir = (char *)mmap(shmId)) == NULL )
+    {
+        printf("sm1: Error @ mmap\n");
+        return 0;
+    }
+
+    memDir[0] = 'P';
+    memDir[1] = '\0';
+
+    shm_close(shmId);
+    return 0;
+}
+
+static 
+int handle_sm2(int ppid, int pid, char * parameters)
+{
+    int shmId;
+    char *memDir = NULL;
+
+    if ( (shmId = shm_open("sm", 1, 0)) == -1 )
+    {
+        printf("sm2\nError @ shm_open\n");
+        return 0;
+    }
+
+    if ( (memDir = (char *)mmap(shmId)) == NULL )
+    {
+        printf("sm2\nError @ mmap\n");
+        return 0;
+    }
+
+    printf("if P == %c\n", *memDir);
+
+    shm_close(shmId);
+    return 0;
+}
 
 /* handle del nros */
 static 
