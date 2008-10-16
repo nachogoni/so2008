@@ -54,6 +54,23 @@ struct s_memory_block_header
 	int size_free;
 };
 
+/*  get_memory_addr
+*   Funcion que devuelve la direccion memoria actual para el uso del malloc
+*
+*    Recibe como parametros:
+*	- void** memory: zona de memoria donde comienza la memoria para allocar
+*	- size*: size de la memoria
+*/
+void
+__get_memory_addr(void** i_memory, size_t *i_size)
+{
+	*i_memory=mem_addr;
+	*i_size=mem_size;
+	
+	return;
+}
+
+
 /*  set_memory_addr
 *	Funcion que inicializa la direccion memoria para el uso del malloc
 *

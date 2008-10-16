@@ -34,6 +34,10 @@ void		set_cursor_pos(unsigned int);
 
 unsigned int	fork(void);
 
+unsigned int    exec(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
+
+unsigned int 	exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
+
 void		debug (void);
 
 // Genera un stackFrame para que nuevos procesos puedan ser agregados al scheduler

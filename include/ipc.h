@@ -8,6 +8,9 @@
 
 typedef char * key_t;
 
+void
+__init_ipcs(void);
+
 int   
 shm_open(key_t key, size_t size, int flags);
 

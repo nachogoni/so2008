@@ -3,10 +3,11 @@ GLOBAL  read_msw,_lidt
 GLOBAL	task_switch
 GLOBAL  int_08_hand, int_09_hand, int_0c_hand
 GLOBAL  int_80_hand, write, read, fork
+GLOBAL  exec, exec_wait
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
-GLOBAL	beep,reboot, task_switch
+GLOBAL	beep, reboot, task_switch
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 
 GLOBAL  createStackFrame
@@ -15,6 +16,7 @@ EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
 EXTERN  __write, __read, __fork
+EXTERN  __exec, __exec_wait
 
 EXTERN _invop
 EXTERN _div0
@@ -202,6 +204,13 @@ int_80_hand:
 	   jz _pread
 	   cmp eax, 4             ; FORK = 4
 	   jz _pfork
+	   cmp eax, 5             ; EXEC = 5
+	   jz _pexec
+	   cmp eax, 6             ; EXEC WAIT = 6
+	   jz _pexec_wait
+	   cmp eax, 7             ; REBOOT = 7
+	   jz _preboot
+
 
 	   ;si no hay instruccion salgo
 	   jmp _pend
@@ -241,8 +250,36 @@ _pread:
 ; el fork no lleva parametros
 _pfork:
 
-		call __fork
-		jmp	 _pend	       	  ; salgo
+	   call    __fork
+	   jmp	   _pend	       	  ; salgo
+
+_pexec:
+	   push    edx             
+	   push    ecx             
+	   push    ebx             
+
+	   call    __exec
+
+	   pop     edx             ; quito los parametros de la pila
+	   pop     edx
+	   pop     edx
+	   jmp	 _pend	       ; salgo
+
+_pexec_wait:
+	   push    edx             
+	   push    ecx             
+	   push    ebx             
+
+	   call    __exec_wait
+
+	   pop     edx             ; quito los parametros de la pila
+	   pop     edx
+	   pop     edx
+	   jmp	 _pend	       ; salgo
+
+_preboot:
+	   jmp 0x0000
+	   jmp   _pend
 
 _pend:
 	   pop     es			  ;salgo
@@ -317,6 +354,65 @@ read:
 	pop     ebp
 	ret
 
+; exec
+exec:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+	push    ecx
+	push    edx
+
+	mov     eax, 5 	   	 ; pongo el selector en exec
+	mov     ebx, [ebp+8]     ; 
+	mov     ecx, [ebp+12]    ; 
+	mov     edx, [ebp+16]    ; 
+
+	int     080h		    ; llamo a int 80
+
+	pop	   edx		    ; restauro
+	pop	   ecx
+	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; exec wait
+exec_wait:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+	push    ecx
+	push    edx
+
+	mov     eax, 6 	   	 ; pongo el selector en exec_wait
+	mov     ebx, [ebp+8]     ; 
+	mov     ecx, [ebp+12]    ; 
+	mov     edx, [ebp+16]    ; 
+
+	int     080h		    ; llamo a int 80
+
+	pop	   edx		    ; restauro
+	pop	   ecx
+	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+reboot:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	mov     eax, 7 		    ; pongo el selector en reboot
+	int     080h		    ; llamo a int 80
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
 ;Es la funcion que mueve el cursor de pantalla
 ;Recibe por stack la posicion de pantalla a donde llevarlo
 set_cursor_pos:
@@ -350,9 +446,6 @@ set_cursor_pos:
 	pop ebp
 	ret
 
-reboot:
-	jmp 0x0000
-	ret
 
 beep:
 	mov al, 182			; Prepare the speaker for the
