@@ -45,6 +45,7 @@ static int handle_nros(int ppid, int pid, char * parameters);
 static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
+static int handle_reboot(int ppid, int pid, char * parameters);
 
 static int next_pid = 1;
 
@@ -218,7 +219,7 @@ init_shell(int ppid, int pid, char * param)
 					exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
 //					goOut = __wait();
 //					printf("response:%d", goOut);
-					printf("response:%d", __wait());
+					//printf("response:%d", __wait());
 				}
 				else
 					exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);

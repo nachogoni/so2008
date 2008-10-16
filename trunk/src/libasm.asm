@@ -6,7 +6,7 @@ GLOBAL  write, read, fork, exec, exec_wait, shm_open, shm_close, mmap
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
-GLOBAL	beep, reboot, task_switch
+GLOBAL	beep, task_switch
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 
 GLOBAL  createStackFrame
@@ -259,13 +259,11 @@ int_80_hand:
 	   jz _pexec
 	   cmp eax, 6             ; EXEC WAIT = 6
 	   jz _pexec_wait
-	   cmp eax, 7             ; REBOOT = 7
-	   jz _preboot
-	   cmp eax, 8             ; SHM_OPEN = 8
+	   cmp eax, 7             ; SHM_OPEN = 7
 	   jz _pshm_open
-	   cmp eax, 9             ; SHM_CLOSE = 9
+	   cmp eax, 8             ; SHM_CLOSE = 8
 	   jz _pshm_close
-	   cmp eax, 10             ; MMAP = 10
+	   cmp eax, 9             ; MMAP = 9
 	   jz _pmmap
 
 	   ;si no hay instruccion salgo
@@ -312,11 +310,6 @@ _pmmap:
 	   pop     ebx
 
 	   jmp	 _pend	       ; salgo
-
-
-_preboot:
-	   jmp 0x0000
-	   jmp   _pend
 
 _pend:
 	   pop     es			  ;salgo
@@ -494,17 +487,6 @@ mmap:
 	int     080h		    ; llamo a int 80
 
 	pop	ebx
-
-	mov     esp, ebp        ; destruye stack frame
-	pop     ebp
-	ret
-
-reboot:
-	push    ebp             ; arma stack frame
-	mov     ebp, esp
-
-	mov     eax, 7 		    ; pongo el selector en reboot
-	int     080h		    ; llamo a int 80
 
 	mov     esp, ebp        ; destruye stack frame
 	pop     ebp
