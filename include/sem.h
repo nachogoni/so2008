@@ -6,10 +6,6 @@
 #ifndef IPC_SEM_H_
 #define IPC_SEM_H_
 
-
-
-typedef char * key_t;
-
 int   
 sem_set(key_t key, int flags);
 

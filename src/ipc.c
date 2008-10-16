@@ -46,7 +46,7 @@ int   shmdt(const void *);
 */
 
 int   
-shm_open(key_t key, size_t size, int flags)
+__shm_open(key_t key, size_t size, int flags)
 {
    shm_block actual, ant = NULL, new;
    int found=0, count_pages;
@@ -147,7 +147,7 @@ mmap(int shmid)
 }
 
 int
-shm_close(int shmid)
+__shm_close(int shmid)
 {
    shm_block actual, ant = NULL;
    int found=0;

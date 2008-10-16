@@ -3,6 +3,7 @@
 #include "../include/strings.h"
 #include "../include/io.h"
 #include "../include/ipc.h"
+#include "../include/sem.h"
 #include "../include/kernel.h"
 #include "../include/kasm.h"
 #include "../include/memory.h"
@@ -19,7 +20,7 @@
 #include "./app/chat.h"
 #include "./app/games.h"
 #include "./app/tron.h"
-#include "./app/movie.h"
+//#include "./app/movie.h"
 // #include "./app/presenta.h"
 
 #define MIN(a,b)	((a) < (b))?(a):(b)
@@ -68,7 +69,7 @@ command commands_avaiable[] = {
 			{"chat", init_chat, "starts the chat"},
 			{"loadkey", handle_loadkeys, "loadkey [es|us]: sets or gets the keyboard map"},
 			{"tron", init_tron, "Help Hugo rescue Hugolina ;O)"},
-			{"wmplayer", init_wmplayer,"Starts wmplayer and plays StarWars"},
+//			{"wmplayer", init_wmplayer,"Starts wmplayer and plays StarWars"},
 // 			{"presents", init_presents,"HumiX presentation"},
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
@@ -78,6 +79,8 @@ command commands_avaiable[] = {
 			{"sm2",handle_sm2,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
+
+
 
 
 static 
@@ -130,6 +133,7 @@ int handle_sm2(int ppid, int pid, char * parameters)
     shm_close(shmId);
     return 0;
 }
+
 
 /* handle del nros */
 static 

@@ -6,19 +6,17 @@
 #ifndef IPC_SHM_H_
 #define IPC_SHM_H_
 
-typedef char * key_t;
-
 void
 __init_ipcs(void);
 
 int   
-shm_open(key_t key, size_t size, int flags);
+__shm_open(key_t key, size_t size, int flags);
 
 void*
 mmap(int shmid);
 
 int
-shm_close(int shmid);
+__shm_close(int shmid);
 
 
 #endif /*IPC_SHM_H_*/

@@ -1,9 +1,8 @@
 
 GLOBAL  read_msw,_lidt
 GLOBAL	task_switch
-GLOBAL  int_08_hand, int_09_hand, int_0c_hand
-GLOBAL  int_80_hand, write, read, fork
-GLOBAL  exec, exec_wait
+GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
+GLOBAL  write, read, fork, exec, exec_wait, shm_open, shm_close
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL  debug
@@ -15,8 +14,8 @@ GLOBAL  createStackFrame
 EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
-EXTERN  __write, __read, __fork
-EXTERN  __exec, __exec_wait
+EXTERN  __write, __read, __fork, __exec, __exec_wait
+EXTERN  __shm_open, __shm_close
 
 EXTERN _invop
 EXTERN _div0
@@ -198,6 +197,7 @@ int_0c_hand:					; Handler de INT 0c ( Serial Port )
 int_80_hand:
 	   push    ds
 	   push    es
+
 	   cmp eax, 0             ; WRITE = 0
 	   jz _pwrite
 	   cmp eax, 1             ; READ = 1
@@ -210,7 +210,10 @@ int_80_hand:
 	   jz _pexec_wait
 	   cmp eax, 7             ; REBOOT = 7
 	   jz _preboot
-
+	   cmp eax, 8             ; SHM_OPEN = 8
+	   jz _pshm_open
+	   cmp eax, 9             ; SHM_CLOSE = 9
+	   jz _pshm_close
 
 	   ;si no hay instruccion salgo
 	   jmp _pend
@@ -275,6 +278,27 @@ _pexec_wait:
 	   pop     edx             ; quito los parametros de la pila
 	   pop     edx
 	   pop     edx
+	   jmp	 _pend	       ; salgo
+
+_pshm_open:
+	   push    edx             
+	   push    ecx             
+	   push    ebx             
+
+	   call    __shm_open
+
+	   pop     edx             ; quito los parametros de la pila
+	   pop     edx
+	   pop     edx
+	   jmp	 _pend	       ; salgo
+
+_pshm_close:
+	   push    ebx             
+
+	   call    __shm_close
+
+	   pop     ebx
+
 	   jmp	 _pend	       ; salgo
 
 _preboot:
@@ -397,6 +421,48 @@ exec_wait:
 	pop	   edx		    ; restauro
 	pop	   ecx
 	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; shm_open
+shm_open:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+	push    ecx
+	push    edx
+
+	mov     eax, 8 		 ; pongo el selector en exec_wait
+	mov     ebx, [ebp+8]     ; 
+	mov     ecx, [ebp+12]    ; 
+	mov     edx, [ebp+16]    ; 
+
+	int     080h		    ; llamo a int 80
+
+	pop	   edx		    ; restauro
+	pop	   ecx
+	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; shm_close
+shm_close:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+
+	mov     eax, 9	 	 ; pongo el selector en shm_close
+	mov     ebx, [ebp+8]     ; 
+
+	int     080h		    ; llamo a int 80
+
+	pop	ebx
 
 	mov     esp, ebp        ; destruye stack frame
 	pop     ebp
