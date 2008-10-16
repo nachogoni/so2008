@@ -9,6 +9,8 @@ int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, i
 void kernel_return_Function_no_unblock(void);
 void kernel_return_Function_unblock(void);
 
+void _kill(int pid, int signal);
+
 void sleep(int seconds);
 
 void createIdle(void);
