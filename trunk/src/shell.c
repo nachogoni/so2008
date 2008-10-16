@@ -41,7 +41,7 @@ static int handle_mem(int ppid, int pid, char * parameters);
 static int handle_configSerial(int ppid, int pid, char * parameters);
 static int handle_top(int ppid, int pid, char * parameters);
 static int handle_nros(int ppid, int pid, char * parameters);
-
+static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
 
@@ -154,6 +154,10 @@ int handle_top(int ppid, int pid, char * parameters)
     return 0;
 }
 
+static int handle_kill(int ppid, int pid, char *parameters) {
+
+	return 0;	
+}
 /* Inicializador del shell */
 int 
 init_shell(int ppid, int pid, char * param)
