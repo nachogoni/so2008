@@ -215,6 +215,39 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	//Inicializo la zona de malloc del kernel
 	__init_memory((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
+	//Inicializo semaforos
+	__init_sem();
+
+
+	shm_open("abc", 1*KB, 0);
+
+	shm_open("abc", 1*KB, 0);
+
+	shm_open("ghi", 1*KB, 0);
+
+	memory = mmap(2);
+
+	memory = mmap(0);
+
+	shm_close(2);
+
+	shm_close(0);
+
+	memory = mmap(0);
+
+	shm_open("def", 5*KB, 0);
+
+	memory = mmap(0);
+
+	memory = mmap(2);
+
+	shm_close(0);
+
+	shm_close(1);
+
+	shm_close(2);
+
+
 	/******************** FIN CONFIGURACION DEL SO *************************/
 
 	/* Pantalla de inicio */
