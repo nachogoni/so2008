@@ -13,7 +13,7 @@ int
 __shm_open(key_t key, size_t size, int flags);
 
 void*
-mmap(int shmid);
+__mmap(int shmid);
 
 int
 __shm_close(int shmid);

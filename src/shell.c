@@ -131,6 +131,7 @@ int handle_sm2(int ppid, int pid, char * parameters)
     printf("if P == %c\n", *memDir);
 
     shm_close(shmId);
+
     return 0;
 }
 
