@@ -7,6 +7,7 @@
 #include "pagination.h"
 #include "processes.h"
 #include "shell.h"
+#include "signal.h"
 
 int last_pid = INIT_PID;
 
@@ -32,8 +33,7 @@ void kernel_return_Function_unblock(void)
 			found = 1;
 		}
 	}
-
-	process_vector[process_running].status = NONE;
+	_kill(process_vector[process_running].pid, SIGKILL);
 	
 	task_switch();
 	
