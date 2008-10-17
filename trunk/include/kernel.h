@@ -77,4 +77,6 @@ int __wait(void);
 
 int __set_scheduler(int scheduler_id);
 
+unsigned int __set_priority(unsigned int pid, int priority);
+
 #endif

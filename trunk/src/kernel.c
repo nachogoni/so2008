@@ -9,8 +9,6 @@
 #include "../include/kernel.h"
 #include "../include/memory.h"
 #include "../include/shell.h"
-#include "../include/drivers/serial.h"
-#include "../include/drivers/video.h"
 #include "../include/drivers/keyboard.h"
 #include "../include/pagination.h"
 #include "../include/drivers/tty.h"
@@ -60,7 +58,7 @@ void int_09(void)
 
 void int_0c(void) 
 {
-	handle_serial();
+//	handle_serial();
 	return;
 }
 
@@ -185,6 +183,12 @@ int __ssf (void) {
 int __bounds (void) {
 	printf("Out of Bounds Exception\n");
 	killCurrent();
+	return 0;
+}
+
+unsigned int __set_priority(unsigned int pid, int priority)
+{
+	set_pid_priority(pid, priority);
 	return 0;
 }
 

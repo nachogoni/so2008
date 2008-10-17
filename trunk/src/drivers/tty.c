@@ -164,8 +164,12 @@ size_t tty_writeBuffer(int b)
 	{
 		if (tty_fore_id >= tty_count || tty_vector[tty_fore_id].using != TTY_IN_USE)
 			return 1;
-		tty_set_active((TTY_INITIAL_COUNT - 1)-(b - (F01 - TTY_INITIAL_COUNT + 1)));
-		tty_flush();
+		
+		if (tty_fore_id != (TTY_INITIAL_COUNT - 1)-(b - (F01 - TTY_INITIAL_COUNT + 1)))
+		{
+			tty_set_active((TTY_INITIAL_COUNT - 1)-(b - (F01 - TTY_INITIAL_COUNT + 1)));
+			tty_flush();
+		}
 		return 1;
 	}
 	
@@ -367,42 +371,42 @@ tty_resp_t tty_clear_scr()
 
 tty_resp_t tty_flush()
 {
-	int from = 0, to = 0, len = 0;
+	int from = 0, to = 0, len = 0, tty_id_ = tty_id;
 	
-	if (tty_id >= tty_count || tty_vector[tty_id].using != TTY_IN_USE)
+	if (tty_id_ >= tty_count || tty_vector[tty_id_].using != TTY_IN_USE)
 		return TTY_INVALID_ID;
 
-	if (tty_vector[tty_id].active != TTY_ACTIVE)
+	if (tty_vector[tty_id_].active != TTY_ACTIVE)
 		return TTY_INVALID_ID;
 	
-	from = tty_vector[tty_id].stdout_first;
-	to = (tty_vector[tty_id].stdout_first + tty_vector[tty_id].stdout_width * tty_vector[tty_id].stdout_height * 2) % tty_vector[tty_id].stdout_length;
+	from = tty_vector[tty_id_].stdout_first;
+	to = (tty_vector[tty_id_].stdout_first + tty_vector[tty_id_].stdout_width * tty_vector[tty_id_].stdout_height * 2) % tty_vector[tty_id_].stdout_length;
 	
 	if (from > to)
 	{
-		len = tty_vector[tty_id].stdout_length - from;
+		len = tty_vector[tty_id_].stdout_length - from;
 		
 		// Copy the first part of the buffer into the video memory
-		memcpy((void *)video_address, tty_vector[tty_id].stdout + from, len * sizeof(char));
+		memcpy((void *)video_address, tty_vector[tty_id_].stdout + from, len * sizeof(char));
 		
 		// Copy the last part of the buffer into the video memory
-		memcpy((void *)video_address + len, tty_vector[tty_id].stdout, to * sizeof(char));
+		memcpy((void *)video_address + len, tty_vector[tty_id_].stdout, to * sizeof(char));
 	}
 	else
 	{
 		len = to - from;
 		
 		// Copy the buffer into the video memory
-		memcpy((void *)video_address, tty_vector[tty_id].stdout + from, len * sizeof(char));
+		memcpy((void *)video_address, tty_vector[tty_id_].stdout + from, len * sizeof(char));
 	}
 	
 	// distance from first to cursor into the buffer
-	if (tty_vector[tty_id].stdout_cursor < tty_vector[tty_id].stdout_first)
-		len = tty_vector[tty_id].stdout_cursor + (tty_vector[tty_id].stdout_length - tty_vector[tty_id].stdout_first);
+	if (tty_vector[tty_id_].stdout_cursor < tty_vector[tty_id_].stdout_first)
+		len = tty_vector[tty_id_].stdout_cursor + (tty_vector[tty_id_].stdout_length - tty_vector[tty_id_].stdout_first);
 	else
-		len = tty_vector[tty_id].stdout_cursor - tty_vector[tty_id].stdout_first;
+		len = tty_vector[tty_id_].stdout_cursor - tty_vector[tty_id_].stdout_first;
 	
-	len %= tty_vector[tty_id].stdout_length;
+	len %= tty_vector[tty_id_].stdout_length;
 	
 	set_cursor_pos(len/2);
 	
