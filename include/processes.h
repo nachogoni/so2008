@@ -33,10 +33,4 @@ int killCurrent(void);
 
 int unblockPid(int pid);
 
-int shell(int a,int b,char * c);
-int a(int a,int b,char * c);
-int b(int a,int b,char * c);
-int c(int a,int b,char * c);
-int d(int a,int b,char * c);
-
 #endif /*PROCESSES_H_*/

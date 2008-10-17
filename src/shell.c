@@ -21,6 +21,7 @@
 #include "./app/chat.h"
 #include "./app/games.h"
 #include "./app/tron.h"
+#include "./app/duplicate.h"
 //#include "./app/movie.h"
 // #include "./app/presenta.h"
 
@@ -78,6 +79,7 @@ command commands_avaiable[] = {
 // 			{"presents", init_presents,"HumiX presentation"},
 			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
 			{"malloc",handle_malloc, "Tries to alloc memory until the systems runs out of it"},
+			{"duplicate",duplicate, "Creates 4 childs sleeping and printing..."},
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
