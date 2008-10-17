@@ -236,6 +236,24 @@ int _kill( int pid, int signal) {
 }
 
 int killCurrent(void) {
-	_kill(process_vector[process_running].pid,SIGKILL);
+	int pid = process_vector[process_running].pid;
+	int ppid = process_vector[process_running].ppid;
+
+//	printf("proceso %d :: padre %d",pid, ppid);
+	_kill(pid,SIGKILL);
+	unblockPid(ppid);
 	task_switch();
+}
+
+int unblockPid(int pid) {
+	int i = 0;
+
+	while(process_vector[i].pid != pid && i < process_count) {
+		i++;
+	}
+	if (i != process_count ) {
+//		printf("encontre al padre");
+		process_vector[i].status = PROC_READY;
+	}
+	return 0;
 }
