@@ -33,6 +33,95 @@ s_ipc_shm g_ipc;
 extern unsigned int process_running;
 extern process_t process_vector[];
 
+int
+addShmPipeWrapper(shm_pipe* vec,unsigned int pid, void * address, size_t size)
+{
+	int i=0, found=0;
+
+	/* busco a ver si ya existe */
+	while((vec[i].shm.address != NULL) && !found)
+	{
+		if (vec[i].pid == pid)
+			found = 1;
+
+		i++;
+	}
+
+	if (found)
+		return 0;
+
+	vec[i].pid = pid;
+	vec[i].shm.address = address;
+	vec[i].shm.size = size;	
+
+	return 1;
+}
+
+int
+delShmPipeWrapper(shm_pipe* vec,unsigned int pid, void * address, size_t size)
+{
+	int i=0, found=0;
+
+	/* busco a ver si ya existe */
+	while((vec[i].shm.address != NULL) && !found)
+	{
+		if (vec[i].pid == pid)
+			found = 1;
+
+		i++;
+	}
+
+	if (found)
+	{
+		vec[i].pid = -1;
+		return 1;
+	}
+
+	return 1;
+}
+
+
+void
+addShmPipe(unsigned int ppid, unsigned int pid)
+{	
+	int key_pipe;
+	void * address;
+	char key_aux[30];
+
+	key_pipe = shm_open(ppid*2, 4*KB, 0);
+	address = mmap(key_pipe);	
+
+	//agrego el pipe al padre
+	addShmPipeWrapper(process_vector[ppid].pipe,pid, address, 4*KB);
+	//agrego el pipe al hijo
+	addShmPipeWrapper(process_vector[pid].pipe,ppid, address, 4*KB);
+
+	return;
+}
+
+
+void
+delShmPipe(unsigned int ppid, unsigned int pid)
+{	
+	int key_pipe;
+	void * address;
+	char key_aux[30];
+
+	key_pipe = shm_open(ppid*2, 4*KB, 0);
+	address = mmap(key_pipe);	
+
+	//agrego el pipe al padre
+	delShmPipeWrapper(process_vector[ppid].pipe,pid, address, 4*KB);
+	//agrego el pipe al hijo
+	delShmPipeWrapper(process_vector[pid].pipe,ppid, address, 4*KB);
+
+	return;
+}
+
+
+
+
+
 void
 __init_ipcs(void)
 {

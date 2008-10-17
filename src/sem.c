@@ -124,6 +124,7 @@ addProcessSem(sem_block sem, unsigned long pid, int priority)
 	sem_block_proc proc, ant, new;
 	void *mem_addr;
 	size_t mem_size;
+	int quit = 0;
 
 	//Backup de la memoria anterior
 	__get_memory_addr(&mem_addr, &mem_size);
@@ -137,7 +138,7 @@ addProcessSem(sem_block sem, unsigned long pid, int priority)
 
 	/* busco la posicion donde agregarlo */
 	/* esta ordenado por prioridad y pid */
-	while (proc != NULL) 
+	while ((proc != NULL) && !quit)
 		if (proc->priority > priority)
 		{
 			ant = proc;
@@ -149,6 +150,8 @@ addProcessSem(sem_block sem, unsigned long pid, int priority)
 				ant = proc;
 				proc = proc->next;
 			}
+			else
+				quit=1;
 
 	/* armo la estructura */
 	if ((new=(sem_block_proc)malloc(sizeof(s_ipc_block_proc_sem))) == NULL)

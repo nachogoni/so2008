@@ -6,6 +6,7 @@
 #include "../include/strings.h"
 #include "../include/io.h"
 #include "../include/ipc.h"
+#include "../include/sem.h"
 #include "../include/kernel.h"
 #include "../include/memory.h"
 #include "../include/shell.h"

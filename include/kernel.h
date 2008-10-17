@@ -28,6 +28,12 @@ typedef struct shm_item
 	size_t size;
 } shm_item;
 
+typedef struct shm_pipe
+{
+	unsigned int pid;
+	shm_item shm;
+}shm_pipe;
+
 // Process information
 typedef struct process_t
 {
@@ -45,6 +51,7 @@ typedef struct process_t
 	void * heap_address;	// address of heap page
 	void * stack_address;	// address of the stack page
 	shm_item shm_vec[MAX_PROCESS_COUNT];	// vector of shm's with other processes
+	shm_pipe pipe[MAX_PROCESS_COUNT];     //vector of 'conexions' between father and son's
 } process_t;
 
 typedef enum eINT_80 {WRITE=0, READ, FORK=4} tINT_80;
