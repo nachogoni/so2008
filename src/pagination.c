@@ -24,30 +24,11 @@ typedef struct
 
 s_pagination g_pagination;
 
-
-/* definiciones de funciones estaticas */
-static void
-set_page_zone(unsigned long **page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts);
-
-/*
-recibe:
-- el vector de tabla de pagina
-- la direccion inicial
-- la cantidad de paginas
-- atributos de las paginas
-// attribute set to: supervisor level, read/write, present(011 in binary)
-*/
-static unsigned long 
-set_page_table(unsigned long *page_table, unsigned long start_address, int page_start, int page_count, char atts);
-
-
-/* fin definiciones */
-
-
 void
 __init_pagination(unsigned long **page_directory, unsigned long *page_table, unsigned long kernel_size, unsigned long user_size)
 {
-	unsigned page_count;
+	unsigned page_count, i, dir_aux, dir_used;
+	unsigned long address=0; 
 	
 	g_pagination.page_directory = page_directory;
 	g_pagination.page_table = page_table;
@@ -65,8 +46,26 @@ __init_pagination(unsigned long **page_directory, unsigned long *page_table, uns
 	g_pagination.kernel_total = page_count;
 	
 	//Seteo la zona de kernel
-	set_page_zone(page_directory, page_table, 0, 0, 0, 0, kernel_size, KERNEL_PAGE_ATT_UP);
-	
+	for(i=0; i< g_pagination.kernel_total ; i++)
+	{
+		page_table[i] = address | KERNEL_PAGE_ATT_UP; // attribute set to: supervisor level, read/write, present(011 in binary)
+		address = address + 4*KB;
+	};
+
+	//calculo cuantos tablas de pagina hizo
+	dir_aux = g_pagination.kernel_total / PAGES_PER_TABLE_DIR;
+	if (g_pagination.kernel_total % PAGES_PER_TABLE_DIR)
+		dir_aux++;
+
+	// las agrego en el directorio
+	for (i=0; i< dir_aux; i++)
+	{
+		page_directory[i] = (void*)page_table + i*4*KB; // attribute set to: supervisor level, read/write, present(011 in binary)
+		page_directory[i] = (unsigned long *)(((unsigned long)page_directory[i]) | KERNEL_PAGE_ATT_UP);
+	}
+
+	dir_used = dir_aux;
+
 	//Asigno la zona de usuario
 	page_count = user_size / (4*KB);
 	if (user_size % (4*KB))
@@ -78,13 +77,30 @@ __init_pagination(unsigned long **page_directory, unsigned long *page_table, uns
 	g_pagination.user_total = page_count;
 	//cantidad de paginas usadas
 	g_pagination.user_used = 0;
-	
-	//Muevo el puntero de la tabla de pagina
-	page_table = (void*)page_table + g_pagination.kernel_used * 4*KB;
-	
-	//Seteo la zona de usuario
-	set_page_zone(page_directory, page_table, g_pagination.start_user_zone_idx / PAGES_PER_TABLE_DIR, g_pagination.start_user_zone_idx * 4*KB, 0, 0, user_size, USER_PAGE_ATT_UP);
-	
+
+	for(i=g_pagination.start_user_zone_idx; i< g_pagination.start_user_zone_idx + g_pagination.user_total ; i++)
+	{
+		page_table[i] = address | USER_PAGE_ATT_UP; // attribute set to: supervisor level, read/write, present(011 in binary)
+		address = address + 4*KB;
+	};
+
+	//calculo cuantos tablas de pagina hizo
+	dir_aux = g_pagination.user_total / PAGES_PER_TABLE_DIR;
+	if (g_pagination.user_total % PAGES_PER_TABLE_DIR)
+		dir_aux++;
+
+	// las agrego en el directorio
+	for (i=dir_used; i< dir_used + dir_aux; i++)
+	{
+		page_directory[i] = (void*)page_table + i*4*KB; // attribute set to: supervisor level, read/write, present(011 in binary)
+		page_directory[i] = (unsigned long *)(((unsigned long)page_directory[i]) | KERNEL_PAGE_ATT_UP);
+	}
+
+
+	/* dejo inactivas las demas */
+	for(i=dir_used + dir_aux; i<1024; i++)
+		page_directory[i] = (unsigned long *)(0 | KERNEL_PAGE_ATT_DOWN);
+
 	// write_cr3, read_cr3, write_cr0, and read_cr0 all come from the assembly functions
 	write_cr3(page_directory); // put that page directory address into CR3
 	write_cr0(read_cr0() | 0x80000000); // set the paging bit in CR0 to 1
@@ -93,117 +109,6 @@ __init_pagination(unsigned long **page_directory, unsigned long *page_table, uns
 
 }
 
-static void
-set_page_zone(unsigned long **page_directory, unsigned long *page_table, unsigned long page_table_idx, unsigned long start_address, int page_start, unsigned long page_start_idx, unsigned long mem_size, char atts)
-{
-	unsigned long address;
-	unsigned long page_count, page_count_left;
-	
-	//Cantidad de paginas totales
-	page_count_left = mem_size / (4*KB);
-	
-	address = start_address;
-	
-	while(page_count_left > 0)
-	{
-		
-		//Calculo la cantidad de paginas a meter
-		page_count = ((page_count_left + page_start_idx) > PAGES_PER_TABLE_DIR ? PAGES_PER_TABLE_DIR : page_count_left);
-		
-//		printf("pagino desde %d (%x) - %d con (%c)\n", page_start_idx, address, page_count,'0'+atts);
-		//Seteo la primera pagina
-		address = set_page_table(page_table, address, page_start_idx, page_count, atts);
-		
-		//La ingreso en el directorio
-//		printf("ingreso la pagina %d\n",page_table_idx);
-		add_page_table(page_directory, page_table, page_table_idx++, atts);
-	
-		//Paso a la proxima direccion
-		page_table += 4096;
-		
-		page_start_idx = 0;
-		
-		//resto las que ya puse
-		page_count_left = page_count_left - page_count;
-	}
-		
-	return;
-}
-
-/*
-recibe:
-- el vector de tabla de pagina
-- la direccion inicial
-- la cantidad de paginas
-- atributos de las paginas
-// attribute set to: supervisor level, read/write, present(011 in binary)
-*/
-static unsigned long
-set_page_table(unsigned long *page_table, unsigned long start_address, int page_start, int page_count, char atts)
-{
-	int i;
-	unsigned long address;
-
-	//Seteo la direccion inicial
-	address = start_address;
-
-	//limpio los bits insignificantes de los atributos
-	atts = atts & 7;
-
-	for(i=page_start; i<page_count; i++)
-	{
-		page_table[i] = address | atts; 
-		address = address + (4*KB); // 4096 = 4kb
-	};
-//	printf("Seteo zona %d (%x) - %d (%x) con atts %c\n",page_start, start_address ,page_count, address, '0' + atts);
-
-	return address;
-}
-
-/*
- Setea una entrada en el directorio
- Recibe:
- - El vector de directorio
- - La pagina a asignar
- - El indice de la pagina
- - Los atributos de la pagina
-*/
-
-void
-add_page_table(unsigned long **page_directory, unsigned long *page_table, int index, char atts)
-{
-	//limpio los bits insignificantes de los atributos
-	atts = atts & 7;
-
-	//seteo 
-	page_directory[index] = page_table; // attribute set to: supervisor level, read/write, present(011 in binary)
-	page_directory[index] = (unsigned long *)(((unsigned long)page_directory[index]) | atts);
-}
-
-/*
- * Wrapper para setear los atributos de una pagina
- */
-static void
-set_page_atts(unsigned int index, char att)
-{
-    int idx_directory, idx_page;
-    unsigned long *page_table;
-   
-    idx_directory = index / PAGES_PER_TABLE_DIR;
-    idx_page = index % PAGES_PER_TABLE_DIR;
-   
-    //Obtengo la tabla de pagina donde se encuentra la pagina
-    page_table = g_pagination.page_directory[idx_directory];
-   
-    //Dejo solo el ultimo bit para no cagarla
-    att = att & 1;
-   
-    //Asigno
-    page_table[idx_page] = page_table[idx_page] & 0xFFF8;
-    page_table[idx_page] = page_table[idx_page] | att;
-   
-    return;
-}
 
 /*
  * Wrapper para levantar o bajar una pagina
@@ -211,21 +116,12 @@ set_page_atts(unsigned int index, char att)
 static void
 set_page(unsigned int index, char att)
 {
-    int idx_directory, idx_page;
-    unsigned long *page_table;
-   
-    idx_directory = index / PAGES_PER_TABLE_DIR;
-    idx_page = index % PAGES_PER_TABLE_DIR;
-   
-    //Obtengo la tabla de pagina donde se encuentra la pagina
-    page_table = g_pagination.page_directory[idx_directory];
-   
     //Dejo solo el ultimo bit para no cagarla
     att = att & 1;
    
     //Asigno
-    page_table[idx_page] = page_table[idx_page] & 0xFFFE;
-    page_table[idx_page] = page_table[idx_page] | att;
+    g_pagination.page_table[index] &= 0xFFFFFFFFE;
+    g_pagination.page_table[index] |= att;
    
     return;
 }
@@ -236,7 +132,9 @@ set_page(unsigned int index, char att)
 void
 up_page(unsigned int index)
 {
-    set_page(index, 1);
+    //set_page(index, 1);
+    g_pagination.page_table[index] &= 0xFFFFFFFFE;
+    g_pagination.page_table[index] |= 0x1;
 
     return;
 }
@@ -247,7 +145,7 @@ up_page(unsigned int index)
 void
 down_page(unsigned int index)
 {
-    set_page(index, 0);
+    g_pagination.page_table[index] &= 0xFFFFFFFFE;    	
 
     return;	
 }
@@ -261,20 +159,39 @@ void
 down_pages_process(void *heap, void* stack)
 {
 	unsigned long index_heap, index_stack,i;
+
+	if (heap == NULL)
+		return;
 	
-	//bajo todas las paginas de usuario
-	for (i=0;i<g_pagination.user_used;i++)
-		down_page(g_pagination.start_user_zone_idx+i);
+	index_heap = (unsigned long)heap/(4*KB);
+	index_stack = (unsigned long)stack/(4*KB);
+	
+	//dejo inactivas solo las que me piden
+	down_page(index_heap);
+	down_page(index_stack);
+	
+	return;
+}
+
+void
+up_pages_process(void *heap, void* stack)
+{
+	unsigned long index_heap, index_stack,i;
+
+	if (heap == NULL)
+		return;
+	
+	index_heap = (unsigned long)heap/(4*KB);
+	index_stack = (unsigned long)stack/(4*KB);
 	
 	//dejo activa solo las que me piden
-	index_heap = (unsigned long)heap/(4*KB);
 	up_page(index_heap);
 	
-	index_stack = (unsigned long)stack/(4*KB);
 	up_page(index_stack);
 	
 	return;
 }
+
 
 /*
 typedef struct
@@ -294,7 +211,9 @@ get_free_page(void)
     unsigned long *page_table;
     void* address;
     
-    index=g_pagination.start_user_zone_idx + g_pagination.user_used;
+    g_pagination.user_used++;
+
+    index = g_pagination.start_user_zone_idx + g_pagination.user_used;
     
     idx_directory = index / PAGES_PER_TABLE_DIR;
     idx_page = index % PAGES_PER_TABLE_DIR;
@@ -303,14 +222,10 @@ get_free_page(void)
     page_table = g_pagination.page_directory[idx_directory];
 	
     //como las direcciones son lineales en la paginacion (1a1) devuelvo directamente 
-    address = (void *)(idx_directory*4*MB + idx_page * 4*KB);
+    address = (void *)(idx_directory*4 * MB + idx_page*4*KB);
 	
-//	printf("Dir= %x\n", address);
-
-    g_pagination.user_used++;
-    
-    //TODO armar si no tiene paginas que devuelva NULL
-
+    up_page(index);
+   
     return address;
 	
 }
