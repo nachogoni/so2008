@@ -14,6 +14,7 @@
 #include "../include/drivers/keyboard.h"
 #include "../include/drivers/serial.h"
 #include "processes.h"
+#include "signal.h"
 
 /* Aplicaciones */
 #include "./app/top.h"
@@ -79,7 +80,8 @@ command commands_avaiable[] = {
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
-			{"top",handle_top,"Listado de procesos"},
+			{"top",handle_top,"List of processes"},
+			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
 			{"0", NULL, ""}
@@ -164,10 +166,9 @@ int handle_top(int ppid, int pid, char * parameters)
     return 0;
 }
 
-static int handle_kill(int ppid, int pid, char *parameters)
+static int handle_kill(int ppid, int pid, char * parameters)
 {
-	
-	
+	kill(atoi(parameters),SIGKILL);
 	
 	return 0;	
 }
@@ -225,9 +226,7 @@ init_shell(int ppid, int pid, char * param)
 				if (fore == 1)
 				{
 					exec_wait(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);
-//					goOut = __wait();
-//					printf("response:%d", goOut);
-					//printf("response:%d", __wait());
+					goOut = __wait();
 				}
 				else
 					exec(commands_avaiable[i].instruction, commands_avaiable[i].name, parameters);

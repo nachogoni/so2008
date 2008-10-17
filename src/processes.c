@@ -19,7 +19,7 @@ void kernel_return_Function_unblock(void)
 {
 	int i, found, resp;
 
-	 __asm__ __volatile__("mov %0, %%eax": "=dN" (resp));
+	 __asm__ __volatile__("mov %0, %%eax": "=aL" (resp));
 		
 	i = 0;
 	found = 0;
@@ -208,7 +208,7 @@ int d(int a,int b,char * c)
 	}
 	return 1;
 }
-int _kill( int pid, int signal) {
+unsigned int _kill(unsigned int pid, int signal) {
 	
 	int i = 0;
 

@@ -9,7 +9,7 @@ void kernel_return_Function_no_unblock(void);
 
 void kernel_return_Function_unblock(void);
 
-int _kill(int pid, int signal);
+unsigned int _kill(unsigned int pid, int signal);
 
 void sleep(int seconds);
 
