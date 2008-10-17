@@ -219,12 +219,14 @@ unsigned int _kill(unsigned int pid, int signal) {
 				i++;
 			}
 			if  ( i != process_count) {
+				printf("matando a %d - %s\n",process_vector[i].pid,process_vector[i].name);
 				process_vector[i].status = NONE;
 				unblockPid(process_vector[i].ppid);
+				task_switch();
 				i = 0;
 				while(i < process_count) {
 					if(process_vector[i].ppid == pid) {
-//						printf("\tmatando al hijo :%d - %s \n",process_vector[i].pid,process_vector[i].name);	
+						printf("\t-- entro a matar al hijo :%d - %s \n",process_vector[i].pid,process_vector[i].name);	
 						_kill(process_vector[i].pid, SIGKILL);
 					}	
 					i++;
@@ -233,6 +235,7 @@ unsigned int _kill(unsigned int pid, int signal) {
 			break;
 		default: return 0;
 	}			
+	task_switch();
 	return 0;	
 }
 
