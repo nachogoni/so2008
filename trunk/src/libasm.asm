@@ -425,7 +425,7 @@ set_priority:
 	push    ebx
 	push    ecx
 
-	mov     eax, 12 	    ; pongo el selector en read
+	mov     eax, 12 	    ; pongo el selector en priority
 	mov     ebx, [ebp+8]    ; pid
 	mov     ecx, [ebp+12]   ; priority
 
@@ -446,7 +446,7 @@ set_scheduler:
 
 	push    ebx
 
-	mov     eax, 2 	    ; pongo el selector en read
+	mov     eax, 11 	    ; pongo el selector en scheduler
 	mov     ebx, [ebp+8]    ; pid
 
 	int     080h		    ; llamo a int 80
