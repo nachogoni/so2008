@@ -32,6 +32,7 @@ static void cleanBuffer(char * buffer, int len);
 static int getCommand(char * buffer, int length, char history[HISTORY_SIZE][BUFFER_SIZE + 1], int count);
 
 static int handle_div0(int ppid, int pid, char * parameters);
+static int handle_malloc(int ppid, int pid, char * parameters);
 static int handle_help(int ppid, int pid, char * parameters);
 static int handle_clear(int ppid, int pid, char * parameters);
 static int handle_shell(int ppid, int pid, char * parameters);
@@ -74,6 +75,7 @@ command commands_avaiable[] = {
 //			{"wmplayer", init_wmplayer,"Starts wmplayer and plays StarWars"},
 // 			{"presents", init_presents,"HumiX presentation"},
 			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
+			{"malloc",handle_malloc, "Tries to alloc memory until the systems runs out of it"},
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
@@ -273,6 +275,9 @@ int handle_help(int ppid, int pid, char * parameters)
 	return 0;
 }
 
+static int handle_malloc(int ppid, int pid, char * parameters) {
+	malloccer();
+}	
 /* handle del clear screen */
 static 
 int handle_clear(int ppid, int pid, char * parameters)
