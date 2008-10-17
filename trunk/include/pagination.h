@@ -1,3 +1,8 @@
+#include "../include/defs.h"
+#include "../include/memory.h"
+#include "../include/kasm.h"
+#include "../include/kernel.h"
+
 /********************************** 
 *
 *  Pagination
@@ -32,7 +37,10 @@ __init_pagination(unsigned long **page_directory, unsigned long *page_table, uns
 */
 
 void
-up_pages_process(void *heap, void* stack);
+up_pages_process(void *heap, void* stack, shm_item *shm_vec);
+
+void
+down_pages_process(void *heap, void* stack, shm_item *shm_vec);
 
 void
 add_page_table(unsigned long **page_directory, unsigned long *page_table, int index, char atts);
@@ -58,8 +66,6 @@ get_free_page(void);
  * Recibe la direccion dada del heap y del stack
  * dejando solo esas activas
  */
-void
-down_pages_process(void *heap, void* stack);
 
 void*
 duplicatePage(void *address);

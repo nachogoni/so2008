@@ -50,6 +50,7 @@ static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_priority(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
+static int handle_sm3(int ppid, int pid, char * parameters);
 static int handle_scheduler(int ppid, int pid, char * parameters);
 static int handle_nothing(int ppid, int pid, char * parameters);
 
@@ -85,6 +86,7 @@ command commands_avaiable[] = {
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
+			{"sm3",handle_sm2,"Shared Memory 3"},
 			{"n",handle_nothing,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
@@ -98,7 +100,7 @@ int handle_nothing(int ppid, int pid, char * parameters)
 static 
 int handle_sm1(int ppid, int pid, char * parameters)
 {
-    int shmId;
+    int shmId, aux=300000000;
     char *memDir = NULL;
 
     if ( (shmId = shm_open("sm", 4, 0)) == -1 )
@@ -114,13 +116,17 @@ int handle_sm1(int ppid, int pid, char * parameters)
         printf("sm1: Error @ mmap\n");
         return 0;
     }
+    sem_set("sem1", 0);
+
+    sem_up("sem1");
 
     memDir[0] = 'P';
     memDir[1] = '\0';
+    while(aux--);
 
+    sem_down("sem1");
 
-
-    //shm_close(shmId);
+    shm_close(shmId);
     return 0;
 }
 
@@ -146,9 +152,55 @@ int handle_sm2(int ppid, int pid, char * parameters)
 
     //memDir[0] = 'P';
 
+    sem_set("sem1", 0);
+
+    sem_up("sem1");
+
 	//Tira page fault cuando queres imprimir el valor de memdir
     printf("if P == %c\n", *memDir);
 
+    sem_down("sem1");
+
+    sem_close("sem1");
+
+    shm_close(shmId);
+
+    return 0;
+}
+
+
+static 
+int handle_sm3(int ppid, int pid, char * parameters)
+{
+    int shmId;
+    char *memDir = NULL;
+
+    if ( (shmId = shm_open("sm", 1, 0)) == -1 )
+    {
+        printf("sm2\nError @ shm_open\n");
+        return 0;
+    }
+
+    printf("shmID = %d\n", shmId);
+
+    if ( (memDir = (char *)mmap(shmId)) == NULL )
+    {
+        printf("sm2\nError @ mmap\n");
+        return 0;
+    }
+
+    //memDir[0] = 'P';
+
+    sem_set("sem2", 0);
+
+    sem_up("sem2");
+
+	//Tira page fault cuando queres imprimir el valor de memdir
+    printf("if P == %c\n", *memDir);
+
+    sem_down("sem2");
+
+    sem_close("sem2");
 
     shm_close(shmId);
 
