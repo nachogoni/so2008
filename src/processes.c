@@ -84,7 +84,7 @@ int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, i
 void createIdle(void)
 {
 	process_vector[0].tty_id = 0;
-	strcpy(process_vector[0].name, "idle");
+	strcpy(process_vector[0].name, "init");
 	process_vector[0].pid = INIT_PID;
 	process_vector[0].ppid = INIT_PID;
 	process_vector[0].status = PROC_READY;

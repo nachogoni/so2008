@@ -1,6 +1,6 @@
 
 ;/*SYSTEM CALLS*/
-GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap, kill
+GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap, kill, set_scheduler
 ;/*EXCEPTIONS*/
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 ;/*FUNCTIONS*/
@@ -26,7 +26,7 @@ EXTERN __snp
 EXTERN __bounds
 EXTERN __pgf
 
-EXTERN  __write, __read, __exec, __exec_wait
+EXTERN  __write, __read, __exec, __exec_wait, __set_scheduler
 EXTERN  __shm_open, __shm_close, __mmap, __kill
 
 
@@ -224,6 +224,16 @@ _pkill:
 	pop	ecx
 	jmp	_pend
 
+; parametros para set_scheduler
+; ebx	=	scheduler
+_psetschd:
+	push	ebx		;nro scheduler
+
+	call	__set_scheduler
+
+	pop	ebx
+	jmp	_pend
+
 _pexec:
 	   push    edx             
 	   push    ecx             
@@ -258,6 +268,8 @@ int_80_hand:
 	   jz _pshm_close
 	   cmp eax, 10            ; MMAP = 10
 	   jz _pmmap
+	   cmp eax, 11            ; SET_SCHEDULER = 11
+	   jz _psetschd
 
 	   ;si no hay instruccion salgo
 	   jmp _pend
@@ -382,6 +394,25 @@ kill:
 
 	pop	   ecx		    ; restauro
 	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; set_scheduler coloca en 
+; - ebx scheduler_id 
+set_scheduler:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+
+	mov     eax, 2 	    ; pongo el selector en read
+	mov     ebx, [ebp+8]    ; pid
+
+	int     080h		    ; llamo a int 80
+
+	pop	   ebx		    ; restauro
 
 	mov     esp, ebp        ; destruye stack frame
 	pop     ebp

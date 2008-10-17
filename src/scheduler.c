@@ -10,7 +10,28 @@ extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
 
-int actual_scheduler = SCH_PRIORITY_ROUND_ROBIN;
+int actual_scheduler = SCH_ROUND_ROBIN;
+
+void _set_scheduler(int scheduler_id)
+{
+	switch(actual_scheduler)
+	{
+		case SCH_ROUND_ROBIN:
+			actual_scheduler = SCH_ROUND_ROBIN;
+			break;
+		case SCH_ROUND_ROBIN_NOT_IDLE:
+			actual_scheduler = SCH_ROUND_ROBIN_NOT_IDLE;
+			break;
+		case SCH_PRIORITY_ROUND_ROBIN:
+			actual_scheduler = SCH_PRIORITY_ROUND_ROBIN;
+			break;
+		default:
+			actual_scheduler = SCH_ROUND_ROBIN;
+			break;
+	}
+	
+	return;
+}
 
 unsigned int scheduler(unsigned int esp)
 {
@@ -20,6 +41,9 @@ unsigned int scheduler(unsigned int esp)
 	{
 		case SCH_ROUND_ROBIN:
 			next_process = scheduler_roundRobin(esp);
+			break;
+		case SCH_ROUND_ROBIN_NOT_IDLE:
+			next_process = scheduler_roundRobin_notIdle(esp);
 			break;
 		case SCH_PRIORITY_ROUND_ROBIN:
 			next_process = scheduler_priority_roundRobin(esp);
@@ -57,6 +81,39 @@ static void new_timerTick(void)
 	return;
 }
 
+unsigned int scheduler_roundRobin_notIdle(unsigned int esp)
+{
+	int new = 0;
+	
+	process_vector[process_running].esp = esp;
+
+	new_timerTick();
+	
+	do
+	{
+		process_running = (process_running + 1) % process_count;
+	}	
+	while (process_vector[process_running].status != PROC_READY);
+	
+	// do not execute idle if it isnt needed
+	if (process_running == 0)
+	{
+		do
+		{
+			new = (new + 1) % process_count;
+		}	
+		while (process_vector[new].status != PROC_READY);
+
+		if (new != process_running)
+			process_running = new;
+	}
+	
+	
+	process_vector[process_running].lived++;
+	
+	return process_running;
+}
+
 unsigned int scheduler_roundRobin(unsigned int esp)
 {
 	process_vector[process_running].esp = esp;
@@ -68,6 +125,9 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 		process_running = (process_running + 1) % process_count;
 	}	
 	while (process_vector[process_running].status != PROC_READY);
+	
+	process_vector[process_running].lived++;
+	
 	return process_running;
 }
 
@@ -157,3 +217,58 @@ void top( processTop ret[MAX_PROCESS_COUNT], int * n) {
 	*n = x;
 }
 
+int top2(int ppid, int pid, char * parameters)
+{
+	int i = 0, total = 0, rest = 100, porc = 0;
+	
+	for (i = 0; i < process_count; i++)
+    {
+		if (process_vector[i].status != NONE)
+			total += process_vector[i].lived;
+	}
+	printf("PID\tPPID\tNiceness\tStatus\tCPU%c\tName\n", '%');
+	for (i = process_count - 1; i >= 0; i--)
+	{
+		if (process_vector[i].status != NONE)
+		{
+			printf("%d\t%d\t%d\t\t", process_vector[i].pid, process_vector[i].ppid, process_vector[i].priority);
+	
+			if (process_vector[i].pid == pid)
+				printf("RUNNING");
+			else
+				switch (process_vector[i].status)
+				{
+					case PROC_CHILD_BLOQUED:
+						printf("CHILD");
+					break;
+					case PROC_SEM_BLOQUED:
+						printf("SEM");
+					break;
+					case PROC_SLEEP_BLOQUED:
+						printf("SLEEP");
+					break;
+					case PROC_STDIN_BLOQUED:
+						printf("READ");
+					break;
+					case PROC_READY:
+						printf("READY");
+					break;
+					case PROC_EXECUTING:
+						printf("RUNNING");
+					break;
+					default:
+						printf("¿?");
+					break;
+				}
+			
+			porc = process_vector[i].lived * 100 / total;
+			if (i == 0)
+				porc = rest;
+			rest -= porc;
+			printf("\t%d\t%s:%d\n", porc, process_vector[i].name, process_vector[i].tty_id);
+		}
+		process_vector[i].lived = 0;
+	}
+
+	return 0;
+}

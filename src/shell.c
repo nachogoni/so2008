@@ -14,6 +14,7 @@
 #include "../include/drivers/keyboard.h"
 #include "../include/drivers/serial.h"
 #include "processes.h"
+#include "scheduler.h"
 #include "signal.h"
 
 /* Aplicaciones */
@@ -47,11 +48,13 @@ static int handle_loadkeys(int ppid, int pid, char * parameters);
 static int handle_mem(int ppid, int pid, char * parameters);
 static int handle_configSerial(int ppid, int pid, char * parameters);
 static int handle_top(int ppid, int pid, char * parameters);
+static int handle_top2(int ppid, int pid, char * parameters);
 static int handle_nros(int ppid, int pid, char * parameters);
 static int handle_infinito(int ppid, int pid, char * parameters);
 static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
+static int handle_scheduler(int ppid, int pid, char * parameters);
 
 #define MAX_LEN_COMMAND		30
 #define MAX_LEN_COMMAND_HELP	500
@@ -79,11 +82,13 @@ command commands_avaiable[] = {
 			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
 			{"malloc",handle_malloc, "Tries to alloc memory until the systems runs out of it"},
 			{"duplicate",duplicate, "Creates 4 childs sleeping and printing..."},
+			{"scheduler",handle_scheduler, "Set witch scheduler will use..."},
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
 			{"infinito",handle_infinito,"secuencia infinita"},
 			{"top",handle_top,"List of processes"},
+			{"top2",handle_top2,"List of processes"},
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
@@ -181,12 +186,63 @@ int handle_top(int ppid, int pid, char * parameters)
     return 0;
 }
 
+/* handle del top */
+static 
+int handle_top2(int ppid, int pid, char * parameters)
+{
+
+    printf("TOP2\n");
+    top2(ppid, pid, parameters);
+
+    return 0;
+}
+
 static int handle_kill(int ppid, int pid, char * parameters)
 {
 	kill(atoi(parameters),SIGKILL);
 	
 	return 0;	
 }
+
+static int handle_scheduler(int ppid, int pid, char * parameters)
+{
+	int sel = 0;
+	
+	if (parameters == NULL)
+	{
+		printf("Posible schedulers:\n\n");
+		printf("\t1. Round Robin with active idle\n");
+		printf("\t2. Round Robin without idle\n");
+		printf("\t3. Round Robin with priority\n");
+		printf("\nUsage: scheduler #\n");
+	}
+	else
+	{
+		switch(atoi(parameters))
+		{
+			case 1:
+				sel = SCH_ROUND_ROBIN;
+				set_scheduler(sel);
+				printf("Round Robin with active idle selected!\n");
+				break;
+			case 2:
+				sel = SCH_ROUND_ROBIN_NOT_IDLE;
+				set_scheduler(sel);
+				printf("Round Robin without idle selected!\n");
+				break;
+			case 3:
+				sel = SCH_PRIORITY_ROUND_ROBIN;
+				set_scheduler(sel);
+				printf("Round Robin with priority selected!\n");
+				break;
+			default:
+				printf("Invalid scheduler\n");
+				break;
+		}
+	}
+	return 0;	
+}
+
 /* Inicializador del shell */
 int 
 init_shell(int ppid, int pid, char * param)
