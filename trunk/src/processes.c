@@ -220,6 +220,7 @@ unsigned int _kill(unsigned int pid, int signal) {
 			}
 			if  ( i != process_count) {
 				process_vector[i].status = NONE;
+				unblockPid(process_vector[i].ppid);
 				i = 0;
 				while(i < process_count) {
 					if(process_vector[i].ppid == pid) {
@@ -253,7 +254,8 @@ int unblockPid(int pid) {
 	}
 	if (i != process_count ) {
 //		printf("encontre al padre");
-		process_vector[i].status = PROC_READY;
+		if(process_vector[i].status == PROC_CHILD_BLOQUED)
+			process_vector[i].status = PROC_READY;
 	}
 	return 0;
 }
