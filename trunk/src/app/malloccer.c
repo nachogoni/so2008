@@ -7,7 +7,7 @@ int malloccer(void) {
 	void *aux;
 
 	while((aux =malloc(400)) != NULL) {
-		printf("Pedi 400 bytes y se me asigna la posicion %d\n", aux);
+		printf("Pedi 400 bytes y se me asigna la posicion 0x%x\n", aux);
 	}
 	if(aux == NULL) {
 		printf("Pedi 400 bytes y no se me asigna nada, no hay mas memoria\n");
