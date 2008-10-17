@@ -201,11 +201,11 @@ int __set_scheduler(int scheduler_id)
 int sysStat(int ppid, int pid, char * parameters) {
 	while(1) {
 		sleep(5);
-		//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		tty_set_position(0,0);
 		//tty_clear_scr();
 		printf("\nSystem Status\n\n");
-		topApp(ppid,pid,parameters);
+		top2(ppid,pid,parameters);
 	}
 }
 void init(void)
