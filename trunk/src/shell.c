@@ -160,8 +160,11 @@ int handle_top(int ppid, int pid, char * parameters)
     return 0;
 }
 
-static int handle_kill(int ppid, int pid, char *parameters) {
-
+static int handle_kill(int ppid, int pid, char *parameters)
+{
+	
+	
+	
 	return 0;	
 }
 /* Inicializador del shell */
