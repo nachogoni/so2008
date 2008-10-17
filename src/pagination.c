@@ -2,6 +2,7 @@
 #include "../include/defs.h"
 #include "../include/memory.h"
 #include "../include/kasm.h"
+#include "../include/kernel.h"
 
 /********************************** 
 *
@@ -156,9 +157,9 @@ down_page(unsigned int index)
  * dejando solo esas activas
  */
 void
-down_pages_process(void *heap, void* stack)
+down_pages_process(void *heap, void* stack, shm_item *shm_vec)
 {
-	unsigned long index_heap, index_stack,i;
+	unsigned long index_heap, index_stack,i=0, index_shm, count_shm;
 
 	if (heap == NULL)
 		return;
@@ -169,14 +170,27 @@ down_pages_process(void *heap, void* stack)
 	//dejo inactivas solo las que me piden
 	down_page(index_heap);
 	down_page(index_stack);
+
+	while(shm_vec[i].address != NULL)
+	{
+		index_shm = (unsigned long)shm_vec[i].address/(4*KB);
+		count_shm = shm_vec[i].size/(4*KB);
+		if (shm_vec[i].size%(4*KB))
+			count_shm++;
+
+		while(count_shm--)
+			down_page(index_shm + count_shm);
+
+		i++;
+	}
 	
 	return;
 }
 
 void
-up_pages_process(void *heap, void* stack)
+up_pages_process(void *heap, void* stack, shm_item *shm_vec)
 {
-	unsigned long index_heap, index_stack,i;
+	unsigned long index_heap, index_stack,i=0, index_shm, count_shm;
 
 	if (heap == NULL)
 		return;
@@ -186,8 +200,21 @@ up_pages_process(void *heap, void* stack)
 	
 	//dejo activa solo las que me piden
 	up_page(index_heap);
-	
 	up_page(index_stack);
+
+	while(shm_vec[i].address != NULL)
+	{
+		index_shm = (unsigned long)shm_vec[i].address/(4*KB);
+		count_shm = shm_vec[i].size/(4*KB);
+		if (shm_vec[i].size%(4*KB))
+			count_shm++;
+
+		while(count_shm--)
+			up_page(index_shm + count_shm);
+
+		i++;
+	}
+
 	
 	return;
 }

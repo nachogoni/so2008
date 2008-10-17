@@ -244,7 +244,6 @@ __shm_close(int shmid)
       else
       {
          ant->next = actual->next;
-         //TODO: si se hace lo de control de paginas, liberarlas
       }
 
       delShmToProcess(actual->address, actual->size);
@@ -254,7 +253,6 @@ __shm_close(int shmid)
    }
 
    //restauro
-	//esta cayendo aca sin liberar al shared memory, que hay que hacer?
    __set_memory_addr(mem_addr, mem_size);
 
    return 0;

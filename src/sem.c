@@ -89,7 +89,6 @@ sem_set(key_t key, int flags)
 
 	/* si no existe lo creo */
 	if (searchSem(&actual, &ant, key)) {
-		printf("ya existe");
 		return 1;
 	}
 
@@ -220,7 +219,7 @@ getFirstProc(sem_block sem)
 	proc = sem->proc_list;
 
 	if (proc == NULL)
-		return -1;
+		return 0;
 	else
 	{
 		sem->proc_list = proc->next;
@@ -250,7 +249,7 @@ sem_down(key_t key)
 		//Busco el proximo proceso a darle el control
 		actual->bloquedBy = getFirstProc(actual);
 
-		if (actual->bloquedBy >= 0)
+		if (actual->bloquedBy > 0)
 			unblock_process(actual->bloquedBy);
 	}
 
@@ -270,14 +269,13 @@ sem_close(key_t key)
 	__set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	/* Busco el semaforo */
-	if (!searchSem(&actual, &ant, key)) {
-		printf("sem_close :no lo encontre\n");
+	if (!searchSem(&actual, &ant, key)) 
+	{
 		return -1;
 	}
 
 	/* Si tiene algun otro semaforo atacheado no lo libero */
-	if (actual->bloquedBy >= 0) {
-		printf("sem_close: no libero la shm");	
+	if (actual->bloquedBy > 0) {
 		return 1;
 	}
 
@@ -296,11 +294,10 @@ sem_close(key_t key)
 	
 	free(actual);
 
-   g_sem.count_keys--;
+	g_sem.count_keys--;
 
 	//restauro
 	__set_memory_addr(mem_addr, mem_size);
-	printf("sem_close: salgo bien");
 	return 1;	
 }
 
@@ -310,7 +307,6 @@ __init_sem(void)
 {
 	g_sem.count_keys = 0;
 	g_sem.first = NULL;
-	printf("__init_sem: inicializa semaforos\n");
 	return;
 }
 
