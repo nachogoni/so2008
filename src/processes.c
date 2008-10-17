@@ -242,7 +242,6 @@ int killCurrent(void) {
 
 //	printf("proceso %d :: padre %d",pid, ppid);
 	_kill(pid,SIGKILL);
-	unblockPid(ppid);
 	task_switch();
 }
 
