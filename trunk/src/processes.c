@@ -198,6 +198,12 @@ unsigned int set_pid_priority(unsigned int pid, int priority)
 {
 	int i = 0;
 
+	if (priority < 1 || priority > 4)
+	{
+		printf("No such process\n");
+		return 0;
+	}
+	
 	while(process_vector[i].pid != pid && i < MAX_PROCESS_COUNT)
 	{
 		i++;
