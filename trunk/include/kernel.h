@@ -36,6 +36,7 @@ typedef struct process_t
 	unsigned int pid;		// process id
 	unsigned int ppid;	// parent process id
 	unsigned int lived;		// count of timer ticks lived
+	unsigned int realtime;
 	unsigned int sleep;		// count of timer ticks left to awake
 	unsigned int priority;	// priority level of the process
 	unsigned int tty_id;	// id of the tty for the process

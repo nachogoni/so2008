@@ -109,7 +109,7 @@ unsigned int scheduler_roundRobin_notIdle(unsigned int esp)
 	}
 	
 	
-	process_vector[process_running].lived++;
+	process_vector[process_running].realtime++;
 	
 	return process_running;
 }
@@ -126,7 +126,7 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 	}	
 	while (process_vector[process_running].status != PROC_READY);
 	
-	process_vector[process_running].lived++;
+	process_vector[process_running].realtime++;
 	
 	return process_running;
 }
@@ -171,6 +171,7 @@ unsigned int scheduler_priority_roundRobin(unsigned int esp)
 
 	// incremento el tiempo vivido total del proceso activo
 	process_vector[process_running].lived++;
+	process_vector[process_running].realtime++;
 
 	//printf("Lived : %d\n", process_vector[process_running].lived);
 	return process_running;
@@ -224,8 +225,12 @@ int top2(int ppid, int pid, char * parameters)
 	for (i = 0; i < process_count; i++)
     {
 		if (process_vector[i].status != NONE)
-			total += process_vector[i].lived;
+			total += process_vector[i].realtime;
 	}
+	
+	if (total == 0)
+		total = 1;
+	
 	printf("PID\tPPID\tNiceness\tStatus\tCPU%c\tName\n", '%');
 	for (i = process_count - 1; i >= 0; i--)
 	{
@@ -261,13 +266,13 @@ int top2(int ppid, int pid, char * parameters)
 					break;
 				}
 			
-			porc = process_vector[i].lived * 100 / total;
+			porc = process_vector[i].realtime * 100 / total;
 			if (i == 0)
 				porc = rest;
 			rest -= porc;
 			printf("\t%d\t%s:%d\n", porc, process_vector[i].name, process_vector[i].tty_id);
 		}
-		process_vector[i].lived = 0;
+		process_vector[i].realtime = 0;
 	}
 
 	return 0;
