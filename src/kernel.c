@@ -51,14 +51,6 @@ int stdser;
 
 /***************** FIN VARIABLE GLOBALES DE SISTEMA ***********************/
 
-void int_08(void)
-{
-	if (player != NULL)
-		player();
-
-	return;
-}
-
 void int_09(void)
 {
 	handle_keyboard();
@@ -130,24 +122,6 @@ __write(int fd, const void* buffer, size_t count)
 	return i;
 }
 
-/* fork
- * 
- * Devuelve el pid 
- */
-unsigned int __fork(void)
-{
-	int pid;
-	
-	pid=0;
-	
-	//duplico el stack y el heap
-	//creo la zona de memoria compartida
-	
-	//creo el proceso
-	
-	return pid;
-}
-
 int __wait(void)
 {
 	return getResponse();
@@ -197,8 +171,12 @@ void init(void)
 //	__exec_(&c, "f_c", "", 6, &kernel_return_Function_no_unblock);
 //	__exec_(&d, "f_d", "", 6, &kernel_return_Function_no_unblock);
 	
+	tty_set_color(SCREEN_FORE_BLUE, SCREEN_BACK_BLACK);
+	printf("[");
 	tty_set_color(SCREEN_FORE_GREEN2, SCREEN_BACK_BLACK);
-	printf("OK!\n");
+	printf("OK!");
+	tty_set_color(SCREEN_FORE_BLUE, SCREEN_BACK_BLACK);
+	printf("]\n");
 	tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 	
 	return;

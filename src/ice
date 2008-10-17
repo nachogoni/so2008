@@ -1,22 +1,21 @@
 
-;/*SYSTEM CALLS*/
-GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap
-;/*EXCEPTIONS*/
-GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
-;/*FUNCTIONS*/
 GLOBAL  read_msw,_lidt
+GLOBAL	task_switch
+GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
+GLOBAL  write, read, fork, exec, exec_wait, shm_open, shm_close, mmap
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
+GLOBAL  debug
 GLOBAL	beep, task_switch
+GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
+
 GLOBAL  createStackFrame
 
-GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
-
+EXTERN  int_08
 EXTERN  int_09
 EXTERN  int_0c
-
-EXTERN  __write, __read, __exec, __exec_wait
-EXTERN  __shm_open, __shm_close, __mmap, __kill
+EXTERN  __write, __read, __fork, __exec, __exec_wait
+EXTERN  __shm_open, __shm_close, __mmap
 
 EXTERN _invop
 EXTERN _div0
@@ -41,7 +40,11 @@ createStackFrame:
 	mov esp, eax
 	; Puntero a la funcion que va a guardar en ip para ejecutar
 	mov eax, [ebp+12]
-	; Carga los parametros para la nueva funcion
+	; Habilita las interrupciones, pushea los flags y las deshabilita
+	;sti
+	;pushf
+	;cli
+
 	mov ecx, [ebp+28]	;parametros en el 28
 	push ecx
 	mov ecx, [ebp+24]  	;pid en el 24;
@@ -50,9 +53,10 @@ createStackFrame:
 	push ecx
 	mov ecx, [ebp+32]	;pusheo la direccion de retorno a la funcion de mantenimiento del kernel
 	push ecx
-	; Habilita las interrupciones, pushea los flags y las deshabilita
+	
 	mov ecx, 512
 	push ecx
+	
 	; Push de CS y ESP (lo usa iret en el multitask)
 	push cs
 	push eax
@@ -96,6 +100,7 @@ read_msw:
 	smsw    ax		; Obtiene la Machine Status Word
 	retn
 
+
 _lidt:							; Carga el IDTR
 	push    ebp
 	mov     ebp, esp
@@ -106,6 +111,21 @@ _lidt:							; Carga el IDTR
 	pop     ebx
 	pop     ebp
 	retn
+
+int_08_hand_back:						; Handler de INT 8 ( Timer tick)
+	push    ds
+	push    es                      ; Se salvan los registros
+	pusha                           ; Carga de DS y ES con el valor del selector
+	mov     ax, 10h				; a utilizar.
+	mov     ds, ax
+	mov     es, ax
+	call    int_08
+	mov	 al,20h				; Envio de EOI generico al PIC
+	out	 20h,al
+	popa
+	pop     es
+	pop     ds
+	iret
 
 ; Handler de INT 8 (Timer tick) -> Multitasker
 int_08_hand:
@@ -205,19 +225,11 @@ _pread:
 	   pop     edx
 	   jmp	 _pend	       	  ; salgo
 
+; el fork no lleva parametros
+_pfork:
 
-; parametros para kill
-; ebx	=	pid
-; ecx	=	signal
-_pkill:
-	push	ecx		;signal
-	push	ebx		;pid
-
-	call	__kill
-
-	pop	ebx
-	pop	ecx
-	jmp	_pend
+	   call    __fork
+	   jmp	   _pend	       	  ; salgo
 
 _pexec:
 	   push    edx             
@@ -241,15 +253,17 @@ int_80_hand:
 	   jz _pwrite
 	   cmp eax, 1             ; READ = 1
 	   jz _pread
+	   cmp eax, 4             ; FORK = 4
+	   jz _pfork
 	   cmp eax, 5             ; EXEC = 5
 	   jz _pexec
 	   cmp eax, 6             ; EXEC WAIT = 6
 	   jz _pexec_wait
-	   cmp eax, 8             ; SHM_OPEN = 8
+	   cmp eax, 7             ; SHM_OPEN = 7
 	   jz _pshm_open
-	   cmp eax, 9             ; SHM_CLOSE = 9
+	   cmp eax, 8             ; SHM_CLOSE = 8
 	   jz _pshm_close
-	   cmp eax, 10            ; MMAP = 10
+	   cmp eax, 9             ; MMAP = 9
 	   jz _pmmap
 
 	   ;si no hay instruccion salgo
@@ -301,6 +315,19 @@ _pend:
 	   pop     es			  ;salgo
 	   pop     ds
 	   iret
+
+
+fork:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	mov     eax, 4 		    ; pongo el selector en fork
+	int     080h		    ; llamo a int 80
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
 
 ; write coloca en 
 ; - ebx el file descriptor
@@ -498,6 +525,7 @@ set_cursor_pos:
 	pop ebp
 	ret
 
+
 beep:
 	mov al, 182			; Prepare the speaker for the
 	out 43h, al			; note.
@@ -523,6 +551,7 @@ beep:
 	and al, 11111100b	; Reset bits 1 and 0.
 	out 61h, al			; Send new value.
 	retn
+
 
 [global read_cr0]
 read_cr0:
@@ -551,6 +580,12 @@ write_cr3:
 	mov cr3, eax
 	pop ebp
 	retn
+	
+
+
+
+
+
 
 ;_div0_hand:				; Handler de excepxin "Divide by zero"
 ;	push ds
@@ -661,9 +696,21 @@ write_cr3:
 ;	jmp $
 ;	iret
 
+
+
+
+
+
 ; Debug para el BOCHS, detiene la ejecucin.
 ; Para continuar colocar en el BOCHSDBG: set $eax=0
 ;
+
+
+
+
+
+
+
 
 debug:
         push    bp
@@ -676,6 +723,8 @@ vuelve:	mov     ax, 1
 	pop     bp
         retn
 
-COM1 EQU 3f8h; parametros para kill
-; ebx	=	pid
-; ecx	=	signal
+
+
+
+	
+COM1 EQU 3f8h
