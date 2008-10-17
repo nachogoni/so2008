@@ -198,17 +198,20 @@ unsigned int set_pid_priority(unsigned int pid, int priority)
 {
 	int i = 0;
 
-	while(process_vector[i].pid != pid && i < process_count)
+	while(process_vector[i].pid != pid && i < MAX_PROCESS_COUNT)
 	{
 		i++;
 	}
 
-	if  ( i != process_count)
+	if  (i < MAX_PROCESS_COUNT && process_vector[i].pid == pid)
 	{
 		process_vector[i].priority = priority;
+		printf("'%s' now has priority %d\n", process_vector[i].name, priority); 
 	}
-
-	return 0;	
+	else
+		printf("No such process\n");
+		
+	return 0;
 }
 
 int killCurrent(void) {
