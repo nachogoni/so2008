@@ -192,6 +192,8 @@ int sysStat(int ppid, int pid, char * parameters) {
 	while(1) {
 		sleep(1);
 		printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		tty_set_position(0,0);
+		printf("\nSystem Status\n\n");
 		topApp(ppid,pid,parameters);
 	}
 }
