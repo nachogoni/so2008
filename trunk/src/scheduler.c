@@ -52,8 +52,12 @@ unsigned int scheduler(unsigned int esp)
 			next_process = scheduler_roundRobin(esp);
 			break;
 	}
-	
+
+	down_pages_process(process_vector[process_running].heap_address, process_vector[process_running].stack_address);
+
 	process_running = next_process;
+
+	up_pages_process(process_vector[next_process].heap_address, process_vector[next_process].stack_address);
 	
 	// set the tty_id global of the next process
 	tty_set_actual(process_vector[next_process].tty_id);

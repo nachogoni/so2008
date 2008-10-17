@@ -3,6 +3,7 @@
 #include "../include/memory.h"
 #include "../include/strings.h"
 #include "../include/defs.h"
+#include "../include/kernel.h"
 
 /********************************** 
 *
@@ -29,6 +30,8 @@ typedef struct
 }s_ipc_shm;
 
 s_ipc_shm g_ipc;
+extern unsigned int process_running;
+extern process_t process_vector[];
 
 void
 __init_ipcs(void)
@@ -37,6 +40,55 @@ __init_ipcs(void)
    g_ipc.first = NULL;
 
    return;
+}
+
+void
+delShmToProcess(void *addr, size_t size)
+{
+	int i, found=0, exit=0;
+
+	for (i=0;i<MAX_PROCESS_COUNT && !found && !exit;i++)
+		if (process_vector[process_running].shm_vec[i].address != NULL)
+		{
+			if (process_vector[process_running].shm_vec[i].address == addr)
+			{
+				process_vector[process_running].shm_vec[i].address = NULL;
+				found = 1;
+			}
+		}
+		else
+			exit=1;
+
+	return;
+}
+
+
+void
+addShmToProcess(void *addr, size_t size)
+{
+	int i, found=0, exit=0;
+
+	for (i=0;i<MAX_PROCESS_COUNT && !found && !exit;i++)
+		if (process_vector[process_running].shm_vec[i].address != NULL)
+		{
+			if (process_vector[process_running].shm_vec[i].address == addr)
+			{
+				found = 1;
+			}
+		}
+		else
+			exit=1;
+
+	if (found)
+		return;
+
+	if (exit)
+	{
+		process_vector[process_running].shm_vec[i].address = addr;
+		process_vector[process_running].shm_vec[i].size = size;
+	}
+
+	return;
 }
 
 /*
@@ -72,7 +124,12 @@ __shm_open(key_t key, size_t size, int flags)
       }
 
       if (found == 0)
+      {
+  	 //Lo agrego al proceso
+         addShmToProcess(actual->address, actual->size);
+
          return actual->shmid;   
+      }
    }
 
    /* armo el bloque nuevo en zona kernel */
@@ -111,6 +168,10 @@ __shm_open(key_t key, size_t size, int flags)
       new->next = actual;
       ant->next = new;
    }
+
+   //Lo agrego al proceso
+   addShmToProcess(new->address, new->size);
+
 
    //restauro
    __set_memory_addr(mem_addr, mem_size);
@@ -154,28 +215,29 @@ __shm_close(int shmid)
    void *mem_addr;
    size_t mem_size;
 
-	printf("shm_close: shmid %d\n",shmid);
    //Backup de la memoria anterior
    __get_memory_addr(&mem_addr, &mem_size);
    //Seteo zona de kernel
    __set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
    /* si hay shms armados veo que no exista la key */
-   if (g_ipc.first == NULL) {
-	printf("shm_close : existia la key \n");
+   if (g_ipc.first == NULL) 
       return -1;
-	}
+
+   actual = g_ipc.first;
+
    /* busco a ver si existe */
-   while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
-   {
-      ant = actual;
-      actual = actual->next;
-   }
+   while((actual != NULL) && !found)
+	if ((found = (shmid == actual->shmid)) == 0 )
+	{
+	      ant = actual;
+	      actual = actual->next;
+	}
 
    /* si lo encontro */
    if (found)
    {
-	printf("shm_close : encontre al shm\n");
+
       /* si es el primero */
       if (ant == NULL)
          g_ipc.first = actual->next;
@@ -184,7 +246,8 @@ __shm_close(int shmid)
          ant->next = actual->next;
          //TODO: si se hace lo de control de paginas, liberarlas
       }
-	printf("shm_close : libero al shm\n");
+
+      delShmToProcess(actual->address, actual->size);
       free(actual);
 
       return 1;

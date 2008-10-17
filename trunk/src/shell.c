@@ -51,6 +51,7 @@ static int handle_priority(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
 static int handle_scheduler(int ppid, int pid, char * parameters);
+static int handle_nothing(int ppid, int pid, char * parameters);
 
 #define MAX_LEN_COMMAND		30
 #define MAX_LEN_COMMAND_HELP	500
@@ -85,8 +86,15 @@ command commands_avaiable[] = {
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
+			{"n",handle_nothing,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
+
+static 
+int handle_nothing(int ppid, int pid, char * parameters)
+{
+    return 0;
+}
 
 static 
 int handle_sm1(int ppid, int pid, char * parameters)
@@ -113,7 +121,7 @@ int handle_sm1(int ppid, int pid, char * parameters)
 
 
 
-    shm_close(shmId);
+    //shm_close(shmId);
     return 0;
 }
 
@@ -137,10 +145,10 @@ int handle_sm2(int ppid, int pid, char * parameters)
         return 0;
     }
 
-    memDir[0] = 'P';
+    //memDir[0] = 'P';
 
 	//Tira page fault cuando queres imprimir el valor de memdir
-    //printf("if P == %c\n", *memDir);
+    printf("if P == %c\n", *memDir);
 
 
     shm_close(shmId);
@@ -150,6 +158,7 @@ int handle_sm2(int ppid, int pid, char * parameters)
 
 
 /* handle del infinito*/
+
 static 
 int handle_infinito(int ppid, int pid, char * parameters)
 {

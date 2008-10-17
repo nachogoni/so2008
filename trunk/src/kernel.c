@@ -311,16 +311,16 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
  	getBlockMem(&memory,&memory_size);
 
  	//Inicializo la paginacion en 2mb
-	__init_pagination((unsigned long **) KERNEL_PAGE_DIRECTORY, (unsigned long *) KERNEL_TABLE_DIRECTORY, KERNEL_MEM_SIZE, 8*MB);
+	__init_pagination((unsigned long **) KERNEL_PAGE_DIRECTORY, (unsigned long *) KERNEL_TABLE_DIRECTORY, KERNEL_MEM_SIZE, USER_MEM_SIZE);
 
 	//Inicializo la zona de malloc del kernel
 	__init_memory((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
 	//Inicializo shared memory
-	//__init_ipcs();
+	__init_ipcs();
 
 	//Inicializo semaforos
-	//__init_sem();
+	__init_sem();
 
 	/******************** FIN CONFIGURACION DEL SO *************************/
 
