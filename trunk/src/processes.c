@@ -176,11 +176,11 @@ unsigned int _kill(unsigned int pid, int signal) {
 
 int killCurrent(void) {
 	int pid = process_vector[process_running].pid;
-	int ppid = process_vector[process_running].ppid;
 
-//	printf("proceso %d :: padre %d",pid, ppid);
 	_kill(pid,SIGKILL);
 	task_switch();
+	
+	return 0;
 }
 
 int unblockPid(int pid) {

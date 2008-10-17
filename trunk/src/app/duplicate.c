@@ -1,4 +1,5 @@
 #include "processes.h"
+#include "io.h"
 #include "tty.h"
 #include "kernel.h"
 #include "kasm.h"
