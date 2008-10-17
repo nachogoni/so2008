@@ -8,6 +8,9 @@ GLOBAL  read_msw,_lidt
 GLOBAL  set_cursor_pos, init_cereal
 GLOBAL  mascaraPIC1,mascaraPIC2,_Cli,_Sti
 GLOBAL	beep, task_switch
+
+GLOBAL  invop_hand, ssf_hand , div0_hand , gpf_hand, bounds_hand, pgf_hand
+
 GLOBAL  createStackFrame
 
 GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
@@ -15,15 +18,17 @@ GLOBAL  int_08_hand, int_09_hand, int_0c_hand, int_80_hand
 EXTERN  int_09
 EXTERN  int_0c
 
+EXTERN __invop
+EXTERN __div0
+EXTERN __gpf
+EXTERN __ssf
+EXTERN __snp
+EXTERN __bounds
+EXTERN __pgf
+
 EXTERN  __write, __read, __exec, __exec_wait
 EXTERN  __shm_open, __shm_close, __mmap, __kill
 
-EXTERN _invop
-EXTERN _div0
-EXTERN _gpf
-EXTERN _ssf
-EXTERN _snp
-EXTERN _bounds
 
 EXTERN scheduler
 
@@ -552,114 +557,143 @@ write_cr3:
 	pop ebp
 	retn
 
-;_div0_hand:				; Handler de excepxin "Divide by zero"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax                  
-;	call _div0                 
-;	mov al,20h			; Envio de EOI generico al PIC
-;	out 20h,al
-;	popf
-;	popa
-;	pop es
-;	pop ds
-;	jmp $
-;	iret
+
+	
+div0_hand:				; Handler de excepxin "Divide by zero"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+
+	call __div0                 
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+
+        iret
+
+bounds_hand:			; Handler de excepcin "BOUND range exceeded"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+
+	call __bounds
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+	
+        iret
+
+gpf_hand:				; Handler de excepcin "General protection exception"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+
+	call __gpf
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+	
+        iret
 ;
-;_bounds_hand:			; Handler de excepcin "BOUND range exceeded"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax
-;	call _bounds
-;	mov	al,20h			; Envio de EOI generico al PIC
-;	out	20h,al
-;	popf
-;	popa
-;	pop es
-;	pop ds
-;	jmp $
-;	iret
+ssf_hand:				; Handler de excepcin "Stack exception"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+               
+	call __ssf
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+	
+        iret
 ;
-;_gpf_hand:				; Handler de excepcin "General protection exception"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov eax, 666666h
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax
-;	call _gpf
-;	mov	al,20h			; Envio de EOI generico al PIC
-;	out	20h,al
-;	popf
-;	popa
-;	pop ax
-;	pop ax
-;	jmp $
-;	iret
-;
-;_ssf_hand:				; Handler de excepcin "Stack exception"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax                  
-;	call _ssf
-;	mov	al,20h			; Envio de EOI generico al PIC
-;	out	20h,al
-;	popf
-;	popa
-;	pop ax
-;	pop ax
-;	jmp $
-;	iret
-;
-;_snp_hand:				; Handler de excepcin "Segment not present"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax
-;	call _snp
-;	mov	al,20h			; Envio de EOI generico al PIC
-;	out	20h,al
-;	popf
-;	popa
-;	pop ax
-;	pop ax
-;	jmp $
-;	iret
-;
-;_invop_hand:				; Handler de excepcin "Invalid opcode"
-;	push ds
-;	push es				; Se salvan los registros
-;	pusha				; Carga de DS y ES con el valor del selector
-;	pushf
-;	mov ax, 10h			; a utilizar.
-;	mov ds, ax
-;	mov es, ax
-;	call _invop
-;	mov	al,20h			; Envio de EOI generico al PIC
-;	out	20h,al
-;	pop ax
-;	popa
-;	pop ax
-;	pop ax
-;	jmp $
-;	iret
+
+invop_hand:				; Handler de excepcin "Invalid opcode"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+
+	call __invop
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+	
+        iret
+
+pgf_hand:				; Handler de excepcin "Page fault"
+        push    ds
+        push    es              ; Se salvan los registros
+        pusha                   ; Carga de DS y ES con el valor del selector
+	push 	dx
+        push	eax
+        mov     ax, 10h			; a utilizar
+	mov     ds, ax
+	mov     es, ax
+
+	call __pgf
+
+	pop	eax
+	mov		al,20h			; Envio de EOI generico al PIC
+	out		20h,al
+	pop		dx
+	popa
+        pop     es
+        pop     ds
+	
+        iret
+
+
+
 
 ; Debug para el BOCHS, detiene la ejecucin.
 ; Para continuar colocar en el BOCHSDBG: set $eax=0

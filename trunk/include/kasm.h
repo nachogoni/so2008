@@ -27,7 +27,20 @@ void mascaraPIC2 (byte mascara);  /* Escribe mascara de PIC2 */
 // Genera un stackFrame para que nuevos procesos puedan ser agregados al scheduler
 int createStackFrame(int (*fn)(int ,int ,char *), void * dire, int ppid, int pid, char *parametros, void * ret);
 
+void 		_reboot(void);
+
+void		div0_hand();
+void		invop_hand();
+void		ssf_hand();
+void		gpf_hand();
+void		bounds_hand();
+void		pgf_hand();
+
+
+
 /* System Calls*/
+
+
 unsigned int read(int fd, void * buf, unsigned int count);
 unsigned int write(int fd, const void * buf, unsigned int count);
 

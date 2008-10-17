@@ -167,6 +167,7 @@ int b(int a,int b,char * c)
 	sleep(2);
 	while(1)
 	{
+
 		sleep(1);
 		tty_set_color(SCREEN_FORE_VIOLET, SCREEN_BACK_BLACK);
 		printf("ppid :%d - %s\n",a,a);
@@ -181,6 +182,8 @@ int c(int a,int b,char * c)
 	sleep(2);
 	while(1)
 	{
+		int i;
+		i = 8 / 0;
 		sleep(1);
 		tty_set_color(SCREEN_FORE_RED, SCREEN_BACK_BLACK);
 		printf("ppid :%d - %s\n",a,a);
@@ -230,4 +233,9 @@ int _kill( int pid, int signal) {
 		default: return 0;
 	}			
 	return 0;	
+}
+
+int killCurrent(void) {
+	_kill(process_vector[process_running].pid,SIGKILL);
+	task_switch();
 }
