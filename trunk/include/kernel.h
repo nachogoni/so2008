@@ -75,4 +75,6 @@ unsigned int __exec_wait(int (*fn)(int ,int ,char *), char * process_name, char 
 
 int __wait(void);
 
+int __set_scheduler(int scheduler_id);
+
 #endif

@@ -46,7 +46,7 @@ unsigned int write(int fd, const void * buf, unsigned int count);
 unsigned int kill(unsigned int pid, int signal);
 unsigned int exec(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
 unsigned int exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
-
+int set_scheduler(int scheduler_id);
 int shm_open(key_t key, size_t size, int flags);
 int shm_close(int shmid);
 void * mmap(int shmid);
