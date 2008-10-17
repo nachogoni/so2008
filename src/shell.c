@@ -266,7 +266,7 @@ static int handle_priority(int ppid, int pid, char * parameters)
 {
 	int i = 0;
 	
-	for (i = 0; i < strlen(parameters) && parameters[i] != ' '; i++)
+	for (i = 0; i < strlen(parameters) && parameters[i] != ' '; i++);
 	
 	set_priority(atoi(parameters),atoi(parameters + i + 1));
 	
