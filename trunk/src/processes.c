@@ -28,7 +28,8 @@ void kernel_return_Function_unblock(void)
 	{
 		if (process_vector[i].pid == process_vector[process_running].ppid)
 		{
-			process_vector[i].status = PROC_READY;
+			if (process_vector[i].status != NONE)
+				process_vector[i].status = PROC_READY;
 			process_vector[i].response = resp;
 			found = 1;
 		}
