@@ -31,6 +31,7 @@ typedef int (* handlerT)(int ppid, int pid, char *);
 static void cleanBuffer(char * buffer, int len);
 static int getCommand(char * buffer, int length, char history[HISTORY_SIZE][BUFFER_SIZE + 1], int count);
 
+static int handle_div0(int ppid, int pid, char * parameters);
 static int handle_help(int ppid, int pid, char * parameters);
 static int handle_clear(int ppid, int pid, char * parameters);
 static int handle_shell(int ppid, int pid, char * parameters);
@@ -72,6 +73,7 @@ command commands_avaiable[] = {
 			{"tron", init_tron, "Help Hugo rescue Hugolina ;O)"},
 //			{"wmplayer", init_wmplayer,"Starts wmplayer and plays StarWars"},
 // 			{"presents", init_presents,"HumiX presentation"},
+			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
@@ -183,6 +185,7 @@ init_shell(int ppid, int pid, char * param)
 		printf("%s>", prompt);
 		tty_set_color(SCREEN_FORE_WHITE, SCREEN_BACK_BLACK);
 		
+
 		cleanBuffer(buffer, BUFFER_SIZE + 1);
 		// Obtiene el comando ingresado por el teclado
 		len = getCommand(buffer, BUFFER_SIZE, history, count);
@@ -318,6 +321,12 @@ static
 int handle_exit(int ppid, int pid, char * parameters)
 {
 	return ppid;
+}
+
+/*handle de dividebyzero */
+static int handle_div0(int ppid, int pid, char *parameters)
+{
+	dividebyzero();
 }
 
 /* handle del process id */

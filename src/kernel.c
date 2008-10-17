@@ -151,6 +151,41 @@ unsigned int __exec_wait(int (*fn)(int ,int ,char *), char * process_name, char 
 unsigned int __kill(int pid, int signal) {
 	return _kill(pid, signal);
 }
+/***************/
+/* EXCEPCIONES */
+/***************/
+
+int __div0 (void) {
+	printf("Divide by Zero Exception");
+	killCurrent();
+
+}
+
+int __pgf (void) {
+	printf("Page Fault Exception");
+	killCurrent();
+	return 0;
+}
+int __invop (void) {
+	printf("Invalid OPcode Exception");
+	killCurrent();
+	return 0;
+}
+int __gpf (void) {
+	printf("General Protection Fault Exception");
+	killCurrent();
+	return 0;
+}
+int __ssf (void) {
+	printf("Stack Segment not Present Exception");
+	killCurrent();
+	return 0;
+}
+int __bounds (void) {
+	printf("Out of Bounds Exception");
+	killCurrent();
+	return 0;
+}
 
 void init(void)
 {
@@ -199,6 +234,17 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	setup_IDT_entry (&idt[0x0c], 0x08, (dword)&int_0c_hand, ACS_INT, 0);
 	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE 80h */
 	setup_IDT_entry (&idt[0x80], 0x08, (dword)&int_80_hand, ACS_INT, 0);
+
+	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE LA EXCEPCION DIVIDE BY 0 */
+	setup_IDT_entry (&idt[0x00], 0x08, (dword)&div0_hand, ACS_INT, 0);
+	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE LA EXCEPCION INVALID OPCODE */
+	setup_IDT_entry (&idt[0x06], 0x08, (dword)&invop_hand, ACS_INT, 0);	
+	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE LA EXCEPCION GENERAL PROTECTION FAULT */
+	setup_IDT_entry (&idt[0x0D], 0x08, (dword)&gpf_hand, ACS_INT, 0);	
+	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE LA EXCEPCION PAGE FAULT */
+	setup_IDT_entry (&idt[0x0E], 0x08, (dword)&pgf_hand, ACS_INT, 0);
+	/* CARGA DE IDT CON LA RUTINA DE ATENCION DE LA EXCEPCION OUT OF BOUNDS */
+	setup_IDT_entry (&idt[0x05], 0x08, (dword)&bounds_hand, ACS_INT, 0);
 
 	/* Carga de IDTR    */
 	idtr.base = 0;
@@ -270,6 +316,7 @@ void kmain(unsigned long infoStruct, unsigned long magicNumber)
 	init();
 	
 	_Sti();
+	
 
 	while(!shutdown_pc && !reboot_pc)
 		asm volatile ("hlt");
