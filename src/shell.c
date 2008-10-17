@@ -71,18 +71,17 @@ command commands_avaiable[] = {
 			{"exit", handle_exit, "exit actual process"},
 			{"pid", handle_pid, "shows actual process id"},
 			{"mem", handle_mem, "shows total memory"},
-			{"loadkey", handle_loadkeys, "loadkey [es|us]: sets or gets the keyboard map"},
+			{"ldkey", handle_loadkeys, "ldkey [es|us]: sets or gets the keyboard map"},
 			{"tron", init_tron, "Help Hugo rescue Hugolina ;O)"},
 			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
 			{"malloc",handle_malloc, "Tries to alloc memory until the systems runs out of it"},
-			{"duplicate",duplicate, "Creates 4 childs sleeping and printing..."},
-			{"scheduler",handle_scheduler, "Set witch scheduler will use..."},
-			{"hangman",hangman,"Hangman game"},
+			{"dupy",duplicate, "Creates 4 childs sleeping and printing..."},
+			{"sched",handle_scheduler, "Set witch scheduler will use..."},
 			{"nros",handle_nros,"secuencia hasta 5000"},
-			{"infinito",handle_infinito,"secuencia infinita"},
+			{"infty",handle_infinito,"secuencia infinita"},
 			{"top",handle_top,"List of processes"},
 			{"top2",handle_top2,"List of processes"},
-			{"priority",handle_priority,"Set priority to a process"},
+			{"nice",handle_priority,"Set priority to a process"},
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
@@ -233,7 +232,7 @@ static int handle_scheduler(int ppid, int pid, char * parameters)
 		printf("\t1. Round Robin with active idle\n");
 		printf("\t2. Round Robin without idle\n");
 		printf("\t3. Round Robin with priority\n");
-		printf("\nUsage: scheduler #\n");
+		printf("\nUsage: sched #\n");
 	}
 	else
 	{
