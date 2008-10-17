@@ -9,24 +9,19 @@
 #include "../include/memory.h"
 #include "../include/shell.h"
 #include "../include/grubInfo.h"
-// #include "../include/drivers/video.h"
 #include "../include/drivers/tty.h"
 #include "../include/drivers/keyboard.h"
-#include "../include/drivers/serial.h"
 #include "processes.h"
 #include "scheduler.h"
 #include "signal.h"
 
 /* Aplicaciones */
 #include "./app/top.h"
-#include "./app/chat.h"
 #include "./app/games.h"
 #include "./app/tron.h"
 #include "./app/malloccer.h"
 #include "./app/duplicate.h"
 #include "./app/excep.h"
-//#include "./app/movie.h"
-// #include "./app/presenta.h"
 
 #define MIN(a,b)	((a) < (b))?(a):(b)
 #define MAX(a,b)	((a) > (b))?(a):(b)
@@ -52,6 +47,7 @@ static int handle_top2(int ppid, int pid, char * parameters);
 static int handle_nros(int ppid, int pid, char * parameters);
 static int handle_infinito(int ppid, int pid, char * parameters);
 static int handle_kill(int ppid, int pid, char * parameters);
+static int handle_priority(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
 static int handle_scheduler(int ppid, int pid, char * parameters);
@@ -74,29 +70,23 @@ command commands_avaiable[] = {
 			{"exit", handle_exit, "exit actual process"},
 			{"pid", handle_pid, "shows actual process id"},
 			{"mem", handle_mem, "shows total memory"},
-			{"chat", init_chat, "starts the chat"},
 			{"loadkey", handle_loadkeys, "loadkey [es|us]: sets or gets the keyboard map"},
 			{"tron", init_tron, "Help Hugo rescue Hugolina ;O)"},
-//			{"wmplayer", init_wmplayer,"Starts wmplayer and plays StarWars"},
-// 			{"presents", init_presents,"HumiX presentation"},
 			{"div0", handle_div0, "Tries to divide by zero and raises an exception"},
 			{"malloc",handle_malloc, "Tries to alloc memory until the systems runs out of it"},
 			{"duplicate",duplicate, "Creates 4 childs sleeping and printing..."},
 			{"scheduler",handle_scheduler, "Set witch scheduler will use..."},
-			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
 			{"infinito",handle_infinito,"secuencia infinita"},
 			{"top",handle_top,"List of processes"},
 			{"top2",handle_top2,"List of processes"},
+			{"priority",handle_priority,"Set priority to a process"},
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
-
-
-
 
 static 
 int handle_sm1(int ppid, int pid, char * parameters)
@@ -200,6 +190,18 @@ int handle_top2(int ppid, int pid, char * parameters)
 static int handle_kill(int ppid, int pid, char * parameters)
 {
 	kill(atoi(parameters),SIGKILL);
+	
+	return 0;	
+}
+
+static int handle_priority(int ppid, int pid, char * parameters)
+{
+	int i = 0;
+	
+	for (i = 0; i < strlen(parameters) && parameters[i] != ' '; i++)
+	
+	printf("%d:%d",atoi(parameters),atoi(parameters + i + 1));
+	set_priority(atoi(parameters),atoi(parameters + i + 1));
 	
 	return 0;	
 }
@@ -531,71 +533,5 @@ int getCommand(char * buffer, int length, char history[HISTORY_SIZE][BUFFER_SIZE
 	}
 	
 	return len;
-}
-
-/* handle de la configuracion del serial */
-static int handle_configSerial(int ppid, int pid, char * parameters)
-{
-	int i = 0;
-
-	printf("= Serial config =\n");
-	
-	printf("Disabling serial interrupt...\n");
-	/* deshabilita la interrupcion del serial */
-	setInterrupt(SERIAL_INT_E_OFF);
-	
-	/* Seteo la cantidad de bits a transmitir por "paquete" */
-	do
-		printf("Set number bit to transmit (5, 6, 7 or 8): ");
-	while((i = getInt()) < 5 || i > 8);
-
-	setBitCount(i);
-	
-	/* Setea la paridad */
-	do
-		printf("Use parity? (1 - yes | 0 - no): ");
-	while((i = getInt()) != 1 && i != 0);
-
-	if (i == 0)
-	{
-		// Sin paridad
-		setParity(SERIAL_PARITY_OFF, SERIAL_PARITY_ODD);
-	}
-	else
-	{
-		// Con paridad -> par? impar?
-		do
-			printf("What parity? (1 - even | 0 - odd): ");
-		while((i = getInt()) != 1 && i != 0);
-	
-		setParity(SERIAL_PARITY_ON, (i == 1)? SERIAL_PARITY_EVEN : SERIAL_PARITY_ODD);
-	}
-
-	/* Setea la velocidad*/
-	do
-	{
-		printf("= Speed =\n");
-		printf("\t0 -> 50 bps\n");
-		printf("\t1 -> 300 bps\n");
-		printf("\t2 -> 1200 bps\n");
-		printf("\t3 -> 2400 bps\n");
-		printf("\t4 -> 4800 bps\n");
-		printf("\t5 -> 9600 bps\n");
-		printf("\t6 -> 19200 bps\n");
-		printf("\t7 -> 38400 bps\n");
-		printf("\t8 -> 57000 bps\n");
-		printf("\t9 -> 115200 bps\n");
-		printf("Select speed to transmit: ");
-	}
-	while((i = getInt()) < 0 || i > 9);
-
-	setbps(i);
-
-	printf("Applying configuration...\n");
-	
-	/* Resetea el driver */
-	doReset();
-
-	return 0;
 }
 

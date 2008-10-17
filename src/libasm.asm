@@ -1,6 +1,6 @@
 
 ;/*SYSTEM CALLS*/
-GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap, kill, set_scheduler
+GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap, kill, set_scheduler, set_priority
 ;/*EXCEPTIONS*/
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 ;/*FUNCTIONS*/
@@ -27,7 +27,7 @@ EXTERN __bounds
 EXTERN __pgf
 
 EXTERN  __write, __read, __exec, __exec_wait, __set_scheduler
-EXTERN  __shm_open, __shm_close, __mmap, __kill
+EXTERN  __shm_open, __shm_close, __mmap, __kill, __set_priority
 
 
 EXTERN scheduler
@@ -211,6 +211,20 @@ _pread:
 	   jmp	 _pend	       	  ; salgo
 
 
+; parametros para setpriority
+; ebx	=	pid
+; ecx	=	priority
+_psetprior:
+	push	ecx		;priority
+	push	ebx		;pid
+
+	call	__set_priority
+
+	pop	ebx
+	pop	ecx
+	jmp	_pend
+
+
 ; parametros para kill
 ; ebx	=	pid
 ; ecx	=	signal
@@ -270,6 +284,8 @@ int_80_hand:
 	   jz _pmmap
 	   cmp eax, 11            ; SET_SCHEDULER = 11
 	   jz _psetschd
+	   cmp eax, 12            ; SET_PRIORITY = 12
+	   jz _psetprior
 
 	   ;si no hay instruccion salgo
 	   jmp _pend
@@ -389,6 +405,29 @@ kill:
 	mov     eax, 2 	    ; pongo el selector en read
 	mov     ebx, [ebp+8]    ; pid
 	mov     ecx, [ebp+12]   ; signal
+
+	int     080h		    ; llamo a int 80
+
+	pop	   ecx		    ; restauro
+	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; set_priority coloca en 
+; - ebx pid 
+; - ecx priority
+set_priority:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+	push    ecx
+
+	mov     eax, 12 	    ; pongo el selector en read
+	mov     ebx, [ebp+8]    ; pid
+	mov     ecx, [ebp+12]   ; priority
 
 	int     080h		    ; llamo a int 80
 

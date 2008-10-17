@@ -57,28 +57,45 @@ unsigned int getNextPID(void)
 
 int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, int tty, void (*ret_fn)(void))
 {
-	if (process_count>=MAX_PROCESS_COUNT || name == NULL)
+	int new = 0, i = 0, found = 0;
+	
+	if (name == NULL)
 		return -1;
 	
-	process_vector[process_count].tty_id = tty;
+	for (i = 0; i < MAX_PROCESS_COUNT && !found; i++)
+	{
+		if (process_vector[i].status == NONE)
+		{
+			found = 1;
+			new = i;
+		}
+	}
 	
-	strcpy(process_vector[process_count].name, name);
+	if (!found)
+		return -1;
+	
+	process_vector[new].tty_id = tty;
+	
+	strcpy(process_vector[new].name, name);
 
-	process_vector[process_count].pid = getNextPID();
-	process_vector[process_count].ppid = getpid();
+	process_vector[new].pid = getNextPID();
+	process_vector[new].ppid = getpid();
 	
-	process_vector[process_count].stack_address = get_free_page() + 0x0FFF;
-	process_vector[process_count].heap_address = get_free_page();
+	process_vector[new].stack_address = get_free_page() + 0x0FFF;
+	process_vector[new].heap_address = get_free_page();
 	
 	/* Inicializa la memoria del proceso*/
-	__init_memory(process_vector[process_count].heap_address, SIZE_PER_PAGE);
+	__init_memory(process_vector[new].heap_address, SIZE_PER_PAGE);
 
-	process_vector[process_count].esp = createStackFrame(fn, process_vector[process_count].stack_address,
-		process_vector[process_count].ppid, process_vector[process_count].pid, parameters, ret_fn);
-	process_vector[process_count].status = PROC_READY;
-	process_vector[process_count].priority = DEFAULT_PRIORITY;
+	process_vector[new].esp = createStackFrame(fn, process_vector[new].stack_address,
+		process_vector[new].ppid, process_vector[new].pid, parameters, ret_fn);
+	process_vector[new].status = PROC_READY;
+	process_vector[new].priority = DEFAULT_PRIORITY;
 	
-	return process_count++;
+	if (process_count < MAX_PROCESS_COUNT)
+		process_count++;
+		
+	return new;
 }
 
 void createIdle(void)
@@ -171,6 +188,23 @@ unsigned int _kill(unsigned int pid, int signal) {
 		default: return 0;
 	}			
 	task_switch();
+	return 0;	
+}
+
+unsigned int set_pid_priority(unsigned int pid, int priority)
+{
+	int i = 0;
+
+	while(process_vector[i].pid != pid && i < process_count)
+	{
+		i++;
+	}
+
+	if  ( i != process_count)
+	{
+		process_vector[i].priority = priority;
+	}
+
 	return 0;	
 }
 

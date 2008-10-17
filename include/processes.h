@@ -11,6 +11,8 @@ void kernel_return_Function_unblock(void);
 
 unsigned int _kill(unsigned int pid, int signal);
 
+unsigned int set_priority(unsigned int pid, int priority);
+
 void sleep(int seconds);
 
 void createIdle(void);
