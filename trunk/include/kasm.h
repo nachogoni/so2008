@@ -43,7 +43,7 @@ void		pgf_hand();
 
 unsigned int read(int fd, void * buf, unsigned int count);
 unsigned int write(int fd, const void * buf, unsigned int count);
-
+unsigned int kill(unsigned int pid, int signal);
 unsigned int exec(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
 unsigned int exec_wait(int (*fn)(int ,int ,char *), char * process_name, char * parameters);
 

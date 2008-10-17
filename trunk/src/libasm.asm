@@ -1,6 +1,6 @@
 
 ;/*SYSTEM CALLS*/
-GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap
+GLOBAL  write, read, exec, exec_wait, shm_open, shm_close, mmap, kill
 ;/*EXCEPTIONS*/
 GLOBAL _invop_hand, _ssf_hand , _snp_hand , _div0_hand , _gpf_hand, _bounds_hand
 ;/*FUNCTIONS*/
@@ -246,6 +246,8 @@ int_80_hand:
 	   jz _pwrite
 	   cmp eax, 1             ; READ = 1
 	   jz _pread
+	   cmp eax, 2             ; KILL = 2
+	   jz _pkill
 	   cmp eax, 5             ; EXEC = 5
 	   jz _pexec
 	   cmp eax, 6             ; EXEC WAIT = 6
@@ -356,6 +358,29 @@ read:
 
 	pop	   edx		    ; restauro
 	pop	   ecx
+	pop	   ebx
+
+	mov     esp, ebp        ; destruye stack frame
+	pop     ebp
+	ret
+
+; kill coloca en 
+; - ebx pid 
+; - ecx signal
+kill:
+	push    ebp             ; arma stack frame
+	mov     ebp, esp
+
+	push    ebx
+	push    ecx
+
+	mov     eax, 2 	    ; pongo el selector en read
+	mov     ebx, [ebp+8]    ; pid
+	mov     ecx, [ebp+12]   ; signal
+
+	int     080h		    ; llamo a int 80
+
+	pop	   ecx		    ; restauro
 	pop	   ebx
 
 	mov     esp, ebp        ; destruye stack frame
@@ -710,6 +735,4 @@ vuelve:	mov     ax, 1
 	pop     bp
         retn
 
-COM1 EQU 3f8h; parametros para kill
-; ebx	=	pid
-; ecx	=	signal
+COM1 EQU 3f8h

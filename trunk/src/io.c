@@ -409,6 +409,23 @@ getInt()
 	return val;
 }
 
+/*MADE IN GUIDO 1976 - 05:28am*/
+int atoi(char * string)
+{
+ int digito, numero = 0, i = 0 ;
+ char c;
+
+ while( (c=string[i++]) != '\n' && c!=0 )
+ {
+  if (c >= '0' && c <= '9')
+   digito = c - '0';
+  else return -1;
+
+  numero = (numero * 10) + digito;
+ }
+
+ return numero;
+}
 
 /* Funciones extraidas de http://www.osdever.net/bkerndev/Docs/whatsleft.htm */
 
