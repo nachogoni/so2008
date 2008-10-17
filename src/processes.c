@@ -200,7 +200,7 @@ unsigned int set_pid_priority(unsigned int pid, int priority)
 
 	if (priority < 1 || priority > 4)
 	{
-		printf("No such process\n");
+		printf("Priority must be a number between 1 and 4\n");
 		return 0;
 	}
 	
