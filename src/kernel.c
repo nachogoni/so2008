@@ -156,33 +156,33 @@ unsigned int __kill(int pid, int signal) {
 /***************/
 
 int __div0 (void) {
-	printf("Divide by Zero Exception");
+	printf("Divide by Zero Exception\n");
 	killCurrent();
 
 }
 
 int __pgf (void) {
-	printf("Page Fault Exception");
+	printf("Page Fault Exception\n");
 	killCurrent();
 	return 0;
 }
 int __invop (void) {
-	printf("Invalid OPcode Exception");
+	printf("Invalid OPcode Exception\n");
 	killCurrent();
 	return 0;
 }
 int __gpf (void) {
-	printf("General Protection Fault Exception");
+	printf("General Protection Fault Exception\n");
 	killCurrent();
 	return 0;
 }
 int __ssf (void) {
-	printf("Stack Segment not Present Exception");
+	printf("Stack Segment not Present Exception\n");
 	killCurrent();
 	return 0;
 }
 int __bounds (void) {
-	printf("Out of Bounds Exception");
+	printf("Out of Bounds Exception\n");
 	killCurrent();
 	return 0;
 }
