@@ -10,7 +10,7 @@ extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
 
-int actual_scheduler = SCH_ROUND_ROBIN_NOT_IDLE;
+int actual_scheduler = SCH_ROUND_ROBIN;
 
 void _set_scheduler(int scheduler_id)
 {
@@ -137,7 +137,8 @@ unsigned int scheduler_roundRobin(unsigned int esp)
 
 unsigned int scheduler_priority_roundRobin(unsigned int esp)
 {
-
+	int new = 0;
+	
 	process_vector[process_running].esp = esp;
 
 	new_timerTick();
@@ -148,23 +149,34 @@ unsigned int scheduler_priority_roundRobin(unsigned int esp)
 		process_vector[process_running].priority = 1;
 	}
 
-
-
 //	if (process_vector[process_running].pid != 1)
 //		printf("%d %s vivio %d / %d\n", process_vector[process_running].pid , process_vector[process_running].name, process_vector[process_running].lived, process_vector[process_running].priority);
 
 	if (process_vector[process_running].lived >= process_vector[process_running].priority
-		|| process_vector[process_running].lived != PROC_READY)
+		|| process_vector[process_running].status != PROC_READY)
 	{
 
 
 		process_vector[process_running].lived = 0;
+		process_vector[process_running].realtime++;
 		// paso al siguiente proceso no bloqueado
 		do
 		{
 			process_running = (process_running + 1) % process_count;
 		}	
 		while (process_vector[process_running].status != PROC_READY);
+
+		if (process_running == 0)
+		{
+			do
+			{
+				new = (new + 1) % process_count;
+			}	
+			while (process_vector[new].status != PROC_READY);
+				
+			if (new)
+				process_running = new;
+		}
 
 		// seteo el tiempo vivido del nuevo proceso en cero
 		process_vector[process_running].lived = 0;
