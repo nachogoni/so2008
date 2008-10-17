@@ -161,7 +161,7 @@ int __div0 (void) {
 }
 
 int __pgf (void) {
-	printf("Page Fault Exception\n");
+	printf("Page Fault\n");
 	killCurrent();
 	return 0;
 }
@@ -171,7 +171,7 @@ int __invop (void) {
 	return 0;
 }
 int __gpf (void) {
-	printf("General Protection Fault Exception\n");
+	printf("General Protection Fault \n");
 	killCurrent();
 	return 0;
 }

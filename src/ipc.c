@@ -154,15 +154,17 @@ __shm_close(int shmid)
    void *mem_addr;
    size_t mem_size;
 
+	printf("shm_close: shmid %d\n",shmid);
    //Backup de la memoria anterior
    __get_memory_addr(&mem_addr, &mem_size);
    //Seteo zona de kernel
    __set_memory_addr((void*)KERNEL_MALLOC_ADDRESS, KERNEL_MALLOC_SIZE);
 
    /* si hay shms armados veo que no exista la key */
-   if (g_ipc.first == NULL)
+   if (g_ipc.first == NULL) {
+	printf("shm_close : existia la key \n");
       return -1;
-
+	}
    /* busco a ver si existe */
    while( (actual != NULL) && (( found = (shmid == actual->shmid)) == 0 ))
    {
@@ -173,6 +175,7 @@ __shm_close(int shmid)
    /* si lo encontro */
    if (found)
    {
+	printf("shm_close : encontre al shm\n");
       /* si es el primero */
       if (ant == NULL)
          g_ipc.first = actual->next;
@@ -181,13 +184,14 @@ __shm_close(int shmid)
          ant->next = actual->next;
          //TODO: si se hace lo de control de paginas, liberarlas
       }
-
+	printf("shm_close : libero al shm\n");
       free(actual);
 
       return 1;
    }
 
    //restauro
+	//esta cayendo aca sin liberar al shared memory, que hay que hacer?
    __set_memory_addr(mem_addr, mem_size);
 
    return 0;

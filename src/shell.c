@@ -111,6 +111,8 @@ int handle_sm1(int ppid, int pid, char * parameters)
     memDir[0] = 'P';
     memDir[1] = '\0';
 
+
+
     shm_close(shmId);
     return 0;
 }
@@ -127,13 +129,19 @@ int handle_sm2(int ppid, int pid, char * parameters)
         return 0;
     }
 
+    printf("shmID = %d\n", shmId);
+
     if ( (memDir = (char *)mmap(shmId)) == NULL )
     {
         printf("sm2\nError @ mmap\n");
         return 0;
     }
 
-    printf("if P == %c\n", *memDir);
+    memDir[0] = 'P';
+
+	//Tira page fault cuando queres imprimir el valor de memdir
+    //printf("if P == %c\n", *memDir);
+
 
     shm_close(shmId);
 
