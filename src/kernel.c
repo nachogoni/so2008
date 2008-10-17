@@ -194,13 +194,13 @@ unsigned int __set_priority(unsigned int pid, int priority)
 
 int __set_scheduler(int scheduler_id)
 {
-	set_scheduler(scheduler_id);
+	_set_scheduler(scheduler_id);
 	return 0;
 }
 
 int sysStat(int ppid, int pid, char * parameters) {
 	while(1) {
-		sleep(5);
+		sleep(1);
 		printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		tty_set_position(0,0);
 		//tty_clear_scr();

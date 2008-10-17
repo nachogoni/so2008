@@ -10,11 +10,11 @@ extern process_t process_vector[MAX_PROCESS_COUNT];
 extern unsigned int process_running;
 extern unsigned int process_count;
 
-int actual_scheduler = SCH_ROUND_ROBIN;
+int actual_scheduler = SCH_ROUND_ROBIN_NOT_IDLE;
 
 void _set_scheduler(int scheduler_id)
 {
-	switch(actual_scheduler)
+	switch(scheduler_id)
 	{
 		case SCH_ROUND_ROBIN:
 			actual_scheduler = SCH_ROUND_ROBIN;
