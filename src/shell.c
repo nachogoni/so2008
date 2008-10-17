@@ -45,6 +45,7 @@ static int handle_mem(int ppid, int pid, char * parameters);
 static int handle_configSerial(int ppid, int pid, char * parameters);
 static int handle_top(int ppid, int pid, char * parameters);
 static int handle_nros(int ppid, int pid, char * parameters);
+static int handle_infinito(int ppid, int pid, char * parameters);
 static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
@@ -80,6 +81,7 @@ command commands_avaiable[] = {
 			{"ser.cfg", handle_configSerial,"Configures serial ports"},
 			{"hangman",hangman,"Hangman game"},
 			{"nros",handle_nros,"secuencia hasta 5000"},
+			{"infinito",handle_infinito,"secuencia infinita"},
 			{"top",handle_top,"List of processes"},
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
@@ -142,6 +144,18 @@ int handle_sm2(int ppid, int pid, char * parameters)
     return 0;
 }
 
+
+/* handle del infinito*/
+static 
+int handle_infinito(int ppid, int pid, char * parameters)
+{
+	int i = 0;
+
+	for(;;i++)
+		printf("%d\n", i);
+
+	return 0;
+}
 
 /* handle del nros */
 static 
