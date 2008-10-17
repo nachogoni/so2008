@@ -2,6 +2,7 @@
 #include "kernel.h"
 #include "tty.h"
 #include "scheduler.h"
+#include "ipc.h"
 #include "strings.h"
 #include "memory.h"
 #include "pagination.h"
@@ -44,7 +45,7 @@ void kernel_return_Function_unblock(void)
 void kernel_return_Function_no_unblock(void)
 {
 	process_vector[process_running].status = NONE;
-	
+
 	task_switch();
 	
 	return;
@@ -95,6 +96,8 @@ int createProcess(int (*fn)(int, int, char *), char * name, char * parameters, i
 	if (process_count < MAX_PROCESS_COUNT)
 		process_count++;
 		
+	addShmPipe(process_vector[new].ppid, process_vector[new].pid);
+	
 	return new;
 }
 

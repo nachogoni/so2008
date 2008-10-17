@@ -18,5 +18,11 @@ __mmap(int shmid);
 int
 __shm_close(int shmid);
 
+void
+addShmPipe(unsigned int ppid, unsigned int pid);
+
+void
+delShmPipe(unsigned int ppid, unsigned int pid);
+
 
 #endif /*IPC_SHM_H_*/

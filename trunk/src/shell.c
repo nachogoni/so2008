@@ -122,7 +122,8 @@ int handle_sm1(int ppid, int pid, char * parameters)
 
     memDir[0] = 'P';
     memDir[1] = '\0';
-    while(aux--);
+    
+    sleep(20);
 
     sem_down("sem1");
 
