@@ -16,6 +16,7 @@ cexe:
 	$(MAKE) clean
 	$(MAKE) all
 	mcopy ./bin/kernel.bin d:boot/ -o
+	$(MAKE) clean
 	bochs -qf bochsrc.txt
 
 qemu:
@@ -23,6 +24,7 @@ qemu:
 	$(MAKE) all	
 	mcopy ./bin/kernel.bin d:boot/ -o
 	cp bin/kernel.bin bin/kernel.s
+	$(MAKE) clean
 	qemu -m 32 -fda img/grubTest.img -no-kqemu
 
 cdebug:
