@@ -21,7 +21,9 @@
 #include "./app/chat.h"
 #include "./app/games.h"
 #include "./app/tron.h"
+#include "./app/malloccer.h"
 #include "./app/duplicate.h"
+#include "./app/excep.h"
 //#include "./app/movie.h"
 // #include "./app/presenta.h"
 
@@ -50,9 +52,6 @@ static int handle_infinito(int ppid, int pid, char * parameters);
 static int handle_kill(int ppid, int pid, char * parameters);
 static int handle_sm1(int ppid, int pid, char * parameters);
 static int handle_sm2(int ppid, int pid, char * parameters);
-static int handle_reboot(int ppid, int pid, char * parameters);
-
-static int next_pid = 1;
 
 #define MAX_LEN_COMMAND		30
 #define MAX_LEN_COMMAND_HELP	500
@@ -292,6 +291,8 @@ int handle_help(int ppid, int pid, char * parameters)
 
 static int handle_malloc(int ppid, int pid, char * parameters) {
 	malloccer();
+	
+	return 0;
 }	
 /* handle del clear screen */
 static 
@@ -347,6 +348,7 @@ int handle_exit(int ppid, int pid, char * parameters)
 static int handle_div0(int ppid, int pid, char *parameters)
 {
 	dividebyzero();
+	return 0;
 }
 
 /* handle del process id */
