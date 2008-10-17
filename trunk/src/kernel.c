@@ -15,6 +15,7 @@
 #include "../include/pagination.h"
 #include "../include/drivers/tty.h"
 #include "../include/processes.h"
+#include "./app/top.h"
 
 #define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
 
@@ -158,7 +159,7 @@ unsigned int __kill(int pid, int signal) {
 int __div0 (void) {
 	printf("Divide by Zero Exception\n");
 	killCurrent();
-
+	return 0;
 }
 
 int __pgf (void) {
@@ -187,6 +188,13 @@ int __bounds (void) {
 	return 0;
 }
 
+int sysStat(int ppid, int pid, char * parameters) {
+	while(1) {
+		sleep(1);
+		printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		topApp(ppid,pid,parameters);
+	}
+}
 void init(void)
 {
 	printf("Initializing multitasking services...\t");
@@ -199,7 +207,7 @@ void init(void)
 	__exec_(&init_shell, "shell", "", 3, &kernel_return_Function_no_unblock);
 	__exec_(&init_shell, "shell", "", 4, &kernel_return_Function_no_unblock);
 	__exec_(&init_shell, "shell", "", 5, &kernel_return_Function_no_unblock);
-	__exec_(&init_shell, "shell", "", 6, &kernel_return_Function_no_unblock);
+	__exec_(&sysStat, "System Status", "", 6, &kernel_return_Function_no_unblock);
 
 //	__exec_(&a, "f_a", "", 6, &kernel_return_Function_no_unblock);
 //	__exec_(&b, "f_b", "", 6, &kernel_return_Function_no_unblock);
