@@ -215,8 +215,17 @@ int _kill( int pid, int signal) {
 //				printf("proceso :%d - %s no matado\n",process_vector[i].pid,process_vector[i].name);
 				i++;
 			}
-			if  ( i != process_count)
+			if  ( i != process_count) {
 				process_vector[i].status = NONE;
+				i = 0;
+				while(i < process_count) {
+					if(process_vector[i].ppid == pid) {
+//						printf("\tmatando al hijo :%d - %s \n",process_vector[i].pid,process_vector[i].name);	
+						_kill(process_vector[i].pid, SIGKILL);
+					}	
+					i++;
+				}				
+			}
 			break;
 		default: return 0;
 	}			
