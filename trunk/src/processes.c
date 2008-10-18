@@ -1,4 +1,3 @@
-#include "kasm.h"
 #include "kernel.h"
 #include "tty.h"
 #include "scheduler.h"
