@@ -86,8 +86,6 @@ command commands_avaiable[] = {
 			{"kill",handle_kill,"Kill a process"},
 			{"sm1",handle_sm1,"Shared Memory 1"},
 			{"sm2",handle_sm2,"Shared Memory 2"},
-			{"sm3",handle_sm2,"Shared Memory 3"},
-			{"n",handle_nothing,"Shared Memory 2"},
 			{"0", NULL, ""}
 			};
 
@@ -216,8 +214,7 @@ int handle_infinito(int ppid, int pid, char * parameters)
 {
 	int i = 0;
 
-	for(;;i++)
-		printf("%d\n", i);
+	while(1);
 
 	return 0;
 }
