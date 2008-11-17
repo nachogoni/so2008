@@ -1,0 +1,2 @@
+_Graf_:	db 	FFh, 80h, FEh, FEh, 80h, F8h, F8h, 80h, E0h, E0h, 80h, F0h, F0h, 80h, FCh, FCh, 80h, F8h, F8h, 80h, FEh, FEh, 80h, FFh, FFh, 80h
+_Etiq1_:	db 	78h, 24h, 22h, 22h, 22h, 24h, 78h, 00h
