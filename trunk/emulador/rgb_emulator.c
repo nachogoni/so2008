@@ -44,7 +44,10 @@ GC gc;
 
 /* Serial functions */
 
-/* http://www.easysw.com/~mike/serial/serial.html */
+/* 
+http://www.easysw.com/~mike/serial/serial.html 
+http://tldp.org/HOWTO/Serial-Programming-HOWTO/x115.html
+*/
 
 int open_port(char * port, int baudrate)
 {
