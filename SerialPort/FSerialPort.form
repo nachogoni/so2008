@@ -1,0 +1,42 @@
+# Gambas Form File 2.0
+
+{ Form Form
+  MoveScaled(70,26.5714,56,58)
+  Text = ("Serial Port")
+  { TextLabel1 TextLabel
+    MoveScaled(1,2,12,3)
+    Text = ("Port Name :")
+  }
+  { TxtPort TextBox
+    MoveScaled(13,2,31,3)
+    Text = ("/dev/ttyS0")
+  }
+  { Button1 Button
+    MoveScaled(45,2,10,3)
+    Text = ("Open")
+  }
+  { TxtSend TextBox
+    MoveScaled(1,9,43,3)
+    Text = ("")
+  }
+  { TextLabel6 TextLabel
+    MoveScaled(1,6,54,3)
+    Foreground = &H030303&
+    Text = ("Write data then press \"Send\"")
+    Alignment = Align.Center
+  }
+  { Button2 Button
+    MoveScaled(45,9,10,3)
+    Text = ("Send")
+  }
+  { TextArea1 TextArea
+    MoveScaled(1,13,54,44)
+    Text = ("")
+  }
+  { SPort #SerialPort
+    #X = 273
+    #Y = 0
+    FlowControl = 0
+    Speed = 115200
+  }
+}
