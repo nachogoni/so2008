@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{648A5603-2C6E-101B-82B6-000000000014}#1.1#0"; "MSCOMM32.OCX"
 Begin VB.Form Form1 
    BackColor       =   &H00000000&
    Caption         =   "Form1"
@@ -11,6 +12,30 @@ Begin VB.Form Form1
    ScaleHeight     =   11985
    ScaleWidth      =   17970
    StartUpPosition =   1  'CenterOwner
+   Begin VB.TextBox txt 
+      Height          =   4455
+      Left            =   9720
+      TabIndex        =   39
+      Top             =   6840
+      Width           =   7455
+   End
+   Begin MSCommLib.MSComm comm 
+      Left            =   120
+      Top             =   2040
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      _Version        =   393216
+      DTREnable       =   -1  'True
+      BaudRate        =   115200
+   End
+   Begin VB.CommandButton Command4 
+      Caption         =   "Enviar"
+      Height          =   495
+      Left            =   120
+      TabIndex        =   38
+      Top             =   1440
+      Width           =   1215
+   End
    Begin VB.VScrollBar VScroll1 
       Height          =   6735
       LargeChange     =   50
@@ -465,7 +490,7 @@ Begin VB.Form Form1
       Height          =   495
       Left            =   120
       TabIndex        =   3
-      Top             =   2640
+      Top             =   840
       Width           =   1215
    End
    Begin VB.PictureBox pic2 
@@ -519,6 +544,8 @@ Dim colu As Integer
 Dim sentido As Integer
 Dim matriz() As Integer
 
+Dim fleds() As Integer
+
 Private Sub Command1_Click()
     cd.ShowOpen
     If cd.FileName <> "" Then
@@ -527,8 +554,6 @@ Private Sub Command1_Click()
 End Sub
 
 Private Sub Command2_Click()
-
-
     ii = 0
     iii = 1
     pic2.Cls
@@ -542,18 +567,22 @@ Private Sub Command2_Click()
             col = pic1.Point(i, j)
             r = col Mod 256
             g = (col / 256) Mod 256
-            B = ((col / 256) / 256) Mod 256
-            gg = 0.3 * r + 0.59 * g + 0.11 * B
-            gg = r + g + B
+            b = ((col / 256) / 256) Mod 256
+            gg = 0.3 * r + 0.59 * g + 0.11 * b
+            gg = r + g + b
             If gg > 127 Then
                 gg = 255
             Else
                 gg = 0
             End If
-            pic2.Line (ii, jj)-(ii + 1, jj + 1), RGB(gg, gg, gg), BF
-'            pic2.Line (ii, jj)-(ii + 1, jj + 1), RGB(r, g, B), BF
+'            pic2.Line (ii, jj)-(ii + 1, jj + 1), RGB(gg, gg, gg), BF
+            pic2.Line (ii, jj)-(ii + 1, jj + 1), RGB(r, g, b), BF
             
             matriz(iii, jjj) = gg
+
+            fleds(iii, jjj, 1) = r
+            fleds(iii, jjj, 2) = g
+            fleds(iii, jjj, 3) = b
 
         Next
         ii = ii + espaciado
@@ -569,13 +598,56 @@ Private Sub Command3_Click()
     pic2.Visible = Not Timer1.Enabled
 End Sub
 
+Private Sub Command4_Click()
+    If Not comm.PortOpen Then
+        comm.PortOpen = True
+    End If
+    txt.Text = ""
+    comm.Output = "R"
+    For i = 1 To ancho
+        r = 0
+        g = 0
+        b = 0
+        For j = alto To 1 Step -1
+            If fleds(i, j, 1) > 127 Then
+                '1
+                r = r * 2 + 1
+            Else
+                '0
+                r = r * 2
+            End If
+            If fleds(i, j, 2) > 127 Then
+                '1
+                g = g * 2 + 1
+            Else
+                '0
+                g = g * 2
+            End If
+            If fleds(i, j, 3) > 127 Then
+                '1
+                b = b * 2 + 1
+            Else
+                '0
+                b = b * 2
+            End If
+        Next j
+        comm.Output = Chr(r) & Chr(g) & Chr(b)
+        txt.Text = txt.Text & Chr(r) & Chr(g) & Chr(b)
+    Next i
+End Sub
+
 Private Sub Form_Load()
-    ancho = 32
-    alto = 32
+    ancho = 8
+    alto = 8
     espaciado = 6
     colu = 1
     sentido = 1
     ReDim matriz(ancho, alto) As Integer
+    ReDim fleds(ancho, alto, 3) As Integer
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+    comm.PortOpen = False
 End Sub
 
 Private Sub Timer1_Timer()
