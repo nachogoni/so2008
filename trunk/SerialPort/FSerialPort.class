@@ -1,0 +1,36 @@
+' Gambas class file
+PUBLIC SUB Form_Close()
+  IF Sport.Status = Net.Active THEN CLOSE Sport
+END
+
+PUBLIC SUB Button1_Click()
+  IF Sport.Status = Net.Active THEN
+    CLOSE Sport
+    Button1.Text = "Open"
+  ELSE
+    Sport.PortName = TxtPort.Text
+    Sport.Speed = "115200"
+    Sport.Parity = "0"
+    Sport.DataBits = "8"
+    Sport.StopBits = "1"
+    Sport.FlowControl = "0"
+    Sport.Open()
+    TextArea1.Text = "Port Opened : " & Sport.PortName & " Settings : " & Sport.Speed & "," & Sport.Parity & "," & Sport.DataBits & "," & Sport.StopBits & Chr(13) & Chr(10)
+    Button1.Text = "Close"
+  END IF
+END
+
+PUBLIC SUB SPort_Read()
+  DIM s AS String
+  READ #Sport, s, Lof(Sport) 
+  TextArea1.Text = TextArea1.Text & s
+END
+
+PUBLIC SUB Button2_Click()
+  IF Sport.Status = Net.Inactive THEN
+    Message("Open port first!")
+  ELSE
+    'WRITE #Sport,TxtSend.Text & Chr(13) & Chr(10), txtSend.Length + 2
+    PRINT #Sport, txtSend.Text;
+  END IF
+END
