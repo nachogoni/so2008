@@ -1,6 +1,9 @@
 [Breakpoints]
 Count=0
 
+[DebugWindow]
+Count=0
+
 [FFind]
 SearchIn="Module"
 CaseSensitive=False
@@ -9,5 +12,11 @@ SearchComment=False
 SearchString=True
 
 [OpenFile]
+File[1]="FSerialPort.form"
+File[2]="FSerialPort.class:38.16"
+Active=2
+Count=2
+
+[Watches]
 Count=0
 

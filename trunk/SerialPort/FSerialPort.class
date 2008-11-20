@@ -34,3 +34,7 @@ PUBLIC SUB Button2_Click()
     PRINT #Sport, txtSend.Text;
   END IF
 END
+
+PUBLIC SUB pixel_MouseDown()
+  pixel.Background = 
+END

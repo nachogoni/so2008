@@ -117,9 +117,7 @@ void regenerate(void)
 {
 	int i = 0, j = 0;
 
-	randomize();
-
-        // draw the led matrix
+    // draw the led matrix
 	for(i = 0; i < HEIGHT; i++) 
 	{
         	for(j = 0; j < WIDTH; j++)
@@ -140,8 +138,6 @@ void resize(void)
 void redraw(void)
 {
 	int i = 0, j = 0, c = 0;
-
-	randomize();
 
         // draw the led matrix
 	for(i = 0; i < HEIGHT; i++) 
@@ -253,6 +249,8 @@ int main(void)
 		close_port(fd);
 		exit(EXIT_FAILURE);
 	}
+
+	randomize();
 
 	redraw();
 
