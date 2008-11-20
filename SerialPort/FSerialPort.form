@@ -1,7 +1,7 @@
 # Gambas Form File 2.0
 
 { Form Form
-  MoveScaled(70,26.5714,56,58)
+  MoveScaled(70,26.4286,56,58)
   Text = ("Serial Port")
   { TextLabel1 TextLabel
     MoveScaled(1,2,12,3)
@@ -30,13 +30,16 @@
     Text = ("Send")
   }
   { TextArea1 TextArea
-    MoveScaled(1,13,54,44)
+    MoveScaled(1,13,54,8)
     Text = ("")
   }
   { SPort #SerialPort
     #X = 273
     #Y = 0
-    FlowControl = 0
+    FlowControl = SerialPort.None
     Speed = 115200
+  }
+  { pixel PictureBox
+    MoveScaled(2,23,2,2)
   }
 }
