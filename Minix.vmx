@@ -1,0 +1,43 @@
+#!/usr/bin/vmware
+config.version = "8"
+virtualHW.version = "4"
+memsize = "16"
+ide0:0.present = "TRUE"
+ide0:0.fileName = "Main.vmdk"
+ide0:0.mode = "independent-persistent"
+ide0:0.deviceType = "disk"
+ide1:0.present = "FALSE"
+ide1:0.fileName = "auto detect"
+ide1:0.deviceType = "cdrom-raw"
+floppy0.fileName = "fd0.flp"
+sound.present = "FALSE"
+displayName = "Minix"
+guestOS = "other"
+priority.grabbed = "normal"
+priority.ungrabbed = "normal"
+
+ide0:1.present = "FALSE"
+ide0:1.fileName = "Test0.vmdk"
+ide0:1.mode = "independent-persistent"
+ide0:1.deviceType = "plainDisk"
+floppy0.fileType = "file"
+floppy1.present = "FALSE"
+floppy1.fileType = "file"
+floppy1.fileName = "fd1"
+usb.present = "FALSE"
+
+serial0.present = "TRUE"
+serial0.fileName = "/dev/ttyS0"
+serial0.hardwareFlowControll = "FALSE"
+serial0.autodetect = "TRUE"
+
+uuid.location = "56 4d bc 97 37 3b 41 c8-a5 60 1a d8 e3 28 c7 2b"
+
+uuid.bios = "56 4d bc 97 37 3b 41 c8-a5 60 1a d8 e3 28 c7 2b"
+
+ide0:0.redo = ""
+nvram = "Minix.nvram"
+
+uuid.action = "create"
+
+tools.remindInstall = "TRUE"
