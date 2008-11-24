@@ -3,7 +3,7 @@
 #include <16F877.h>
 #fuses HS,NOWDT,NOPROTECT,NOLVP,NOBROWNOUT,NOPUT
 #use delay(clock=20000000, restart_wdt)
-#use rs232(baud=4800, xmit=PIN_C6, rcv=PIN_C7)
+#use rs232(baud=115200, xmit=PIN_C6, rcv=PIN_C7)
 
 /****** DEFINITIONS ******/
 typedef enum {B1200 = 0, B2400, B4800, B9600, B19200, 
@@ -18,21 +18,23 @@ typedef enum {SCROLL_NONE = 0, SCROLL_RIGHT, SCROLL_LEFT,
 #define _PONG					_COMMAND_BASE + 'A'
 #define _SET_SCROLL_FREQ		_COMMAND_BASE + 'B'
 #define _SET_UART_SPEED			_COMMAND_BASE + 'C'
-#define _START_SCROLL			_COMMAND_BASE + 'D'
-#define _STOP_SCROLL			_COMMAND_BASE + 'E'
 #define _GET_SCREEN				_COMMAND_BASE + 'F'
 #define _SET_SCREEN				_COMMAND_BASE + 'G'
-#define _SCROLL_DOWN_CARRY		_COMMAND_BASE + 'H'
-#define _SCROLL_DOWN			_COMMAND_BASE + 'I'
-#define _SCROLL_UP_CARRY		_COMMAND_BASE + 'J'
-#define _SCROLL_UP				_COMMAND_BASE + 'K'
-#define _SCROLL_LEFT_CARRY		_COMMAND_BASE + 'L'
-#define _SCROLL_LEFT			_COMMAND_BASE + 'M'
-#define _SCROLL_RIGHT_CARRY		_COMMAND_BASE + 'N'
-#define _SCROLL_RIGHT			_COMMAND_BASE + 'O'
 #define _CLEAR					_COMMAND_BASE + 'P'
 #define _GET_COL				_COMMAND_BASE + 'Q'
 #define _SET_COL				_COMMAND_BASE + 'R'
+
+#define _SCROLL_DOWN_CARRY		0
+#define _SCROLL_DOWN			1
+#define _SCROLL_UP_CARRY		2
+#define _SCROLL_UP				3
+#define _SCROLL_LEFT_CARRY		4
+#define _SCROLL_LEFT			5
+#define _SCROLL_RIGHT_CARRY		6
+#define _SCROLL_RIGHT			7
+#define _START_SCROLL			8
+#define _STOP_SCROLL			9
+
 
 #define PARAM_SET_SCROLL_FREQ	_COMMAND_BASE + 1
 #define PARAM_SET_UART_SPEED	_COMMAND_BASE + 2
@@ -128,6 +130,7 @@ byte actual_col = 0;
 byte buffer[SCREEN];
 byte buffer_idx = 0;
 byte status = _COMMAND_BASE;
+byte column = 0;
 
 /* INTERRUPT */
 #INT_RDA
@@ -138,7 +141,92 @@ void recv_rs232(void)
 	LINK_ENA
 	recv = getc();
 
-	if (status == 0)
+	if (status == 0x01)
+	{
+		status = 0x02;
+		matrix[column * 3] = recv;
+	}
+	else if (status == 0x02)
+	{
+		status = 0x03;
+		matrix[column * 3 + 1] = recv;
+	}
+	else if (status == 0x03)
+	{
+		status = 0x00;
+		matrix[column * 3 + 2] = recv;
+	}
+	else if (status == 0)
+	{
+		// SET COLUMN (0100 ABCD) + R + G + B
+		if ((recv & 0xF0) == 0x40)
+		{
+			column = recv & 0x0F;
+			status = 0x01;
+		}
+		// CLEAR SCREEN (0000 0000)
+		if (recv == 0x00)
+			clearScreen();
+		// GET SCREEN (0101 1010)
+		if (recv == 0x5A)
+			getScreen();
+		// SET UART SPEED (0000 1ABC)
+		if ((recv & 0xF8) == 0x08)
+			setUARTSpeed(recv & 0x07);
+		// SET SCROLL FREQ (0010 ABCD)
+		if ((recv & 0xF0) == 0x20)
+			setScrollFreq(recv & 0x0F);
+		// SCROLL (0001 ABCD)
+		if ((recv & 0xF0) == 0x10)
+		{
+			switch (recv & 0x0F)
+			{
+				case _SCROLL_DOWN_CARRY:
+					scroll_type = SCROLL_DOWN_CARRY;
+					startScroll();
+					break;
+				case _SCROLL_DOWN:
+					scroll_type = SCROLL_DOWN;
+					startScroll();
+					break;
+				case _SCROLL_UP_CARRY:
+					scroll_type = SCROLL_UP_CARRY;
+					startScroll();
+					break;
+				case _SCROLL_UP:
+					scroll_type = SCROLL_UP;
+					startScroll();
+					break;
+				case _SCROLL_LEFT_CARRY:
+					scroll_type = SCROLL_LEFT_CARRY;
+					startScroll();
+					break;
+				case _SCROLL_LEFT:
+					scroll_type = SCROLL_LEFT;
+					startScroll();
+					break;
+				case _SCROLL_RIGHT_CARRY:
+					scroll_type = SCROLL_RIGHT_CARRY;
+					startScroll();
+					break;
+				case _SCROLL_RIGHT:
+					scroll_type = SCROLL_RIGHT;
+					startScroll();
+					break;
+				case _START_SCROLL:
+					startScroll();
+					break;
+				case _STOP_SCROLL:
+					stopScroll();
+					break;
+				default:
+					stopScroll();
+					break;
+			}
+		}
+	}
+
+/*	if (status == 0)
 	{
 		// Es un comando
 		switch (recv)
@@ -148,13 +236,6 @@ void recv_rs232(void)
 				status = PARAM_SET_SCREEN;
 				buffer_idx = 0;
 				break;
-			// 1 parameter left
-			case _SET_SCROLL_FREQ:
-				status = PARAM_SET_SCROLL_FREQ;
-				break;
-			case _SET_UART_SPEED:
-				status = PARAM_SET_UART_SPEED;
-				break;
 			case _SET_COL:
 				status = PARAM_SET_COL;
 				break;
@@ -162,49 +243,8 @@ void recv_rs232(void)
 			case _PONG:
 				pong();
 				break;
-			case _START_SCROLL:
-				startScroll();
-				break;
-			case _STOP_SCROLL:
-				stopScroll();
-				break;
 			case _GET_SCREEN:
 				getScreen();
-				break;
-			case _SCROLL_DOWN_CARRY:
-				scroll_type = SCROLL_DOWN_CARRY;
-				startScroll();
-				break;
-			case _SCROLL_DOWN:
-				scroll_type = SCROLL_DOWN;
-				startScroll();
-				break;
-			case _SCROLL_UP_CARRY:
-				scroll_type = SCROLL_UP_CARRY;
-				startScroll();
-				break;
-			case _SCROLL_UP:
-				scroll_type = SCROLL_UP;
-				startScroll();
-				break;
-			case _SCROLL_LEFT_CARRY:
-				scroll_type = SCROLL_LEFT_CARRY;
-				startScroll();
-				break;
-			case _SCROLL_LEFT:
-				scroll_type = SCROLL_LEFT;
-				startScroll();
-				break;
-			case _SCROLL_RIGHT_CARRY:
-				scroll_type = SCROLL_RIGHT_CARRY;
-				startScroll();
-				break;
-			case _SCROLL_RIGHT:
-				scroll_type = SCROLL_RIGHT;
-				startScroll();
-				break;
-			case _CLEAR:
-				clearScreen();
 				break;
 			case _GET_COL:
 				get_col();
@@ -212,20 +252,6 @@ void recv_rs232(void)
 			default:
 				break;
 		}
-	}
-	else if (PARAM_SET_SCROLL_FREQ == status)
-	{
-		// Freq @ recv
-		if ((recv >= 0) && (recv <= 16)) 
-			setScrollFreq(recv);
-		status = _COMMAND_BASE;
-	}
-	else if (PARAM_SET_UART_SPEED == status)
-	{
-		// Speed @ recv
-		if ((recv >= B1200) && (recv <= B115200)) 
-			setUARTSpeed(recv);
-		status = _COMMAND_BASE;
 	}
 	else if (PARAM_SET_SCREEN == status)
 	{
@@ -240,19 +266,7 @@ void recv_rs232(void)
 		else
 			buffer[buffer_idx++] = recv;
 	}
-	else if (PARAM_SET_COL == status)
-	{
-		// <column @ recv
-		if ((recv >= 0) && (recv < SCREEN_WIDTH)) 
-			set_col(recv);
-		status = _COMMAND_BASE;
-	}/*
-	else
-	{
-		// Es un dato
-		idx %= SCREEN;
-		matrix[idx++] = recv;
-	}*/
+*/
 	//enable_interrupts(GLOBAL);
 	return;
 }
@@ -261,7 +275,7 @@ void recv_rs232(void)
 void clock(void)
 {
 	LINK_DIS
-
+/*
 	if(0 == (--int_ping_count))
 	{
 		ping();
@@ -272,7 +286,7 @@ void clock(void)
 			reset_cpu();
 		}
 	}
-
+*/
 	if((scroll == ENABLED) && (0 == (--int_count)))
 	{
 		switch (scroll_type)
