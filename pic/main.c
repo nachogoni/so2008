@@ -236,18 +236,9 @@ void recv_rs232(void)
 				status = PARAM_SET_SCREEN;
 				buffer_idx = 0;
 				break;
-			case _SET_COL:
-				status = PARAM_SET_COL;
-				break;
 			// No parameters
 			case _PONG:
 				pong();
-				break;
-			case _GET_SCREEN:
-				getScreen();
-				break;
-			case _GET_COL:
-				get_col();
 				break;
 			default:
 				break;
