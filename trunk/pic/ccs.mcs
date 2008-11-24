@@ -5,7 +5,7 @@ Version=1.0
 Location=main.ESYM
 Folder=Intermediary
 [File001]
-Location=D:\Escritorio\minix\pic\main.o
+Location=D:\Mis Documentos\pic\main.o
 Folder=Intermediary
 [File002]
 Location=main.HEX
