@@ -35,6 +35,21 @@ PUBLIC SUB Button2_Click()
   END IF
 END
 
-PUBLIC SUB pixel_MouseDown()
-  pixel.Background = 
+
+PUBLIC SUB Button3_Click()
+  IF Sport.Status = Net.Inactive THEN
+    Message("Open port first!")
+  ELSE
+    'WRITE #Sport,TxtSend.Text & Chr(13) & Chr(10), txtSend.Length + 2
+    PRINT #Sport, Mid(txtSend2.Text, 1, 1);
+  END IF
+END
+
+PUBLIC SUB Button4_Click()
+  IF Sport.Status = Net.Inactive THEN
+    Message("Open port first!")
+  ELSE
+    'WRITE #Sport,TxtSend.Text & Chr(13) & Chr(10), txtSend.Length + 2
+    PRINT #Sport, Chr(txtSend3.Text);
+  END IF
 END

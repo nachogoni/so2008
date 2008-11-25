@@ -14,26 +14,26 @@ msgstr ""
 msgid "Serial port example"
 msgstr ""
 
-#: FSerialPort.class:55
+#: FSerialPort.class:78
 msgid "Serial Port"
 msgstr ""
 
-#: FSerialPort.class:59
+#: FSerialPort.class:82
 msgid "Port Name :"
 msgstr ""
 
-#: FSerialPort.class:64
+#: FSerialPort.class:87
 msgid "/dev/ttyS0"
 msgstr ""
 
-#: FSerialPort.class:69
+#: FSerialPort.class:92
 msgid "Open"
 msgstr ""
 
-#: FSerialPort.class:80
+#: FSerialPort.class:103
 msgid "Write data then press \"Send\""
 msgstr ""
 
-#: FSerialPort.class:86
+#: FSerialPort.class:109
 msgid "Send"
 msgstr ""
