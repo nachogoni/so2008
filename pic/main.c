@@ -1,4 +1,4 @@
-#define _VERSION_ "0.48"
+#define _VERSION_ "0.52"
 
 #include <16F877.h>
 #fuses HS,NOWDT,NOPROTECT,NOLVP,NOBROWNOUT,NOPUT
@@ -65,6 +65,8 @@ typedef enum {SCROLL_NONE = 0, SCROLL_RIGHT, SCROLL_LEFT,
 #define COLOR_COUNT			3
 #define SCREEN				(COLOR_COUNT * SCREEN_WIDTH)
 
+#define SET_ACTUAL_COLUMN(r,g,b) matrix[(actual_col * 3)]=r;matrix[(actual_col * 3) + 1]=g;matrix[(actual_col * 3) + 2]=b;
+
 /* TIMER */
 // 76 && 256 -> 1Hz
 #define DEFAULT_TIMER_COUNT	76
@@ -98,24 +100,10 @@ void setUARTSpeed(byte speed);
 void setScrollFreq(byte freq);
 void ping(void);
 void pong(void);
+void showSplashScreen(void);
 
 /* TIMER */
-byte matrix[SCREEN] = {	0x00, 0x00, 0xFF,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00,
-						0x00, 0x00, 0x00};
+byte matrix[SCREEN];
 
 /****** IMPLEMENTATION ******/
 byte timer_div = DEFAULT_TIMER_DIV;
@@ -170,6 +158,9 @@ void recv_rs232(void)
 		// GET SCREEN (0101 1010)
 		if (recv == 0x5A)
 			getScreen();
+		// PONG RECV (0111 1110)
+		if (recv == 0x7E)
+			pong();
 		// SET UART SPEED (0000 1ABC)
 		if ((recv & 0xF8) == 0x08)
 			setUARTSpeed(recv & 0x07);
@@ -266,7 +257,7 @@ void recv_rs232(void)
 void clock(void)
 {
 	LINK_DIS
-/*
+
 	if(0 == (--int_ping_count))
 	{
 		ping();
@@ -277,7 +268,7 @@ void clock(void)
 			reset_cpu();
 		}
 	}
-*/
+
 	if((scroll == ENABLED) && (0 == (--int_count)))
 	{
 		switch (scroll_type)
@@ -314,6 +305,26 @@ void clock(void)
 	}
 }
 
+void showScreen(void)
+{
+	int i;
+	set_col(0);
+	actual_col = 0;
+	for (i = 0; i < SCREEN; i+=3)
+	{
+		COL_DIS
+		set_red(matrix[i]);
+		delay_ms(SET_74573_TIME);
+		set_green(matrix[i+1]);
+		delay_ms(SET_74573_TIME);
+		set_blue(matrix[i+2]);
+		delay_ms(SET_74573_TIME);
+		set_col(actual_col++);
+//delay_ms(1000);
+	}
+	return;
+}
+
 /* MAIN */
 void main(void)
 {
@@ -329,7 +340,7 @@ void main(void)
 	output_d(0x00);
 
 	for (i = 0; i < SCREEN; i++)
-		buffer[i] = 0;
+		matrix[i] = 0;
 
 	status = 0; //means waiting for a command
 	// scroll?
@@ -351,24 +362,13 @@ void main(void)
 
 	printf("\r\nInitializing Fleds (ver %s)\r\n", _VERSION_);
 
-
 	clear();
 
-	set_col(0);
+	showSplashScreen();
+
 	while(1)
 	{
-		actual_col = 0;
-		for (i = 0; i < SCREEN; i+=3)
-		{
-			COL_DIS
-			set_red(matrix[i]);
-			delay_ms(SET_74573_TIME);
-			set_green(matrix[i+1]);
-			delay_ms(SET_74573_TIME);
-			set_blue(matrix[i+2]);
-			delay_ms(SET_74573_TIME);
-			set_col(actual_col++);
-		}
+		showScreen();
 		if (0 == alive)
 			STATUS_ENA
 		if (128 == alive++)
@@ -761,5 +761,42 @@ void pong(void)
 	// do not do reset!
 	do_reset = ping_count;
 
+	return;
+}
+
+void showSplashScreen(void)
+{
+	actual_col = 0;
+	SET_ACTUAL_COLUMN(0x3F, 0x0, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x5, 0x0, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x1, 0x0, 0xF0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x0, 0x80);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x3E, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x2A, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x0, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0xF0, 0xF0, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x90, 0x90, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x60, 0x60, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x4, 0x4);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x2A, 0x2A);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x2A, 0x2A);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x10, 0x10);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0x0, 0x0, 0x0);
+	set_col(actual_col++);
+	SET_ACTUAL_COLUMN(0xBC, 0x0, 0xBC);
 	return;
 }
