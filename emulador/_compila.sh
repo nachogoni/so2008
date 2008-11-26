@@ -1,1 +1,1 @@
-gcc -g -lX11 rgb_emulator.c -o rgb_emu
+gcc -g -lX11 -lpthread rgb_emulator.c -o rgb_emu
