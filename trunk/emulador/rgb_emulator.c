@@ -9,6 +9,10 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <pthread.h>
 
 #define		FAILED		0
 #define		OK		FAILED + 1
@@ -28,19 +32,21 @@
 #define		BLUE		255
 
 int matrix[HEIGHT][WIDTH] = {
-	{RED,	GREEN,	RED,	RED,	BLUE,	RED,	RED,	RED,	BLUE,	RED,	GREEN,	BLUE,	RED,	GREEN,	RED,	GREEN},
-	{GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	BLUE,	RED,	BLUE,	RED,	RED,	GREEN,	RED,	GREEN,	RED},
-	{RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	RED,	RED,	BLUE,	GREEN,	RED,	GREEN,	RED,	GREEN},
-	{BLUE,	RED,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE,	RED,	BLUE,	GREEN,	BLUE,	GREEN,	RED,	RED,	BLUE},
-	{RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE,	RED},
-	{BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE},
-	{RED,	BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	RED,	RED,	BLUE,	GREEN},
-	{GREEN,	RED,	BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	BLUE,	RED,	BLUE}
-	};
+{RED,	GREEN,	RED,	RED,	BLUE,	RED,	RED,	RED,	BLUE,	RED,	GREEN,	BLUE,	RED,	GREEN,	RED,	GREEN},
+{GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	BLUE,	RED,	BLUE,	RED,	RED,	GREEN,	RED,	GREEN,	RED},
+{RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	RED,	RED,	BLUE,	GREEN,	RED,	GREEN,	RED,	GREEN},
+{BLUE,	RED,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE,	RED,	BLUE,	GREEN,	BLUE,	GREEN,	RED,	RED,	BLUE},
+{RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE,	RED},
+{BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	BLUE,	RED,	BLUE},
+{RED,	BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	RED,	RED,	BLUE,	GREEN},
+{GREEN,	RED,	BLUE,	RED,	BLUE,	RED,	GREEN,	RED,	GREEN,	RED,	RED,	BLUE,	RED,	BLUE,	RED,	BLUE}
+};
 
 Window win;
 Display * display;
 GC gc;
+int go_out = 0;
+int fd = -1;
 
 /* Serial functions */
 
@@ -145,7 +151,8 @@ void redraw(void)
         	for(j = 0; j < WIDTH; j++)
 		{
 			XSetForeground(display, gc, matrix[i][j]);
-			XFillArc(display, win, gc, j * LED_X_DIF + LED_WIDTH, i * LED_Y_DIF + LED_HEIGHT, LED_WIDTH, LED_HEIGHT, 0 * 64, 360 * 64);
+			XFillArc(display, win, gc, j * LED_X_DIF + LED_WIDTH, i * LED_Y_DIF + LED_HEIGHT, 
+				 LED_WIDTH, LED_HEIGHT, 0 * 64, 360 * 64);
 	        }
 	}
 
@@ -236,17 +243,61 @@ void destroyWindow(void)
 	return;
 }
 
-int main(void)
+void * fn_draw_screen(void * params)
 {
 	XEvent new_event;
-	int quit = 0, fd = -1;
+	
+	while (!go_out)
+	{
+		XNextEvent(display, &new_event);
+		switch (new_event.type)
+		{
+			case DestroyNotify:
+					go_out = 1;
+					break;
+			case Expose:
+					redraw();
+					break;
+			case ButtonPress:
+					regenerate();
+					redraw();
+					break;
+			case ConfigureNotify:
+					resize();
+					break;
+			default:
+				break;
+		}
+	}
+	return;
+}
 
-	if ((fd = open_port("/dev/ttyS0", B9600)) == -1)
+int main(int argc, char * argv[])
+{
+	int attempts = 10, i, color;
+	char c, rgb[3];
+	pthread_t pid;
+	pthread_attr_t attr;
+	
+	if (argc != 2)
+	{
+		printf("Usage:\t%s <input_file_name>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	
+	fd = -1;
+	
+	while (--attempts && ((fd = open(argv[1], O_RDONLY)) == -1))
+	{
+		printf("Opening input file %d, %d attempts left\n", argv[1], attempts);
+	}
+	
+	if (attempts == 0 && ((fd = open(argv[1], O_RDONLY)) == -1))
 		exit(EXIT_FAILURE);
 
 	if (createWindow() != OK)
 	{
-		close_port(fd);
+		close(fd);
 		exit(EXIT_FAILURE);
 	}
 
@@ -254,30 +305,52 @@ int main(void)
 
 	redraw();
 
-	while (!quit)
+	while((read(fd, &c, 1) == 1) && c != EOF)
 	{
-		XNextEvent(display, &new_event);
-		switch (new_event.type)
+		if (c == 'Z')
 		{
-			case DestroyNotify:
-				quit = 1;
-				break;
-			case Expose:
-				redraw();
-				break;
-			case ButtonPress:
-				regenerate();
-				redraw();
-				break;
-			case ConfigureNotify:
-				resize();
-				break;
-			default:
-				break;
+			printf("Recv Z");
+			for(i=0;i<16;i++)
+				putchar((char)matrix[0][i]);
 		}
+		// SET COLUMN (0100 ABCD) + R + G + B
+		else if (c >= '@' && c <= 'O')
+		{
+			read(fd, &rgb, 3);
+			for(i=8;i>=0;i--)
+			{
+				c = rgb[2] & 0x01;
+				color = 255 * c;
+				c = rgb[1] & 0x01;
+				color += 255 * 255 * c;
+				c = rgb[0] & 0x01;
+				color += 255 * 255 * 255 * c;
+				matrix[i][c - '@'] = color;
+				rgb[0] /= 2;
+				rgb[1] /= 2;
+				rgb[2] /= 2;
+			}
+		}
+                // CLEAR SCREEN (0000 0000)
+		else if (c == 0x00)
+		{
+			for(i=0;i<16;i++)
+				matrix[0][i] = 0;
+		}
+		redraw();
+		usleep(100000);
 	}
-
-	close_port(fd);
+	
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_create(&pid, &attr, fn_draw_screen, NULL);
+	pthread_attr_destroy(&attr);
+	
+	go_out = 1;
+	
+	sleep(5);
+	
+	close(fd);
 
 	destroyWindow();
 
