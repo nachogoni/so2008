@@ -1,8 +1,8 @@
 ÀÄmain
    ÃÄMAIN  1/168  Ram=4
    ³  ÃÄ??0??
-   ³  ÃÄ@const127  0/36  Ram=0
-   ³  ÃÄ@const128  0/9  Ram=0
+   ³  ÃÄ@const126  0/36  Ram=0
+   ³  ÃÄ@const127  0/9  Ram=0
    ³  ÃÄclear  0/32  Ram=0
    ³  ÃÄshowSplashScreen  0/902  Ram=4
    ³  ³  ÃÄ@MUL88  0/37  Ram=2
@@ -111,9 +111,7 @@
    ³  ÃÄstartScroll  0/31  Ram=0
    ³  ÃÄstopScroll  0/2  Ram=0
    ³  ÀÄstopScroll  0/2  Ram=0
-   ÀÄclock  0/351  Ram=1
-      ÃÄping  (Inline)  Ram=0
-      ÃÄ@const120  0/40  Ram=0
+   ÀÄclock  0/323  Ram=0
       ÃÄscrollRight  (Inline)  Ram=5
       ÃÄscrollLeft  (Inline)  Ram=5
       ÃÄscrollUp  (Inline)  Ram=3
