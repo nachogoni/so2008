@@ -207,7 +207,7 @@ void recv_rs232(void)
 void clock(void)
 {
 	LINK_DIS
-
+/*
 	if(0 == (--int_ping_count))
 	{
 		ping();
@@ -218,7 +218,7 @@ void clock(void)
 			reset_cpu();
 		}
 	}
-
+*/
 	if((scroll == ENABLED) && (0 == (--int_count)))
 	{
 		switch (scroll_type)
