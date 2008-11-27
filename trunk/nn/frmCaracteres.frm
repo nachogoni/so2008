@@ -235,6 +235,8 @@ Private Sub cmdClear_Click()
 End Sub
 
 Private Sub cmdFuncion_Click()
+    Dim parcial(0 To 2) As Integer
+    
     If Coma Then
         Anexo = ", "
         Cant = 1
@@ -243,9 +245,9 @@ Private Sub cmdFuncion_Click()
         Cant = 0
     End If
     For i = 1 To Columnas
-        Parcial(0) = 0
-        Parcial(1) = 0
-        Parcial(2) = 0
+        parcial(0) = 0
+        parcial(1) = 0
+        parcial(2) = 0
         For X = 0 To 7
             DoEvents
             Select Case pic((i - 1) * 8 + X).BackColor
@@ -254,37 +256,37 @@ Private Sub cmdFuncion_Click()
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbRed:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbBlue:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbGreen:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbYellow:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbCyan:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbMagenta:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbWhite:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
             End Select
         Next
         If Coma Then n = ","
-        ParcialStr = "0x" & Hex(Parcial(0)) & n & " 0x" & Hex(Parcial(1)) & n & " 0x" & Hex(Parcial(2))
+        ParcialStr = "0x" & Hex(parcial(0)) & n & " 0x" & Hex(parcial(1)) & n & " 0x" & Hex(parcial(2))
         Salida = Salida & ParcialStr & Anexo
     Next
 End Sub
@@ -478,7 +480,7 @@ Private Sub ActualizarColumnas()
 End Sub
 
 Private Function GeneraHexa(Coma As Boolean) As String
-    Dim i As Integer, X As Integer, Parcial(0 To 2) As Integer
+    Dim i As Integer, X As Integer, parcial(0 To 2) As Integer
     Dim Cant As Byte
     Dim Salida As String, Anexo As String, ParcialStr As String
     If Coma Then
@@ -489,9 +491,9 @@ Private Function GeneraHexa(Coma As Boolean) As String
         Cant = 0
     End If
     For i = 1 To Columnas
-        Parcial(0) = 0
-        Parcial(1) = 0
-        Parcial(2) = 0
+        parcial(0) = 0
+        parcial(1) = 0
+        parcial(2) = 0
         For X = 0 To 7
             DoEvents
             Select Case pic((i - 1) * 8 + X).BackColor
@@ -500,37 +502,37 @@ Private Function GeneraHexa(Coma As Boolean) As String
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbRed:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbBlue:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbGreen:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbYellow:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
 '                    Parcial(2) = Parcial(2) + (2 ^ x)
                 Case vbCyan:
 '                    Parcial(0) = Parcial(0) + (2 ^ x)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbMagenta:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
 '                    Parcial(1) = Parcial(1) + (2 ^ x)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
                 Case vbWhite:
-                    Parcial(0) = Parcial(0) + (2 ^ X)
-                    Parcial(1) = Parcial(1) + (2 ^ X)
-                    Parcial(2) = Parcial(2) + (2 ^ X)
+                    parcial(0) = parcial(0) + (2 ^ X)
+                    parcial(1) = parcial(1) + (2 ^ X)
+                    parcial(2) = parcial(2) + (2 ^ X)
             End Select
         Next
         If Coma Then n = ","
-        ParcialStr = "0x" & Hex(Parcial(0)) & n & " 0x" & Hex(Parcial(1)) & n & " 0x" & Hex(Parcial(2))
+        ParcialStr = "0x" & Hex(parcial(0)) & n & " 0x" & Hex(parcial(1)) & n & " 0x" & Hex(parcial(2))
         Salida = Salida & ParcialStr & Anexo
     Next
     GeneraHexa = Trim(Left(Salida, Len(Salida) - Cant))

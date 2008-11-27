@@ -14,16 +14,6 @@ typedef enum {SCROLL_NONE = 0, SCROLL_RIGHT, SCROLL_LEFT,
 			SCROLL_LEFT_CARRY, SCROLL_UP_CARRY,
 			SCROLL_DOWN_CARRY} scrolls;
 
-#define _COMMAND_BASE			0
-#define _PONG					_COMMAND_BASE + 'A'
-#define _SET_SCROLL_FREQ		_COMMAND_BASE + 'B'
-#define _SET_UART_SPEED			_COMMAND_BASE + 'C'
-#define _GET_SCREEN				_COMMAND_BASE + 'F'
-#define _SET_SCREEN				_COMMAND_BASE + 'G'
-#define _CLEAR					_COMMAND_BASE + 'P'
-#define _GET_COL				_COMMAND_BASE + 'Q'
-#define _SET_COL				_COMMAND_BASE + 'R'
-
 #define _SCROLL_DOWN_CARRY		0
 #define _SCROLL_DOWN			1
 #define _SCROLL_UP_CARRY		2
@@ -34,12 +24,6 @@ typedef enum {SCROLL_NONE = 0, SCROLL_RIGHT, SCROLL_LEFT,
 #define _SCROLL_RIGHT			7
 #define _START_SCROLL			8
 #define _STOP_SCROLL			9
-
-
-#define PARAM_SET_SCROLL_FREQ	_COMMAND_BASE + 1
-#define PARAM_SET_UART_SPEED	_COMMAND_BASE + 2
-#define PARAM_SET_SCREEN		_COMMAND_BASE + 3
-#define PARAM_SET_COL			_COMMAND_BASE + 4
 
 #define DISABLED			0
 #define ENABLED				(DISABLED + 1)
@@ -115,9 +99,7 @@ byte scroll = DISABLED;
 byte scroll_type = SCROLL_NONE;
 byte do_reset = PING_PONG_COUNT;
 byte actual_col = 0;
-byte buffer[SCREEN];
-byte buffer_idx = 0;
-byte status = _COMMAND_BASE;
+byte status = 0;
 byte column = 0;
 
 /* INTERRUPT */
@@ -217,38 +199,6 @@ void recv_rs232(void)
 		}
 	}
 
-/*	if (status == 0)
-	{
-		// Es un comando
-		switch (recv)
-		{
-			// SCREEN parameters left
-			case _SET_SCREEN:
-				status = PARAM_SET_SCREEN;
-				buffer_idx = 0;
-				break;
-			// No parameters
-			case _PONG:
-				pong();
-				break;
-			default:
-				break;
-		}
-	}
-	else if (PARAM_SET_SCREEN == status)
-	{
-		// Es un dato
-		if (buffer_idx >= SCREEN)
-		{
-			// Buffer full -> flush to screen
-			setScreen(buffer);
-			buffer_idx = 0;
-			status = _COMMAND_BASE;
-		}
-		else
-			buffer[buffer_idx++] = recv;
-	}
-*/
 	//enable_interrupts(GLOBAL);
 	return;
 }
@@ -308,7 +258,6 @@ void clock(void)
 void showScreen(void)
 {
 	int i;
-	set_col(0);
 	actual_col = 0;
 	for (i = 0; i < SCREEN; i+=3)
 	{
@@ -320,7 +269,6 @@ void showScreen(void)
 		set_blue(matrix[i+2]);
 		delay_ms(SET_74573_TIME);
 		set_col(actual_col++);
-//delay_ms(1000);
 	}
 	return;
 }
@@ -366,9 +314,11 @@ void main(void)
 
 	showSplashScreen();
 
+	set_col(0);
 	while(1)
 	{
 		showScreen();
+		// Red led -> Alive!
 		if (0 == alive)
 			STATUS_ENA
 		if (128 == alive++)
@@ -386,7 +336,7 @@ void set_col(byte col)
 		output_a(col);
 		COL_ENA
 		delay_ms(SET_74154_TIME);
-		//COL_DIS
+		COL_DIS
 	}
 	return;
 }
