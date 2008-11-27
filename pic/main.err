@@ -1,5 +1,4 @@
->>> Warning 203 "D:\Mis Documentos\pic\main.c" Line 370(1,1): Condition always TRUE
->>> Warning 216 "D:\Mis Documentos\pic\main.c" Line 804(0,1): Interrupts disabled during call to prevent re-entrancy:  (@MUL88)
->>> Warning 202 "D:\Mis Documentos\pic\main.c" Line 119(17,27): Variable never used:   buffer_idx
-      Memory usage:   ROM=33%      RAM=35% - 38%
-      0 Errors,  3 Warnings.
+>>> Warning 203 "D:\Mis Documentos\pic\main.c" Line 319(1,1): Condition always TRUE
+>>> Warning 216 "D:\Mis Documentos\pic\main.c" Line 754(0,1): Interrupts disabled during call to prevent re-entrancy:  (@MUL88)
+      Memory usage:   ROM=28%      RAM=21% - 24%
+      0 Errors,  2 Warnings.
