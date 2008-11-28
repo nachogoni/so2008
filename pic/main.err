@@ -1,4 +1,0 @@
->>> Warning 203 "D:\Mis Documentos\pic\main.c" Line 319(1,1): Condition always TRUE
->>> Warning 216 "D:\Mis Documentos\pic\main.c" Line 754(0,1): Interrupts disabled during call to prevent re-entrancy:  (@MUL88)
-      Memory usage:   ROM=28%      RAM=21% - 24%
-      0 Errors,  2 Warnings.
