@@ -1,0 +1,2 @@
+; Pajaros con 4 Sprittes de 8x8 Leds 
+_Pajaros_:	db 	00h, 04h, 04h, 88h, 44h, 84h, 40h, 80h, 00h, 02h, 04h, 48h, 44h, 82h, 40h, 40h, 00h, 04h, 04h, 28h, 44h, 84h, 40h, 20h, 00h, 08h, 04h, 48h, 44h, 88h, 40h, 40h
