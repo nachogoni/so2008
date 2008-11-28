@@ -1,0 +1,16 @@
+Firmware
+Fleds consta de 128 leds rgb, con la capacidad de encenderse con los 3 colores primarios luz, rojo, azul y verde, independientemente.  Consta de 16 columnas por 8 filas. Se utilizó un decodificador para la selección de la columna, 3 latches para el dibujado de los colores y un microcontrolador para el refresco de la pantalla.  En la figura ¿? se muestra el diagrama del circuito.
+FIGURA ¿?
+Principio de funcionamiento
+En el microcontrolador tiene cargado el firmware, el cual se encarga de mantener la comunicación con el driver de Minix vía puerto serial. 
+Cuando recibe un byte, se genera una interrupción, la cual analiza según el protocolo el comando recibido y lo ejecuta. 
+En estado normal, mantiene el refresco de la pantalla. Primero, le indica al decodificador que debe habilitar la primer columna, luego, se setean en cada latch, la columna del rojo, verde y azul. Se espera un milisegundo, y se proceden a dibujar las siguientes columnas, hasta llegar a la última, donde vuelve a comenzar el ciclo. El refresco es de 60Hz aproximadamente.
+Protocolo
+Se enumeran los comandos implementados en el firmware:
+0x00: Clear screen. Borra la pantalla.
+0x40 al 0x4F: Set column. Establece la combinación de colores para la columna del nibble menos significativo (0 a 15). Recibe por parámetros los 3 bytes para el rojo, verde y azul, respectivamente.
+0x10 al 0x19: Scroll. Realiza un scroll en base al valor del nibble menos significativo. 0 para ScrollDownCarry, 1 para ScrollDown, 2 para ScrollUpCarry, 3 para ScrollUp, 4 para ScrollLeftCarry, 5 para ScrollLeft, 6 para ScrollRightCarry, 7 para ScrollRight, 8 para  StartScroll y 9 para StopScroll.
+0x08 al 0x8F: Set UART speed. Establece la velocidad de la UART en base al nibble menos significativo.  0 para 1200, 1 para  2400, 2 para 4800, 3 para 9600, 4 para 19200, 5 para 38400, 6 para 57600 y 7 para 115200 baudios.
+0x20 al 0x2F: Set scroll speed. Establece la frecuencia para el scroll.
+0x5A: Get screen. Transmite por el serial, el contenido actual de la pantalla, enviando 96 caracteres encerrados entre ‘[‘ y ‘]’, para su mejor lectura.
+
