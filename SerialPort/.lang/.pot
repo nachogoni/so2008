@@ -10,10 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .project:1
-msgid "Serial port example"
-msgstr ""
-
 #: FSerialPort.class:78
 msgid "Serial Port"
 msgstr ""
@@ -36,4 +32,8 @@ msgstr ""
 
 #: FSerialPort.class:109
 msgid "Send"
+msgstr ""
+
+#: .project:1
+msgid "Serial port example"
 msgstr ""
