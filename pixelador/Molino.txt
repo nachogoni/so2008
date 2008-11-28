@@ -1,0 +1,2 @@
+; Molino con 9 Sprittes de 8x8 Leds 
+_Molino_:	db 	20h, 33h, 16h, 08h, 34h, 66h, 02h, 00h, 02h, 72h, 16h, 08h, 34h, 27h, 20h, 00h, 02h, 66h, 34h, 08h, 16h, 33h, 20h, 00h, 06h, 44h, 74h, 08h, 17h, 11h, 30h, 00h, 04h, 0Ch, 68h, 3Eh, 0Bh, 18h, 10h, 00h, 18h, 08h, 09h, 7Fh, 48h, 08h, 0Ch, 00h, 10h, 18h, 0Bh, 3Eh, 68h, 0Ch, 04h, 00h, 30h, 11h, 17h, 08h, 74h, 44h, 06h, 00h, 20h, 33h, 16h, 08h, 34h, 66h, 02h, 00h
