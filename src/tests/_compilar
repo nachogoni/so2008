@@ -1,0 +1,3 @@
+cc -o ./bin/text text.c libFleds.c
+cc -o ./bin/pic pic.c libFleds.c
+cc -o ./bin/movie movie.c libFleds.c
