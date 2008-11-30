@@ -1,17 +1,15 @@
-This is pdfeTeX, Version 3.141592-1.21a-2.2 (Web2C 7.5.4) (format=pdflatex 2007.6.27)  28 NOV 2008 18:13
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2008.11.20)  30 NOV 2008 20:30
 entering extended mode
+ %&-line parsing enabled.
 **informe.tex
 (./informe.tex
-LaTeX2e <2003/12/01>
-Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, b
-ahasa, basque, bulgarian, catalan, croatian, czech, danish, dutch, esperanto, e
-stonian, finnish, greek, icelandic, irish, italian, latin, magyar, norsk, polis
-h, portuges, romanian, russian, serbian, slovak, slovene, spanish, swedish, tur
-kish, ukrainian, nohyphenation, loaded.
-(/usr/share/texmf/tex/latex/base/article.cls
-Document Class: article 2004/02/16 v1.4f Standard LaTeX document class
-(/usr/share/texmf/tex/latex/base/size11.clo
-File: size11.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
+LaTeX2e <2005/12/01>
+Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ukrainian, russian, bulgarian, pinyin, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2005/09/16 v1.4f Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size11.clo
+File: size11.clo 2005/09/16 v1.4f Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -25,61 +23,68 @@ File: size11.clo 2004/02/16 v1.4f Standard LaTeX file (size option)
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
-(/usr/share/texmf/tex/latex/base/inputenc.sty
-Package: inputenc 2004/02/05 v1.0d Input encoding file
+(/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
+Package: inputenc 2006/05/05 v1.1b Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
 
-(/usr/share/texmf/tex/latex/base/latin1.def
-File: latin1.def 2004/02/05 v1.0d Input encoding file
+(/usr/share/texmf-texlive/tex/latex/base/latin1.def
+File: latin1.def 2006/05/05 v1.1b Input encoding file
 ))
 (/usr/share/texmf/tex/generic/babel/babel.sty
-Package: babel 2004/11/20 v3.8d The Babel package
+Package: babel 2005/11/23 v3.8h The Babel package
 
-(/usr/share/texmf/tex/generic/babel/spanish.ldf
-Language: spanish.ldf 2004/02/20 v4.2b Spanish support from the babel system
+(/usr/share/texmf-texlive/tex/generic/babel/spanish.ldf
+Language: spanish.ldf 2005/03/31 v4.2b Spanish support from the babel system
 
-(/usr/share/texmf/tex/generic/babel/babel.def
-File: babel.def 2004/11/20 v3.8d Babel common definitions
+(/usr/share/texmf-texlive/tex/generic/babel/babel.def
+File: babel.def 2005/11/23 v3.8h Babel common definitions
 \babel@savecnt=\count87
 \U@D=\dimen103
 )
-\es@quottoks=\toks14
+
+Package babel Warning: No hyphenation patterns were loaded for
+(babel)                the language `Spanish'
+(babel)                I will use the patterns loaded for \language=0 instead.
+
+\l@spanish = a dialect from \language0
+\es@quottoks=\toks16
 \es@quotdepth=\count88
 Package babel Info: Making . an active character on input line 509.
 Package babel Info: Making " an active character on input line 540.
 Package babel Info: Making < an active character on input line 641.
 Package babel Info: Making > an active character on input line 642.
-))
-(/usr/share/texmf/tex/latex/graphics/graphicx.sty
+)) (/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf/tex/latex/graphics/keyval.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
-\KV@toks@=\toks15
+\KV@toks@=\toks17
 )
-(/usr/share/texmf/tex/latex/graphics/graphics.sty
-Package: graphics 2001/07/07 v1.0n Standard LaTeX Graphics (DPC,SPQR)
+(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+Package: graphics 2006/02/20 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf/tex/latex/graphics/trig.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/usr/share/texmf/tex/latex/graphics/graphics.cfg
-File: graphics.cfg 2005/02/03 v1.3 graphics configuration of teTeX/TeXLive
+(/etc/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
 )
-Package graphics Info: Driver file: pdftex.def on input line 80.
+Package graphics Info: Driver file: pdftex.def on input line 90.
 
-(/usr/share/texmf/tex/latex/graphics/pdftex.def
-File: pdftex.def 2002/06/19 v0.03k graphics/color for pdftex
+(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2007/01/08 v0.04d Graphics/color for pdfTeX
 \Gread@gobject=\count89
 ))
 \Gin@req@height=\dimen104
 \Gin@req@width=\dimen105
 )
-(/usr/share/texmf/tex/latex/graphics/epsfig.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/epsfig.sty
 Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
 \epsfxsize=\dimen106
 \epsfysize=\dimen107
 )
-(/usr/share/texmf/tex/latex/fancyvrb/fancyvrb.sty
+(/usr/share/texmf-texlive/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 1998/07/17
 
 Style option: `fancyvrb' v2.6, with DG/SPQR fixes <1998/07/17> (tvz)
@@ -91,7 +96,7 @@ Style option: `fancyvrb' v2.6, with DG/SPQR fixes <1998/07/17> (tvz)
 \FV@OutFile=\write3
 
 No file fancyvrb.cfg.
-) (/usr/share/texmf/tex/latex/fancyhdr/fancyhdr.sty
+) (/usr/share/texmf-texlive/tex/latex/fancyhdr/fancyhdr.sty
 \fancy@headwidth=\skip43
 \f@ncyO@elh=\skip44
 \f@ncyO@erh=\skip45
@@ -121,40 +126,6 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 53.
 LaTeX Font Info:    ... okay on input line 53.
- (/usr/share/texmf/tex/context/base/supp-pdf.tex
-(/usr/share/texmf/tex/context/base/supp-mis.tex
-loading : Context Support Macros / Miscellaneous (2004.10.26)
-\protectiondepth=\count93
-\scratchcounter=\count94
-\scratchtoks=\toks16
-\scratchdimen=\dimen108
-\scratchskip=\skip52
-\scratchmuskip=\muskip10
-\scratchbox=\box27
-\scratchread=\read2
-\scratchwrite=\write4
-\zeropoint=\dimen109
-\onepoint=\dimen110
-\onebasepoint=\dimen111
-\minusone=\count95
-\thousandpoint=\dimen112
-\onerealpoint=\dimen113
-\emptytoks=\toks17
-\nextbox=\box28
-\nextdepth=\dimen114
-\everyline=\toks18
-\!!counta=\count96
-\!!countb=\count97
-\recursecounter=\count98
-)
-loading : Context Support Macros / PDF (2004.03.26)
-\nofMPsegments=\count99
-\nofMParguments=\count100
-\MPscratchCnt=\count101
-\MPscratchDim=\dimen115
-\MPnumerator=\count102
-\everyMPtoPDFconversion=\toks19
-)
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 54.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -163,7 +134,8 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 54.
  [1
 
-{/usr/share/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./informe.toc
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+(./informe.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 5.
 
@@ -174,8 +146,8 @@ Package Fancyhdr Warning: \headheight is too small (10.0pt):
  This may cause the page layout to be inconsistent, however.
 
 [2])
-\tf@toc=\write5
-\openout5 = `informe.toc'.
+\tf@toc=\write4
+\openout4 = `informe.toc'.
 
  [3]
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -184,12 +156,12 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 63.
 
 Overfull \hbox (46.93666pt too wide) in paragraph at lines 76--77
-[]\OT1/cmr/m/n/10.95 Luego de in-ves-ti-gar y re-vi-sar el con-tro-la-dor pro-v
-is-to por mi-nix del se-rial ([]\OT1/cmtt/m/n/10.95 /usr/src/kernel/RS232\OT1/c
-mr/m/n/10.95 c)
+[]\OT1/cmr/m/n/10.95 Luego de in-ves-ti-gar y re-vis-ar el con-tro-lador pro-vi
+s-to por minix del se-ri-al ([]\OT1/cmtt/m/n/10.95 /usr/src/kernel/RS232\OT1/cm
+r/m/n/10.95 c)
  []
 
-<design.png, id=26, 1003.75pt x 702.625pt>
+<design.png, id=16, 1003.75pt x 702.625pt>
 File: design.png Graphic file (type png)
  <use design.png>
 Overfull \hbox (61.87378pt too wide) in paragraph at lines 87--88
@@ -211,7 +183,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 106--107
 
  []
 
-[5 <./design.png>]
+[5 <./design.png (PNG copy)>]
 Underfull \hbox (badness 10000) in paragraph at lines 109--110
 
  []
@@ -226,63 +198,119 @@ Underfull \hbox (badness 10000) in paragraph at lines 115--116
 
  []
 
-[6]
-Overfull \hbox (16.0032pt too wide) in paragraph at lines 149--150
-[]\OT1/cmr/m/n/10.95 Tambi^^Sen se tie-ne que agre-gar el mis-mo al ta-ma~no to
--tal de sta-ck de-fi-ni-do en []\OT1/cmtt/m/n/10.95 TOT_STACK_SPACE\OT1/cmr/m/n
-/10.95 . 
+[6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17]
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+[][]\OT1/cmtt/m/n/9 byte splash[SCREEN] = {0x3F, 0x0, 0x0, 0x5, 0x0, 0x0, 0x1, 
+0x0, 0xF0, 0x0, 0x0, 0x80,
  []
 
-[7]
-Overfull \hbox (55.94014pt too wide) in paragraph at lines 157--158
-[]\OT1/cmr/m/n/10.95 Es im-por-tan-te que se agre-gue en con-conr-dan-cia al n^
-^Sume-ro de ta-rea in-clui-do en []\OT1/cmtt/m/n/10.95 /include/minix/com\OT1/c
-mr/m/n/10.95 h.
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+\OT1/cmtt/m/n/9 0x0, 0x3E, 0x0, 0x0, 0x2A, 0x0, 0x0, 0x0, 0x0, 0xF0, 0xF0, 0x0,
+ 0x90, 0x90, 0x0, 0x60, 0x60,
  []
 
-[8] [9] [10] [11]
-Underfull \hbox (badness 10000) in paragraph at lines 171--171
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+\OT1/cmtt/m/n/9 0x0, 0x0, 0x4, 0x4, 0x0, 0x2A, 0x2A, 0x0, 0x2A, 0x2A, 0x0, 0x10
+, 0x10, 0x0, 0x0, 0x0, 0xBC,
+ []
+
+[18]
+Overfull \hbox (16.0032pt too wide) in paragraph at lines 154--155
+[]\OT1/cmr/m/n/10.95 Tambi^^Sen se tiene que agre-gar el mis-mo al tama~no to-t
+al de stack definido en []\OT1/cmtt/m/n/10.95 TOT_STACK_SPACE\OT1/cmr/m/n/10.95
+ . 
+ []
+
+[19]
+Overfull \hbox (55.94014pt too wide) in paragraph at lines 162--163
+[]\OT1/cmr/m/n/10.95 Es im-por-tante que se agregue en con-con-r-dan-cia al n^^
+Sumero de tarea in-clu-i-do en []\OT1/cmtt/m/n/10.95 /include/minix/com\OT1/cmr
+/m/n/10.95 h.
+ []
+
+[20] [21] [22] [23]
+Underfull \hbox (badness 10000) in paragraph at lines 176--176
 [][][][]\OT1/cmtt/m/n/9 user_phys = proc_vir2phys(proc_addr(m_ptr->PROC_NR), (v
 ir_bytes)
  []
 
-[12]
-Underfull \hbox (badness 10000) in paragraph at lines 171--171
+[24]
+Underfull \hbox (badness 10000) in paragraph at lines 176--176
 [][][][]\OT1/cmtt/m/n/9 user_phys = proc_vir2phys(proc_addr(m_ptr->PROC_NR), (v
 ir_bytes)
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 171--171
+Underfull \hbox (badness 10000) in paragraph at lines 176--176
 [][][][]\OT1/cmtt/m/n/9 /* copio  los datos del buffer a una variable local (po
 r que el
  []
 
-[13] [14] [15] [16] [17]
-Underfull \hbox (badness 10000) in paragraph at lines 177--177
+[25] [26] [27] [28] [29]
+Underfull \hbox (badness 10000) in paragraph at lines 182--182
 []\OT1/cmtt/m/n/9 typedef enum{SERIAL_S_50, SERIAL_S_300,SERIAL_S_1200, SERIAL_
 S_2400, SERIAL_S_4800,
  []
 
-[18] [19] [20] [21] (./informe.aux) ) 
+[30] [31] [32] [33] [34] [35] [36] [37] [38]
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].red =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].green =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].blue =
+ []
+
+[39] [40] [41]
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][]\OT1/cmtt/m/n/9 fleds->pic[i].blue = (~((fleds->pic[i].red + fleds->pic[i
+].blue +
+ []
+
+[42] [43]
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].red = (fleds->pic[i].red & (~x)) |
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].green = (fleds->pic[i].green & (~x)) |
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 255--255
+[][][][][]\OT1/cmtt/m/n/9 fleds->pic[i].blue = (fleds->pic[i].blue & (~x)) |
+ []
+
+[44] [45] (./informe.aux) ) 
 Here is how much of TeX's memory you used:
- 2046 strings out of 94500
- 25526 string characters out of 1176766
- 87184 words of memory out of 1000000
- 5214 multiletter control sequences out of 10000+50000
- 11361 words of font info for 40 fonts, out of 500000 for 2000
- 580 hyphenation exceptions out of 1000
- 25i,11n,43p,599b,386s stack positions out of 1500i,500n,5000p,200000b,5000s
+ 1743 strings out of 94828
+ 22047 string characters out of 1179022
+ 84055 words of memory out of 1500000
+ 4929 multiletter control sequences out of 10000+50000
+ 11361 words of font info for 40 fonts, out of 1200000 for 2000
+ 212 hyphenation exceptions out of 8191
+ 25i,11n,43p,599b,388s stack positions out of 5000i,500n,6000p,200000b,5000s
+</usr/share/texmf-texlive/fonts/type1/bluesky/cm/cmb
+x10.pfb></usr/share/texmf-texlive/fonts/type1/bluesky/cm/cmbx12.pfb></usr/share
+/texmf-texlive/fonts/type1/bluesky/cm/cmcsc10.pfb></usr/share/texmf-texlive/fon
+ts/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/bluesky/cm
+/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/bluesky/cm/cmr12.pfb></usr/sha
+re/texmf-texlive/fonts/type1/bluesky/cm/cmr6.pfb></usr/share/texmf-texlive/font
+s/type1/bluesky/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/bluesky/cm/
+cmti10.pfb></usr/share/texmf-texlive/fonts/type1/bluesky/cm/cmtt10.pfb></usr/sh
+are/texmf-texlive/fonts/type1/bluesky/cm/cmtt9.pfb>
+Output written on informe.pdf (45 pages, 214525 bytes).
 PDF statistics:
- 102 PDF objects out of 300000
- 0 named destinations out of 131072
- 6 words of extra memory for PDF output out of 65536
-</usr/share/texmf/fonts/type1/bluesky/cm/c
-mtt9.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr6.pfb></usr/share/texmf/fo
-nts/type1/bluesky/cm/cmtt10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10
-.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmti10.pfb></usr/share/texmf/font
-s/type1/bluesky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmbx10.p
-fb></usr/share/texmf/fonts/type1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/t
-ype1/bluesky/cm/cmcsc10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr12.pfb>
-</usr/share/texmf/fonts/type1/bluesky/cm/cmbx12.pfb>
-Output written on informe.pdf (21 pages, 166328 bytes).
+ 194 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 131072)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -114,6 +114,11 @@ Se enumeran los comandos implementados en el firmware:
 
 \textbf{0x5A}: Get screen. Transmite por el serial, el contenido actual de la  pantalla, enviando 96 caracteres encerrados entre [ y ], para su mejor lectura. \\
 
+\subsection{C\'odigo fuente}
+Se muestra a continuaci\'on el firmware del microcontrolador
+
+\includescript{main-pic.c}
+
 \section{Controlador}
 La implementaci\'on del driver del fleds involucr\'o la modificaci\'on de c\'odigos fuentes del kernel de Minix y el agregado de nuevos archivos. Se detalla a continuaci\'on las modificaciones correspondientes con sus respectivas explicaciones. 
 \textit{Aclaraci\'on: Los paths que encabezan las siguientes subsecciones son relativos a \emph{\/usr\/}., y representan la locaci\'on del archivo en el file-system.}
@@ -240,6 +245,15 @@ Tira animaciones re-locas.
 Anima la pelicula.
 \subsubsection{CAMEL}
 Genera el efecto camel que tanto se comenta entre los j\'ovenes.
+
+\subsection{libFleds.h}
+
+\includescript{libFleds.h}
+
+\subsection{libFleds.c}
+
+\includescript{libFleds.c}
+
 \section{Conclusiones} 
 Creemos haber cumplido el objetivo que nos planteamos al comienzo del tpe, desarrollar un dispositivo f\'isico de leds y su respectivo driver para el sistema operativo Minix.\\
 Se comprendi\'o la interacci\'on de Minix internamente, el armado de un controlador nuevo y la vinculaci\'on entre s\'i.\\

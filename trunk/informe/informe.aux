@@ -16,44 +16,47 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Dise\~no del circuito el\'ectrico de FLEDS}}{5}}
 \newlabel{design}{{1}{5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Protocolo}{5}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Controlador}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}include/minix/com.h}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}include/minix/config.h}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}include/minix/const.h}{7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}src/kernel/table.c}{7}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}src/fs/table.c}{9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}src/kernel/fleds.c}{9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}src/kernel/fleds.h}{17}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Aplicaci\'on}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}fledsADT newFleds (int height, int width, char * device)}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}int freeFleds (fledsADT fleds)}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}int loadText (fledsADT fleds, char * text, int x, int y)}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}int loadPic (fledsADT fleds, pic\_t pic, int x, int y)}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}int loadMovie (fledsADT fleds, pic\_t * pic)}{19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}int clear (fledsADT fleds)}{19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}int show (fledsADT fleds)}{19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}int hide (fledsADT fleds)}{19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.9}int animate (fledsADT fleds, animation\_t animation, int iterations, int speed)}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.1}SCROLL\_NONE}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.2}SCROLL\_RIGHT}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.3}SCROLL\_LEFT}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.4}SCROLL\_UP}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.5}SCROLL\_DOWN}{19}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.6}SCROLL\_RIGHT\_CARRY}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.7}SCROLL\_LEFT\_CARRY}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.8}SCROLL\_UP\_CARRY}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.9}SCROLL\_DOWN\_CARRY}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.10}SCROLL\_ROW\_LEFT}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.11}SCROLL\_ROW\_RIGHT}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.12}SCROLL\_COLUMN\_DOWN}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.13}WAVE}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.14}TWINKLE}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.15}LSD}{20}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.16}MOVIE}{20}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}C\'odigo fuente}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Controlador}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}include/minix/com.h}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}include/minix/config.h}{18}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}include/minix/const.h}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}src/kernel/table.c}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}src/fs/table.c}{21}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}src/kernel/fleds.c}{21}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}src/kernel/fleds.h}{30}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Aplicaci\'on}{30}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}fledsADT newFleds (int height, int width, char * device)}{30}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}int freeFleds (fledsADT fleds)}{30}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}int loadText (fledsADT fleds, char * text, int x, int y)}{30}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}int loadPic (fledsADT fleds, pic\_t pic, int x, int y)}{31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}int loadMovie (fledsADT fleds, pic\_t * pic)}{31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6}int clear (fledsADT fleds)}{31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}int show (fledsADT fleds)}{31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8}int hide (fledsADT fleds)}{31}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.9}int animate (fledsADT fleds, animation\_t animation, int iterations, int speed)}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.1}SCROLL\_NONE}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.2}SCROLL\_RIGHT}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.3}SCROLL\_LEFT}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.4}SCROLL\_UP}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.5}SCROLL\_DOWN}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.6}SCROLL\_RIGHT\_CARRY}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.7}SCROLL\_LEFT\_CARRY}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.8}SCROLL\_UP\_CARRY}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.9}SCROLL\_DOWN\_CARRY}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.10}SCROLL\_ROW\_LEFT}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.11}SCROLL\_ROW\_RIGHT}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.12}SCROLL\_COLUMN\_DOWN}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.13}WAVE}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.14}TWINKLE}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.15}LSD}{32}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.16}MOVIE}{33}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.17}CAMEL}{33}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.10}libFleds.h}{33}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.11}libFleds.c}{34}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusiones}{44}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Posibles extensiones}{44}}
 \bibcite{libro1}{1}
 \bibcite{libro2}{2}
 \bibcite{link}{3}
 \bibcite{source}{4}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.9.17}CAMEL}{21}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusiones}{21}}
-\@writefile{toc}{\contentsline {section}{\numberline {7}Posibles extensiones}{21}}
